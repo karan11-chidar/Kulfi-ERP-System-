@@ -23,7 +23,7 @@ body {
 
 /* ===== Card ===== */
 .login-box {
-  background: #ffffff;
+  background: #000000;
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
@@ -41,7 +41,7 @@ body {
 .subtitle {
   text-align: center;
   font-size: 14px;
-  color: #666;
+  color: #ffffff;
   margin-bottom: 25px;
 }
 
@@ -53,7 +53,7 @@ body {
 .input-group label {
   display: block;
   font-size: 14px;
-  color: #333;
+  color: #ffffff;
   margin-bottom: 6px;
 }
 
@@ -63,7 +63,7 @@ body {
   padding: 12px;
   font-size: 15px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid #ffffff;
   transition: 0.3s;
 }
 
@@ -76,11 +76,11 @@ body {
 
 /* Adjust password input padding for icons */
 .password-wrapper input {
-  padding-left: 40px; /* Space for Lock Icon */
+  padding-left: 40px; /* Space for Lock/Mail Icon */
   padding-right: 40px; /* Space for Eye Icon */
 }
 
-/* Icon Left (Lock) */
+/* Icon Left (Lock/Mail) */
 .icon-left {
   position: absolute;
   left: 12px;
@@ -117,7 +117,7 @@ body {
   box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.15);
 }
 
-/* When input is focused, color the lock icon too */
+/* When input is focused, color the lock/mail icon too */
 .password-wrapper input:focus + .icon-left {
   color: #ff5722;
 }
