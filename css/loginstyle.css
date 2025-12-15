@@ -1,0 +1,192 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+/* ===== Background ===== */
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #8a5b16, #ff5722);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* ===== Container ===== */
+.login-container {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* ===== Card ===== */
+.login-box {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* ===== Heading ===== */
+.login-box h2 {
+  text-align: center;
+  font-size: 26px;
+  color: #ff5722;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+/* ===== Inputs ===== */
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+/* Default Input Styling */
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  transition: 0.3s;
+}
+
+/* ===== Password Wrapper for Icons ===== */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Adjust password input padding for icons */
+.password-wrapper input {
+  padding-left: 40px; /* Space for Lock Icon */
+  padding-right: 40px; /* Space for Eye Icon */
+}
+
+/* Icon Left (Lock) */
+.icon-left {
+  position: absolute;
+  left: 12px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  pointer-events: none; /* User can't click the lock */
+}
+
+/* Icon Right (Eye - Clickable) */
+.icon-right {
+  position: absolute;
+  right: 12px;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s;
+}
+
+.icon-right:hover {
+  color: #ff5722;
+}
+
+/* Hidden Class for Toggling */
+.hidden {
+  display: none !important;
+}
+
+/* Focus State */
+.input-group input:focus {
+  outline: none;
+  border-color: #ff5722;
+  box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.15);
+}
+
+/* When input is focused, color the lock icon too */
+.password-wrapper input:focus + .icon-left {
+  color: #ff5722;
+}
+
+/* ===== Button ===== */
+.login-btn {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #ff5722, #ff9800);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(255, 87, 34, 0.4);
+}
+
+/* ===== Note ===== */
+.note {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 12px;
+  color: #777;
+}
+
+/* ===== Animation ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================================================= */
+/* ================= Responsive ==================== */
+/* ================================================= */
+
+/* Tablet */
+@media (min-width: 600px) {
+  .login-container {
+    max-width: 450px;
+  }
+
+  .login-box {
+    padding: 35px;
+  }
+}
+
+/* Laptop / Desktop */
+@media (min-width: 1024px) {
+  body {
+    padding: 0;
+  }
+
+  .login-container {
+    max-width: 400px;
+  }
+
+  .login-box h2 {
+    font-size: 28px;
+  }
+}
