@@ -31,7 +31,12 @@
   font-family: 'Poppins', sans-serif; /* Smart Font */
 }
 
-/* ===== Header ===== */
+body {
+  background: var(--bg-color); /* Body background set kiya */
+  overflow-x: hidden; /* Horizontal scroll roka */
+}
+
+/* ===== Header (Fixed Top) ===== */
 .topbar {
   background: var(--primary-gradient);
   color: #fff;
@@ -40,9 +45,9 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  position: sticky;
+  position: sticky; /* Header bhi chipka rahega */
   top: 0;
-  z-index: 100;
+  z-index: 1000; /* Sidebar se upar */
 }
 
 .header-left {
@@ -76,20 +81,27 @@
   padding: 0;
 }
 
-/* ===== Layout ===== */
+/* ===== Layout (Main Container) ===== */
 .layout {
   display: flex;
-  min-height: calc(100vh - 60px);
+  /* Height hataya taaki sticky kaam kare */
   position: relative;
+  min-height: 100vh; /* Ensure layout takes full height */
 }
 
-/* ===== Sidebar ===== */
+/* ===== Sidebar (FIXED) ===== */
 .sidebar {
   width: 250px;
   background: var(--sidebar-bg);
   padding-top: 30px;
-  transition: transform 0.3s ease;
-  z-index: 200;
+  
+  /* Sidebar ko chipkane ka logic */
+  position: fixed; /* Sticky ki jagah Fixed */
+  top: 60px; /* Header ki height ke neeche se start hoga */
+  left: 0;
+  bottom: 0; /* Bottom tak extend karega */
+  overflow-y: auto; /* Agar sidebar ke items zyada ho toh sidebar scroll karega */
+  z-index: 900;
 }
 
 .close-btn {
@@ -105,9 +117,9 @@
 }
 
 .sidebar a {
-  display: flex; /* Flex for Icon + Text */
+  display: flex;
   align-items: center;
-  gap: 12px; /* Gap between icon and text */
+  gap: 12px;
   padding: 15px 30px;
   color: #b0b0b0;
   text-decoration: none;
@@ -123,18 +135,20 @@
   padding-left: 35px;
 }
 
-/* Icons inside Sidebar */
 .sidebar a i {
   width: 20px;
   height: 20px;
 }
 
-/* ===== Content Area ===== */
+/* ===== Content Area (Scrollable) ===== */
 .content {
   flex: 1;
   padding: 20px;
   background: var(--bg-color);
   width: 100%;
+  margin-left: 250px; /* Content ko sidebar ke bagal me lana padega kyunki sidebar fixed hai */
+  /* Content scroll karega, lekin body scroll ke saath */
+  min-height: 100vh; 
 }
 
 .content h3 {
@@ -144,10 +158,10 @@
   border-bottom: 2px solid #ddd;
   padding-bottom: 10px;
   display: inline-block;
-  margin-top: 30px;
+  margin-top: 10px;
 }
 
-/* ===== Main Stats Cards (Top Section) ===== */
+/* ===== Cards & Lists Styles (No Change) ===== */
 .cards {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
@@ -170,8 +184,6 @@
   border-top: 4px solid var(--primary-color);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  
-  /* Flex to put text left and icon right */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -201,7 +213,6 @@
   font-weight: 600;
 }
 
-/* Icon Box inside Card */
 .icon-box {
   width: 50px;
   height: 50px;
@@ -209,22 +220,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f5f5; /* Default fallback */
+  background: #f5f5f5;
 }
 
-/* Icon Box Colors */
 .icon-green { background: var(--icon-bg-green); color: var(--icon-color-green); }
 .icon-blue { background: var(--icon-bg-blue); color: var(--icon-color-blue); }
 .icon-orange { background: var(--icon-bg-orange); color: var(--icon-color-orange); }
 .icon-purple { background: var(--icon-bg-purple); color: var(--icon-color-purple); }
 
-
-/* ===== NEW STYLE: Pending Credits as Grid Cards (Columns) ===== */
 .list-section {
   margin-top: 10px;
 }
 
-/* Grid Layout for Cards - Cards bagal-bagal mein aayenge */
 .credit-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
@@ -234,19 +241,15 @@
   border-radius: 0;
 }
 
-/* Shop Card Style - Row Layout (Left: Info, Right: Amount) */
 .list-item {
   background: white;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-  
-  /* Flex ROW: Info aur Amount ko side-by-side rakhne ke liye */
   display: flex;
   flex-direction: row; 
-  justify-content: space-between; /* Dono kone par */
-  align-items: center; /* Center align vertically */
-  
+  justify-content: space-between;
+  align-items: center;
   border-left: 5px solid transparent; 
   transition: transform 0.3s;
 }
@@ -256,15 +259,14 @@
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-/* Specific Risk Borders */
 .list-item:nth-child(1) { border-left-color: var(--danger-color); }
 .list-item:nth-child(2) { border-left-color: var(--warning-color); }
 .list-item:nth-child(3) { border-left-color: var(--success-color); }
 
 .shop-info {
   margin-bottom: 0;
-  flex: 1; /* Shop info bachi hui jagah lega */
-  padding-right: 15px; /* Amount se thoda gap */
+  flex: 1;
+  padding-right: 15px;
 }
 
 .shop-info h4 {
@@ -274,17 +276,15 @@
   margin-bottom: 4px;
 }
 
-/* Address and Mobile with Icons */
 .shop-info .address, .shop-info .mobile {
   font-size: 12px;
   color: var(--text-gray);
   margin-bottom: 4px;
   display: flex;
   align-items: center;
-  gap: 5px; /* Space between icon and text */
+  gap: 5px;
 }
 
-/* Small icons for list items */
 .mini-icon {
   width: 14px;
   height: 14px;
@@ -298,11 +298,10 @@
   background: #f0f2f5;
   padding: 3px 8px;
   border-radius: 4px;
-  display: inline-flex; /* Use inline-flex for alignment */
+  display: inline-flex;
   align-items: center;
 }
 
-/* Amount Styling - Ab Right Side par */
 .credit-amount {
   font-size: 20px;
   font-weight: 700;
@@ -311,14 +310,12 @@
   white-space: nowrap; 
 }
 
-/* Risk Colors */
 .high-risk { color: var(--danger-color); }
 .medium-risk { color: var(--warning-color); }
 .low-risk { color: var(--success-color); }
 
-/* View All Button */
 .view-all-btn-container {
-    grid-column: 1 / -1; /* Poori width lega */
+    grid-column: 1 / -1;
     text-align: center;
     margin-top: 10px;
     background: transparent;
@@ -343,7 +340,6 @@
     box-shadow: 0 6px 12px rgba(255, 87, 34, 0.3);
 }
 
-/* ===== Overlay ===== */
 .overlay {
   display: none;
   position: fixed;
@@ -357,29 +353,177 @@
   transition: opacity 0.3s ease;
 }
 
-/* ===== Responsive Mobile ===== */
+/* ===== MODAL STYLES (Popup) ===== */
+.modal-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Dark background */
+    z-index: 2000; /* Sidebar se upar */
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-dark);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+}
+
+/* Profile Picture Styling with Upload Button */
+.profile-pic-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-pic-wrapper {
+    position: relative; /* Relative position for placing camera icon */
+    display: inline-block;
+}
+
+#modal-profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid var(--primary-color);
+    object-fit: cover; /* Image aspect ratio maintain karega */
+}
+
+/* Upload Camera Icon */
+.upload-icon {
+    position: absolute;
+    bottom: 0;
+    right: 5px;
+    background: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    padding: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+}
+
+.upload-icon:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.upload-icon i {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+    color: var(--text-gray);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.save-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.save-btn:hover {
+    box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
+}
+
+/* ===== Responsive Mobile (Overlay Sidebar) ===== */
 @media (max-width: 768px) {
   .menu-toggle { display: block; }
   
   .sidebar {
-    position: fixed;
+    /* Mobile par FIXED hi rahega (Screen ke upar) */
+    position: fixed; 
     top: 0;
     left: 0;
     height: 100vh;
     width: 260px;
     transform: translateX(-100%);
     box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+    padding-top: 20px;
+    z-index: 1200; /* Header se upar */
   }
 
   .sidebar.active { transform: translateX(0); }
   .close-btn { display: block; }
   .overlay.active { display: block; opacity: 1; }
+  
   .layout { display: block; }
   
-  .content { padding: 20px 15px; }
-  
-  /* Mobile par credit list ek column me rahe */
-  .credit-list {
-    grid-template-columns: 1fr;
+  .content { 
+    padding: 20px 15px; 
+    margin-left: 0; /* Mobile par margin hatana padega */
   }
+  .credit-list { grid-template-columns: 1fr; }
 }

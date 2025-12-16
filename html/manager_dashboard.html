@@ -1,21 +1,7 @@
 <!-- 
-
 DESCRIPTION:
-Dashboard HTML page for the Kulfi ERP System. This file serves as the main user 
-interface for displaying key business metrics, analytics, and navigation elements.
-
-PURPOSE:
-- Provide a centralized view of business data and KPIs
-- Offer quick access to main ERP system modules
-- Display real-time or summarized business information
-
-DEPENDENCIES:
-- CSS stylesheets for dashboard styling
-- JavaScript for interactivity and data manipulation
-- Backend API endpoints for data retrieval
-
-LAST UPDATED: [Date]
-MAINTAINED BY: karan11-chidar
+Dashboard HTML page for the Kulfi ERP System.
+Pure Static Design (No Firebase, Data Hardcoded).
 -->
 
 <!DOCTYPE html>
@@ -23,11 +9,13 @@ MAINTAINED BY: karan11-chidar
   <head>
     <meta charset="UTF-8" />
     <title>Kulfi ERP | Dashboard</title>
-    <!-- Viewport Meta Tag Mobile ke liye zaroori hai -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/MangerDashborad.css" />
+    <!-- External CSS Link -->
+    <link rel="stylesheet" href="../css/manager_dashboard.css" />
     <!-- Lucide Icons Script -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tailwind CSS for Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body>
     <!-- Header -->
@@ -39,14 +27,19 @@ MAINTAINED BY: karan11-chidar
         </button>
         <h2>Kulfi ERP</h2>
       </div>
-      <span class="role">Manager Dashboard</span>
+      <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
+          <span class="role">Manager Dashboard</span>
+          <!-- Profile Trigger (Header Image) -->
+          <div id="profile-trigger" style="cursor: pointer;">
+              <img id="header-profile-img" src="https://ui-avatars.com/api/?name=Manager+User&background=0D8ABC&color=fff" alt="Profile" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+          </div>
+      </div>
     </header>
 
     <!-- Main Layout -->
     <div class="layout">
-      <!-- Sidebar (Ab yeh mobile par chupa rahega) -->
+      <!-- Sidebar -->
       <aside class="sidebar" id="sidebar">
-        <!-- Close Button for Mobile (Optional but good for UX) -->
         <button id="close-sidebar" class="close-btn">&times;</button>
         
         <a href="#" class="active"><i data-lucide="layout-dashboard"></i> Dashboard</a>
@@ -55,10 +48,14 @@ MAINTAINED BY: karan11-chidar
         <a href="#"><i data-lucide="credit-card"></i> Credit</a>
         <a href="#"><i data-lucide="store"></i> Shops</a>
         <a href="#"><i data-lucide="users"></i> Staff</a>
-        <a href="#"><i data-lucide="log-out"></i> Logout</a>
+        
+        <!-- SIDEBAR PROFILE LINK -->
+        <a href="#" id="sidebar-profile-link"><i data-lucide="user"></i> My Profile</a>
+        
+        <a href="login.html" id="logout-btn"><i data-lucide="log-out"></i> Logout</a>
       </aside>
 
-      <!-- Overlay (Screen ko dark karne ke liye jab menu khule) -->
+      <!-- Overlay -->
       <div class="overlay" id="overlay"></div>
 
       <!-- Content -->
@@ -70,7 +67,7 @@ MAINTAINED BY: karan11-chidar
           <div class="card">
             <div class="card-content">
               <h4>Total Stock</h4>
-              <p>120 Packets</p>
+              <p>150 Packets</p> <!-- Hardcoded Data -->
             </div>
             <div class="icon-box icon-green">
               <i data-lucide="package"></i>
@@ -81,7 +78,7 @@ MAINTAINED BY: karan11-chidar
           <div class="card">
             <div class="card-content">
               <h4>Today Sales</h4>
-              <p>₹4,500</p>
+              <p>₹5,200</p> <!-- Hardcoded Data -->
             </div>
             <div class="icon-box icon-blue">
               <i data-lucide="indian-rupee"></i>
@@ -92,7 +89,7 @@ MAINTAINED BY: karan11-chidar
           <div class="card">
             <div class="card-content">
               <h4>Pending Payments</h4>
-              <p>₹40,500</p>
+              <p>₹42,000</p> <!-- Hardcoded Data -->
             </div>
             <div class="icon-box icon-orange">
               <i data-lucide="alert-circle"></i>
@@ -103,7 +100,7 @@ MAINTAINED BY: karan11-chidar
           <div class="card">
             <div class="card-content">
               <h4>Running Boy</h4>
-              <p><strong>Live</strong> 5</p>
+              <p><strong>Live</strong> 8</p> <!-- Hardcoded Data -->
             </div>
             <div class="icon-box icon-purple">
               <i data-lucide="bike"></i>
@@ -111,13 +108,13 @@ MAINTAINED BY: karan11-chidar
           </div>
         </div>
 
-        <!-- NEW SECTION: Pending Credit List (Now in Grid/Columns) -->
+        <!-- NEW SECTION: Pending Credit List -->
         <div class="list-section">
           <h3>Top Pending Credits</h3>
           
           <div class="credit-list">
-            <!-- Shop Item 1 (Highest Credit) -->
-            <div class="list-item">
+            <!-- Shop 1 -->
+            <div class="list-item" style="border-left-color: var(--danger-color);">
               <div class="shop-info">
                 <h4>Gupta Kirana Store</h4>
                 <span class="address"><i data-lucide="map-pin" class="mini-icon"></i> 12, Main Market, Indore</span>
@@ -128,8 +125,8 @@ MAINTAINED BY: karan11-chidar
               </div>
             </div>
 
-            <!-- Shop Item 2 -->
-            <div class="list-item">
+            <!-- Shop 2 -->
+            <div class="list-item" style="border-left-color: var(--warning-color);">
               <div class="shop-info">
                 <h4>Sharma General Store</h4>
                 <span class="address"><i data-lucide="map-pin" class="mini-icon"></i> Near Bus Stand, Dewas</span>
@@ -140,8 +137,8 @@ MAINTAINED BY: karan11-chidar
               </div>
             </div>
 
-            <!-- Shop Item 3 -->
-            <div class="list-item">
+            <!-- Shop 3 -->
+            <div class="list-item" style="border-left-color: var(--success-color);">
               <div class="shop-info">
                 <h4>Verma Dairy</h4>
                 <span class="address"><i data-lucide="map-pin" class="mini-icon"></i> Sector 4, Bhopal</span>
@@ -163,10 +160,44 @@ MAINTAINED BY: karan11-chidar
       </main>
     </div>
 
-    <!-- JavaScript Logic for Menu Toggle & Icons -->
-    <script src="../javascript/ManagerDashborad-page/featureJs.js"></script>
-    <script>
-    </script>
+    <!-- PROFILE MODAL (Popup) -->
+    <div id="profile-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>My Profile</h3>
+                <button id="close-modal-btn" class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-pic-container">
+                    <div class="profile-pic-wrapper">
+                        <img id="modal-profile-pic" src="https://ui-avatars.com/api/?name=Manager+User&background=0D8ABC&color=fff" alt="Profile">
+                        <!-- Camera Icon Upload Trigger -->
+                        <label for="file-upload" class="upload-icon">
+                            <i data-lucide="camera"></i>
+                        </label>
+                        <input type="file" id="file-upload" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="profile-name" value="Manager User" />
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="profile-email" value="manager@kulfi.com" readonly style="background-color: #f0f0f0; cursor: not-allowed;" />
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="profile-phone" value="+91 9876543210" />
+                    </div>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic (External File) -->
+    <script src="../javascript/manager_dashborad/featureJs.js"></script>
   </body>
 </html>
-```
