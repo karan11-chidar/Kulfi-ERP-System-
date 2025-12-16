@@ -1,0 +1,217 @@
+/* ===== Google Fonts ===== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary: #ff5722;
+    --primary-dark: #e64a19;
+    --bg-light: #f4f7f6;
+    --text-dark: #333;
+    --text-muted: #777;
+    --white: #fff;
+    
+    /* Status Colors */
+    --color-cash: #4caf50; /* Green */
+    --color-credit: #f44336; /* Red */
+    --color-online: #2196f3; /* Blue */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+body { background: var(--bg-light); color: var(--text-dark); }
+
+/* ===== Topbar ===== */
+.topbar {
+    background: var(--white);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-left { display: flex; align-items: center; gap: 15px; }
+.topbar h2 { font-size: 1.2rem; color: var(--primary); font-weight: 700; }
+
+.menu-toggle { background: none; border: none; font-size: 24px; color: var(--text-dark); cursor: pointer; display: none; }
+
+.user-info { display: flex; align-items: center; gap: 10px; }
+.role-badge { 
+    font-size: 12px; 
+    background: #fff3e0; 
+    color: var(--primary); 
+    padding: 4px 10px; 
+    border-radius: 15px; 
+    font-weight: 600;
+}
+.avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #fff3e0; }
+
+/* ===== Sidebar ===== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: #1e1e2d;
+    transform: translateX(-100%);
+    transition: 0.3s;
+    z-index: 200;
+    padding-top: 20px;
+}
+.sidebar.active { transform: translateX(0); }
+
+.sidebar-header { padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.sidebar-header h3 { color: #fff; font-size: 1.2rem; }
+
+.nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 25px;
+    color: #b0b0b0;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 15px;
+}
+.nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.05); color: var(--white); border-left: 4px solid var(--primary); }
+.nav-links a.logout { color: #ff5252; margin-top: 20px; }
+
+.close-btn { 
+    position: absolute; top: 15px; right: 15px; 
+    background: none; border: none; color: #fff; font-size: 30px; cursor: pointer; 
+}
+
+.overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 150;
+    opacity: 0; visibility: hidden; transition: 0.3s;
+}
+.overlay.active { opacity: 1; visibility: visible; }
+
+/* ===== Content Area ===== */
+.content { padding: 20px; max-width: 800px; margin: 0 auto; }
+
+.page-title { font-size: 1.5rem; margin-bottom: 20px; font-weight: 600; }
+
+/* --- Metrics Grid --- */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    border-top: 4px solid transparent;
+}
+
+.icon-box {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+}
+.stat-card h4 { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+.stat-card p { font-size: 1.4rem; font-weight: 700; color: var(--text-dark); }
+
+/* Card Colors */
+.blue-card { border-color: #2196f3; }
+.blue-card .icon-box { background: #e3f2fd; color: #2196f3; }
+
+.green-card { border-color: #4caf50; }
+.green-card .icon-box { background: #e8f5e9; color: #4caf50; }
+
+.yellow-card { border-color: #ff9800; }
+.yellow-card .icon-box { background: #fff3e0; color: #ff9800; }
+
+/* NEW: Red Card Style */
+.red-card { border-color: #f44336; }
+.red-card .icon-box { background: #ffebee; color: #f44336; }
+
+
+/* --- Action Buttons --- */
+.action-section { margin-bottom: 30px; }
+.section-title { font-size: 1rem; color: var(--text-muted); margin-bottom: 15px; }
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.action-btn {
+    border: none;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.action-btn:active { transform: scale(0.98); }
+
+.primary-btn { background: var(--primary); color: white; }
+.secondary-btn { background: var(--white); color: var(--primary); border: 2px solid var(--primary); }
+
+
+/* --- Recent Activity --- */
+.recent-list-section { background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+
+.list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.list-header h4 { font-size: 1rem; font-weight: 600; }
+.view-all { font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 500; }
+
+.activity-list { display: flex; flex-direction: column; gap: 15px; }
+
+.activity-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.item-left { display: flex; align-items: center; gap: 12px; }
+.shop-icon { 
+    width: 40px; height: 40px; 
+    background: #f5f5f5; border-radius: 10px; 
+    display: flex; align-items: center; justify-content: center; font-size: 1.2rem; 
+}
+.shop-name { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
+.time { font-size: 11px; color: var(--text-muted); }
+
+.item-right { text-align: right; }
+.amount { display: block; font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+
+/* Status Badges */
+.status-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+.status-badge.cash { background: #e8f5e9; color: var(--color-cash); }
+.status-badge.credit { background: #ffebee; color: var(--color-credit); }
+.status-badge.online { background: #e3f2fd; color: var(--color-online); }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .menu-toggle { display: block; }
+    .content { padding: 15px; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
+    /* Last card (if odd) spans full width */
+    .metrics-grid .stat-card:last-child { grid-column: span 1; } 
+    /* Ab 4 cards hain, toh 2 per row barabar aayenge, no span needed */
+}
+```
+
+Ab aap `delivery_dashboard.html` check karein, wahan "Total Shops" ka **Red Box** add ho gaya hoga.
