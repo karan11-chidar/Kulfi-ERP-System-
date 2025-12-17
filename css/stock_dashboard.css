@@ -1,0 +1,111 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ===== Top Bar ===== */
+.topbar {
+  background: linear-gradient(135deg, #ff5722, #ff9800);
+  color: #fff;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.back-btn {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* ===== Container ===== */
+.container {
+  padding: 20px;
+  background: #f4f4f4;
+  min-height: calc(100vh - 60px);
+}
+
+/* ===== Card ===== */
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.card h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* ===== Form ===== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+}
+
+.form-grid input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.form-grid button {
+  padding: 10px;
+  background: #ff5722;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.form-grid button:hover {
+  background: #e64a19;
+}
+
+/* ===== Table ===== */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f0f0f0;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+tr:not(:last-child) {
+  border-bottom: 1px solid #ddd;
+}
+
+/* Status */
+.in {
+  color: green;
+  font-weight: bold;
+}
+
+.low {
+  color: red;
+  font-weight: bold;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .topbar h2 {
+    font-size: 16px;
+  }
+}
