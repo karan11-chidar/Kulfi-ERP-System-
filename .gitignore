@@ -2,3 +2,5 @@
 .firebase.json
 .firebase-config.js
 .auth.js
+./javascript/firebase-config.js
+./javascript/auth.js
