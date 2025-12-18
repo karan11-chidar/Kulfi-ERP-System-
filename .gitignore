@@ -4,3 +4,5 @@
 .auth.js
 ./javascript/firebase-config.js
 ./javascript/auth.js
+.vscode/
+.firebase-config.js
