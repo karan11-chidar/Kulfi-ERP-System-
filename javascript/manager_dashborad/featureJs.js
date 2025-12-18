@@ -93,3 +93,4 @@ if (profileForm) {
 if (window.lucide) {
   window.lucide.createIcons();
 }
+

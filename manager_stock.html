@@ -1,0 +1,241 @@
+<!-- 
+DESCRIPTION:
+Stock Management Page for Manager. 
+Includes Stock List, Assign Stock, and Return Stock features.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kulfi ERP | Stock Management</title>
+    <!-- CSS Link -->
+    <link rel="stylesheet" href="./css/stockpagestyle.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="topbar">
+        <div class="header-left">
+            <button id="menu-btn" class="menu-toggle">
+                <i data-lucide="menu"></i>
+            </button>
+            <h2>Kulfi ERP</h2>
+        </div>
+        <div class="user-info">
+            <span class="role-badge">Manager</span>
+            <div class="profile-icon">
+                <img src="https://ui-avatars.com/api/?name=Manager+User&background=0D8ABC&color=fff" alt="User">
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <button id="close-sidebar" class="close-btn">&times;</button>
+            <div class="sidebar-header">
+                <h3>Menu</h3>
+            </div>
+            <nav class="nav-links">
+                <a href="manager_dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="#" class="active"><i data-lucide="package"></i> Stock</a>
+                <a href="#"><i data-lucide="bar-chart-3"></i> Sales</a>
+                <a href="#"><i data-lucide="credit-card"></i> Credit</a>
+                <a href="#"><i data-lucide="store"></i> Shops</a>
+                <a href="#"><i data-lucide="users"></i> Staff</a>
+                <a href="#"><i data-lucide="user"></i> Profile</a>
+                <a href="#" class="logout"><i data-lucide="log-out"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <!-- Overlay -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="content">
+            
+            <div class="page-header">
+                <h3>Stock Management</h3>
+                <!-- Action Buttons Wrapper -->
+                <div class="header-actions">
+                    <button class="btn btn-assign" id="assign-stock-btn">
+                        <i data-lucide="arrow-right-circle"></i> Assign to Boy
+                    </button>
+                    <button class="btn btn-return" id="return-stock-btn">
+                        <i data-lucide="arrow-left-circle"></i> Return Stock
+                    </button>
+                    <button class="btn btn-add" id="add-stock-btn">
+                        <i data-lucide="plus"></i> Add Product
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="mini-card">
+                    <span>Total Products</span>
+                    <h4>12</h4>
+                </div>
+                <div class="mini-card warning">
+                    <span>Low Stock</span>
+                    <h4>2 Items</h4>
+                </div>
+                <div class="mini-card danger">
+                    <span>Out of Stock</span>
+                    <h4>1 Item</h4>
+                </div>
+            </div>
+
+            <!-- Search & Filter Bar -->
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="stock-search" placeholder="Search product name...">
+                </div>
+                <select class="filter-select">
+                    <option value="all">All Categories</option>
+                    <option value="kulfi">Kulfi</option>
+                    <option value="ice-cream">Ice Cream</option>
+                    <option value="shakes">Shakes</option>
+                </select>
+            </div>
+
+            <!-- Stock Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price (₹)</th>
+                            <th>Stock Qty</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stock-table-body">
+                        <tr><td colspan="6" style="text-align: center;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL 1: ADD NEW PRODUCT -->
+    <div id="stock-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Product</h3>
+                <button class="close-modal" data-target="stock-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-stock-form">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" placeholder="E.g. Kesar Pista Kulfi" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select>
+                                <option>Kulfi</option>
+                                <option>Ice Cream</option>
+                                <option>Cone</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Price</label>
+                            <input type="number" placeholder="₹" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Initial Quantity</label>
+                        <input type="number" placeholder="Qty" required>
+                    </div>
+                    <button type="submit" class="save-btn">Add Product</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ASSIGN STOCK (Dena) -->
+    <div id="assign-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Assign Stock to Delivery Boy</h3>
+                <button class="close-modal" data-target="assign-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="assign-form">
+                    <div class="form-group">
+                        <label>Select Delivery Boy</label>
+                        <select required>
+                            <option value="">-- Select --</option>
+                            <option>Ramesh Kumar</option>
+                            <option>Suresh Singh</option>
+                            <option>Rahul Verma</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Product</label>
+                        <select required>
+                            <option>Kesar Pista Kulfi</option>
+                            <option>Malai Kulfi</option>
+                            <option>Mango Dolly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity to Assign</label>
+                        <input type="number" placeholder="Enter Qty" required>
+                    </div>
+                    <button type="submit" class="save-btn" style="background: var(--info);">Assign Stock</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: RETURN STOCK (Wapis Lena) -->
+    <div id="return-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Return Stock from Delivery Boy</h3>
+                <button class="close-modal" data-target="return-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="return-form">
+                    <div class="form-group">
+                        <label>Select Delivery Boy</label>
+                        <select required>
+                            <option value="">-- Select --</option>
+                            <option>Ramesh Kumar</option>
+                            <option>Suresh Singh</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Product</label>
+                        <select required>
+                            <option>Kesar Pista Kulfi</option>
+                            <option>Malai Kulfi</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity Returned</label>
+                        <input type="number" placeholder="Enter Qty" required>
+                    </div>
+                    <!-- Warning Note -->
+                    <p style="font-size: 12px; color: #e74c3c; margin-bottom: 10px;">
+                        * This will add stock back to Godown.
+                    </p>
+                    <button type="submit" class="save-btn" style="background: var(--warning);">Process Return</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="./javascript/stockjs.js"></script>
+</body>
+</html>
