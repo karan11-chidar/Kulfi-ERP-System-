@@ -1,8 +1,9 @@
-.firebase-debug.log
-.firebase.json
-.firebase-config.js
-.auth.js
-./javascript/firebase-config.js
-./javascript/auth.js
+.gitignore
+# Ignore system files
+.DS_Store
+Thumbs.db
+# Ignore node modules
 .vscode/
-.firebase-config.js
+.idea/
+.javascript/firebase-config.js
+.javascript/auth.js
