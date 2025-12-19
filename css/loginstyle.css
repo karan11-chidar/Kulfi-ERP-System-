@@ -1,159 +1,218 @@
+/* ===== Google Fonts ===== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* ===== Background ===== */
 body {
   min-height: 100vh;
-  background: linear-gradient(135deg, #8a5b16, #ff5722);
+  /* Clean Professional Background */
+  background: #f0f2f5;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* ===== Container ===== */
+/* --- Decorative Animated Blobs --- */
+.background-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+  animation: float 10s infinite alternate;
+}
+
+.shape-1 {
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 87, 34, 0.2); /* Brand Orange */
+  top: -50px;
+  left: -50px;
+}
+
+.shape-2 {
+  width: 400px;
+  height: 400px;
+  background: rgba(41, 121, 255, 0.15); /* Soft Blue for contrast */
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(30px, 50px); }
+}
+
+/* ===== Login Container ===== */
 .login-container {
   width: 100%;
   max-width: 420px;
+  z-index: 1;
 }
 
-/* ===== Card ===== */
+/* ===== Main Card ===== */
 .login-box {
-  background: #000000;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-  animation: fadeIn 0.5s ease-in-out;
+  background: #ffffff;
+  padding: 40px 35px;
+  border-radius: 20px;
+  /* Soft but deep shadow for pop effect */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  animation: slideUp 0.6s ease-out;
 }
 
-/* ===== Heading ===== */
+/* Brand Logo Box */
+.brand-logo {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #ff5722, #ff9100);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  color: white;
+  box-shadow: 0 10px 20px rgba(255, 87, 34, 0.3);
+}
+
+.brand-logo svg {
+  width: 30px;
+  height: 30px;
+}
+
 .login-box h2 {
-  text-align: center;
-  font-size: 26px;
-  color: #ff5722;
-  margin-bottom: 8px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 5px;
 }
 
 .subtitle {
-  text-align: center;
   font-size: 14px;
-  color: #ffffff;
-  margin-bottom: 25px;
+  color: #777;
+  margin-bottom: 35px;
+  font-weight: 400;
 }
 
 /* ===== Inputs ===== */
 .input-group {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
+  text-align: left;
 }
 
 .input-group label {
   display: block;
-  font-size: 14px;
-  color: #ffffff;
-  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
 }
 
-/* Default Input Styling */
-.input-group input {
-  width: 100%;
-  padding: 12px;
-  font-size: 15px;
-  border-radius: 6px;
-  border: 1px solid #ffffff;
-  transition: 0.3s;
-}
-
-/* ===== Password Wrapper for Icons ===== */
-.password-wrapper {
+.input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-/* Adjust password input padding for icons */
-.password-wrapper input {
-  padding-left: 40px; /* Space for Lock/Mail Icon */
-  padding-right: 40px; /* Space for Eye Icon */
+.input-wrapper input {
+  width: 100%;
+  padding: 14px 14px 14px 45px; /* Left padding for icon */
+  font-size: 14px;
+  color: #333;
+  background: #f9f9f9;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  transition: all 0.3s ease;
 }
 
-/* Icon Left (Lock/Mail) */
+.input-wrapper input:focus {
+  background: #fff;
+  border-color: #ff5722;
+  box-shadow: 0 0 0 4px rgba(255, 87, 34, 0.1);
+  outline: none;
+}
+
+/* Icons Styling */
 .icon-left {
   position: absolute;
-  left: 12px;
-  color: #888;
+  left: 14px;
+  color: #999;
   display: flex;
-  align-items: center;
-  pointer-events: none; /* User can't click the lock */
+  transition: 0.3s;
 }
 
-/* Icon Right (Eye - Clickable) */
 .icon-right {
   position: absolute;
-  right: 12px;
-  color: #888;
+  right: 14px;
+  color: #999;
   cursor: pointer;
   display: flex;
-  align-items: center;
-  transition: color 0.3s;
+  transition: 0.3s;
 }
 
 .icon-right:hover {
   color: #ff5722;
 }
 
-/* Hidden Class for Toggling */
-.hidden {
-  display: none !important;
-}
-
-/* Focus State */
-.input-group input:focus {
-  outline: none;
-  border-color: #ff5722;
-  box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.15);
-}
-
-/* When input is focused, color the lock/mail icon too */
-.password-wrapper input:focus + .icon-left {
+.input-wrapper input:focus + .icon-left,
+.input-wrapper input:focus ~ .icon-left {
   color: #ff5722;
 }
 
 /* ===== Button ===== */
 .login-btn {
   width: 100%;
-  padding: 13px;
-  background: linear-gradient(135deg, #ff5722, #ff9800);
+  padding: 15px;
+  margin-top: 10px;
+  background: linear-gradient(135deg, #ff5722, #ff9100);
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 10px;
-  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(255, 87, 34, 0.25);
 }
 
 .login-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 15px rgba(255, 87, 34, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px rgba(255, 87, 34, 0.35);
 }
 
-/* ===== Note ===== */
-.note {
-  text-align: center;
-  margin-top: 18px;
+.login-btn:active {
+  transform: translateY(0);
+}
+
+/* ===== Footer ===== */
+.footer-text {
+  margin-top: 30px;
   font-size: 12px;
-  color: #777;
+  color: #aaa;
+  line-height: 1.5;
 }
 
-/* ===== Animation ===== */
-@keyframes fadeIn {
+.hidden {
+  display: none !important;
+}
+
+/* Animation */
+@keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -161,32 +220,14 @@ body {
   }
 }
 
-/* ================================================= */
-/* ================= Responsive ==================== */
-/* ================================================= */
-
-/* Tablet */
-@media (min-width: 600px) {
-  .login-container {
-    max-width: 450px;
-  }
-
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
   .login-box {
-    padding: 35px;
+    padding: 30px 20px;
   }
-}
-
-/* Laptop / Desktop */
-@media (min-width: 1024px) {
-  body {
-    padding: 0;
-  }
-
-  .login-container {
-    max-width: 400px;
-  }
-
-  .login-box h2 {
-    font-size: 28px;
+  
+  .shape-1, .shape-2 {
+    width: 200px;
+    height: 200px;
   }
 }

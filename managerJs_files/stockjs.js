@@ -6,23 +6,33 @@ const closeBtn = document.getElementById("close-sidebar");
 const tableBody = document.getElementById("stock-table-body");
 const searchInput = document.getElementById("stock-search");
 
-// Buttons
-const addBtn = document.getElementById("add-stock-btn");
+// Stats Elements
+const totalDamagedEl = document.getElementById("total-damaged-count");
+const resetDamageBtn = document.getElementById("reset-damage-btn");
+
+// Buttons (Add Btn Removed)
 const assignBtn = document.getElementById("assign-stock-btn");
 const returnBtn = document.getElementById("return-stock-btn");
+const damageBtn = document.getElementById("damage-stock-btn");
 
-// Modals
-const stockModal = document.getElementById("stock-modal");
+// Modals (Add Modal Removed)
 const assignModal = document.getElementById("assign-modal");
 const returnModal = document.getElementById("return-modal");
+const damageModal = document.getElementById("damage-modal");
 
-// Close Buttons (Multiple)
+// Close Buttons
 const closeButtons = document.querySelectorAll(".close-modal");
 
-// Forms
-const addForm = document.getElementById("add-stock-form");
+// Forms (Add Form Removed)
 const assignForm = document.getElementById("assign-form");
 const returnForm = document.getElementById("return-form");
+const damageForm = document.getElementById("damage-form");
+
+// Input Fields
+const damageQtyInput = document.getElementById("damage-qty");
+
+// --- Variables ---
+let totalDamagedCount = 0; // Starts at 0
 
 // --- Sidebar Logic ---
 function toggleMenu() {
@@ -108,7 +118,6 @@ function renderTable(data) {
         `;
     tableBody.innerHTML += row;
   });
-  // Re-initialize icons after rendering
   if (window.lucide) window.lucide.createIcons();
 }
 renderTable(stockData);
@@ -126,7 +135,7 @@ if (searchInput) {
   });
 }
 
-// --- MODAL LOGIC (OPENING) ---
+// --- MODAL LOGIC ---
 function openModal(modal) {
   if (modal) modal.classList.add("active");
 }
@@ -134,15 +143,14 @@ function closeModalFunction(modal) {
   if (modal) modal.classList.remove("active");
 }
 
-// Open specific modals (Only if button and modal exist)
-if (addBtn && stockModal)
-  addBtn.addEventListener("click", () => openModal(stockModal));
+// Removed Add Stock Logic
 if (assignBtn && assignModal)
   assignBtn.addEventListener("click", () => openModal(assignModal));
 if (returnBtn && returnModal)
   returnBtn.addEventListener("click", () => openModal(returnModal));
+if (damageBtn && damageModal)
+  damageBtn.addEventListener("click", () => openModal(damageModal));
 
-// Close buttons functionality
 closeButtons.forEach((btn) => {
   btn.addEventListener("click", (e) => {
     const modalId = e.target.getAttribute("data-target");
@@ -151,7 +159,6 @@ closeButtons.forEach((btn) => {
   });
 });
 
-// Close on outside click
 window.onclick = function (event) {
   if (event.target.classList.contains("modal-overlay")) {
     event.target.classList.remove("active");
@@ -159,13 +166,7 @@ window.onclick = function (event) {
 };
 
 // --- FORM SUBMIT LOGIC ---
-if (addForm) {
-  addForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    alert("New Product Added! (Data saved to DB)");
-    closeModalFunction(stockModal);
-  });
-}
+// Add Form Logic Removed
 
 if (assignForm) {
   assignForm.addEventListener("submit", (e) => {
@@ -183,5 +184,35 @@ if (returnForm) {
   });
 }
 
-// Initial icon load
+// --- DAMAGED LOGIC (With Reset Fix) ---
+if (resetDamageBtn) {
+  resetDamageBtn.addEventListener("click", () => {
+    if (confirm("Reset damaged count to 0?")) {
+      totalDamagedCount = 0;
+      if (totalDamagedEl)
+        totalDamagedEl.innerText = totalDamagedCount + " Items";
+    }
+  });
+}
+
+if (damageForm) {
+  damageForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const qty = parseInt(damageQtyInput.value);
+
+    if (qty > 0) {
+      totalDamagedCount += qty;
+      if (totalDamagedEl)
+        totalDamagedEl.innerText = totalDamagedCount + " Items";
+
+      alert(`Recorded ${qty} Damaged Items!`);
+      damageForm.reset();
+      closeModalFunction(damageModal);
+    } else {
+      alert("Please enter a valid quantity!");
+    }
+  });
+}
+
 if (window.lucide) window.lucide.createIcons();

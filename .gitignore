@@ -1,6 +1,5 @@
 .gitignore
-./config_files/
-.firebase-
-.vscode/
-.firebase-config_files
 .auth.js
+../congig_files/
+./congig_files.firebase-congig_files.js
+.firebase-congig_files.js
