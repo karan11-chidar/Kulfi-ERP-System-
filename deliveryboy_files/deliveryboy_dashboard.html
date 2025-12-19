@@ -1,0 +1,232 @@
+<!-- 
+DESCRIPTION:
+Dashboard for Delivery Personnel.
+Profile Edit Enabled (Name, Phone, Photo). Email is Read-only.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kulfi ERP | Delivery Dashboard</title>
+    <!-- CSS Link -->
+    <link rel="stylesheet" href="../css/deliveryboy_dashboard.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="topbar">
+        <div class="header-left">
+            <button id="menu-btn" class="menu-toggle">
+                <i data-lucide="menu"></i>
+            </button>
+            <h2>Kulfi ERP</h2>
+        </div>
+        <div class="user-info">
+            <span class="role-badge">Delivery Boy</span>
+            <!-- Profile Trigger (Clickable) -->
+            <div id="profile-trigger" style="cursor: pointer;">
+                <img id="header-profile-img" src="https://ui-avatars.com/api/?name=Ramesh+Kumar&background=ffcc80&color=333" alt="User" class="avatar">
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <button id="close-sidebar" class="close-btn">&times;</button>
+            
+            <div class="sidebar-header">
+                <h3>Menu</h3>
+            </div>
+
+            <nav class="nav-links">
+                <a href="#" class="active"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="#"><i data-lucide="plus-circle"></i> Sales</a>
+                <a href="#"><i data-lucide="store"></i> Add Shop</a>
+                <a href="#"><i data-lucide="history"></i> My History</a>
+                
+                <!-- Profile Link in Sidebar -->
+                <a href="#" id="sidebar-profile-link"><i data-lucide="user"></i> My Profile</a>
+                
+                <a href="login.html" class="logout"><i data-lucide="log-out"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <!-- Overlay -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="content">
+            
+            <h3 class="page-title">Hello, Ramesh! 👋</h3>
+
+            <!-- 1. Metrics Grid -->
+            <div class="metrics-grid">
+                <!-- Card 1: My Stock -->
+                <div class="stat-card blue-card">
+                    <div class="icon-box">
+                        <i data-lucide="package"></i>
+                    </div>
+                    <div>
+                        <h4>My Stock</h4>
+                        <p>50 Pkts</p>
+                    </div>
+                </div>
+
+                <!-- Card 2: Today's Sale -->
+                <div class="stat-card green-card">
+                    <div class="icon-box">
+                        <i data-lucide="indian-rupee"></i>
+                    </div>
+                    <div>
+                        <h4>Today's Sale</h4>
+                        <p>₹2,400</p>
+                    </div>
+                </div>
+
+                <!-- Card 3: Cash Collected -->
+                <div class="stat-card yellow-card">
+                    <div class="icon-box">
+                        <i data-lucide="wallet"></i>
+                    </div>
+                    <div>
+                        <h4>Cash in Hand</h4>
+                        <p>₹1,800</p>
+                    </div>
+                </div>
+
+                <!-- Card 4: Total Shops (Red Card) -->
+                <div class="stat-card red-card">
+                    <div class="icon-box">
+                        <i data-lucide="store"></i>
+                    </div>
+                    <div>
+                        <h4>Total Shops</h4>
+                        <p>45</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Quick Action Buttons -->
+            <div class="action-section">
+                <h4 class="section-title">Quick Actions</h4>
+                <div class="action-buttons">
+                    <button class="action-btn primary-btn">
+                        <i data-lucide="plus-square"></i>
+                        <span>New Sale Entry</span>
+                    </button>
+                    <button class="action-btn secondary-btn">
+                        <i data-lucide="map-pin"></i>
+                        <span>Add New Shop</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. Recent Activity List -->
+            <div class="recent-list-section">
+                <div class="list-header">
+                    <h4>Recent Sales (Today)</h4>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+
+                <div class="activity-list">
+                    <!-- Item 1 -->
+                    <div class="activity-item">
+                        <div class="item-left">
+                            <div class="shop-icon">🏪</div>
+                            <div>
+                                <h5 class="shop-name">Sharma General Store</h5>
+                                <span class="time">10:30 AM</span>
+                            </div>
+                        </div>
+                        <div class="item-right">
+                            <span class="amount">₹500</span>
+                            <span class="status-badge cash">Cash</span>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="activity-item">
+                        <div class="item-left">
+                            <div class="shop-icon">🏬</div>
+                            <div>
+                                <h5 class="shop-name">Gupta Kirana</h5>
+                                <span class="time">11:15 AM</span>
+                            </div>
+                        </div>
+                        <div class="item-right">
+                            <span class="amount">₹1,200</span>
+                            <span class="status-badge credit">Credit</span>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="activity-item">
+                        <div class="item-left">
+                            <div class="shop-icon">🏨</div>
+                            <div>
+                                <h5 class="shop-name">City Cafe</h5>
+                                <span class="time">12:00 PM</span>
+                            </div>
+                        </div>
+                        <div class="item-right">
+                            <span class="amount">₹700</span>
+                            <span class="status-badge online">Online</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- PROFILE MODAL (Popup - EDITABLE except Email) -->
+    <div id="profile-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>My Profile</h3>
+                <button id="close-modal-btn" class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-pic-container">
+                    <div class="profile-pic-wrapper">
+                        <img id="modal-profile-pic" src="https://ui-avatars.com/api/?name=Ramesh+Kumar&background=ffcc80&color=333" alt="Profile">
+                        <!-- Camera Icon Added Back -->
+                        <label for="file-upload" class="upload-icon">
+                            <i data-lucide="camera"></i>
+                        </label>
+                        <input type="file" id="file-upload" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <!-- Editable -->
+                        <input type="text" id="profile-name" value="Ramesh Kumar" />
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <!-- Readonly (Cannot Change) -->
+                        <input type="email" id="profile-email" value="ramesh@kulfi.com" readonly style="background-color: #f9f9f9; cursor: not-allowed; border-color: transparent;" />
+                        <p style="font-size: 10px; color: #777; margin-top: 2px;">Email cannot be changed.</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <!-- Editable -->
+                        <input type="tel" id="profile-phone" value="+91 99887 76655" />
+                    </div>
+                    
+                    <!-- Save Button Added Back -->
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Linked new JS file -->
+    <script src="../deliveryboyJs_files/deliveryboy_dashboardJs.js"></script>
+</body>
+</html>

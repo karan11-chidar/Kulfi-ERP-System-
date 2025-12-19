@@ -1,0 +1,206 @@
+<!-- 
+DESCRIPTION:
+Sales & Purchase Management Page for Manager.
+Includes styled "New Purchase" Modal.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kulfi ERP | Sales & Purchase</title>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="../css/manager_sales.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="topbar">
+        <div class="header-left">
+            <button id="menu-btn" class="menu-toggle"><i data-lucide="menu"></i></button>
+            <h2>Kulfi ERP</h2>
+        </div>
+        <div class="user-info">
+            <span class="role-badge">Manager</span>
+            <div class="profile-icon">
+                <img src="https://ui-avatars.com/api/?name=Manager+User&background=0D8ABC&color=fff" alt="User" style="width: 35px; height: 35px; border-radius: 50%;">
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <button id="close-sidebar" class="close-btn">&times;</button>
+            <div class="sidebar-header"><h3>Menu</h3></div>
+            <nav class="nav-links">
+                <a href="../manager_files/dashboard_page.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="../manager_files/stock_page.html"><i data-lucide="package"></i> Stock</a>
+                <a href="../manager_files/sales_page.html" class="active"><i data-lucide="bar-chart-3"></i> Sales/Purchase</a>
+                <a href="../manager_files/credit_page.html"><i data-lucide="credit-card"></i> Credit</a>
+                <a href="../manager_files/shops_page.html"><i data-lucide="store"></i> Shops</a>
+                <a href="../manager_files/staff_page.html"><i data-lucide="users"></i> Staff</a>
+                <a href="../index.html" class="logout"><i data-lucide="log-out"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="content">
+            
+            <div class="page-header">
+                <h3>Transactions</h3>
+                <!-- Toggle Buttons -->
+                <div class="view-switcher">
+                    <button class="switch-btn active" id="btn-show-sales">Sales List</button>
+                    <button class="switch-btn" id="btn-show-purchase">Purchase List</button>
+                </div>
+            </div>
+
+            <!-- Action Button (Excel) -->
+            <div class="header-actions" style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
+                <button class="btn btn-export" id="btn-open-sheet">
+                    <i data-lucide="sheet"></i> Open Google Sheet
+                </button>
+            </div>
+
+            <!-- SALES STATS -->
+            <div class="stats-row" id="sales-stats">
+                <div class="mini-card success"><span>Total Sales</span><h4>₹8,500</h4></div>
+                <div class="mini-card info"><span>Online</span><h4>₹3,200</h4></div>
+                <div class="mini-card warning"><span>Market Credit</span><h4>₹45,000</h4></div>
+                <div class="mini-card primary"><span>Weekly Sales</span><h4>₹52,000</h4></div>
+            </div>
+
+            <!-- PURCHASE STATS (Hidden initially) -->
+            <div class="stats-row hidden" id="purchase-stats">
+                <div class="mini-card info"><span>Stock In</span><h4>500 Units</h4></div>
+                <div class="mini-card danger"><span>Total Expense</span><h4>₹12,000</h4></div>
+                <div class="mini-card warning"><span>Weekly Purchase</span><h4>₹85,000</h4></div>
+                <div class="mini-card success"><span>Pending Bills</span><h4>₹5,000</h4></div>
+            </div>
+
+            <!-- Filter Bar & New Purchase Button -->
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="sales-search" placeholder="Search...">
+                </div>
+                
+                <select class="filter-select" id="filter-boy">
+                    <option value="all">All Staff</option>
+                    <option value="ramesh">Ramesh Kumar</option>
+                    <option value="suresh">Suresh Singh</option>
+                </select>
+                
+                <input type="date" class="filter-date">
+                
+                <!-- NEW PURCHASE BUTTON (Hidden on Sales Tab) -->
+                <button class="btn btn-add hidden" id="btn-add-purchase">
+                    <i data-lucide="plus"></i> New Purchase
+                </button>
+            </div>
+
+            <!-- SALES TABLE -->
+            <div id="sales-section" class="table-container">
+                <h4 class="table-title">Sales Records</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Shop Name</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Delivery Boy</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body">
+                        <!-- JS renders rows here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PURCHASE TABLE -->
+            <div id="purchase-section" class="table-container hidden">
+                <h4 class="table-title">Purchase Records (Stock In)</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Supplier</th>
+                            <th>Quantity</th>
+                            <th>Cost</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="purchase-table-body">
+                        <!-- JS renders rows here -->
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- NEW PURCHASE MODAL (Styled) -->
+    <div id="purchase-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Stock Purchase</h3>
+                <button class="close-modal" id="close-purchase-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-purchase-form">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" placeholder="E.g. Kesar Pista Kulfi" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Supplier Name</label>
+                        <input type="text" placeholder="E.g. Dairy Farm Inc." required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select>
+                                <option>Kulfi</option>
+                                <option>Ice Cream</option>
+                                <option>Raw Material</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Cost (₹)</label>
+                            <input type="number" placeholder="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantity Received</label>
+                        <input type="number" placeholder="Qty" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Bill Status</label>
+                        <select>
+                            <option value="Paid">Paid</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="save-btn">Save Entry</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../managerJs_files/salesJs.js"></script>
+</body>
+</html>

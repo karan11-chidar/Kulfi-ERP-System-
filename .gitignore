@@ -1,9 +1,6 @@
 .gitignore
-# Ignore system files
-.DS_Store
-Thumbs.db
-# Ignore node modules
+./config_files/
+.firebase-
 .vscode/
-.idea/
-.javascript/firebase-config.js
-.javascript/auth.js
+.firebase-config_files
+.auth.js
