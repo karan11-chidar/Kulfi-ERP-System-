@@ -43,6 +43,7 @@ Includes styled "New Purchase" Modal.
                 <a href="sales_page.html" class="active"><i data-lucide="bar-chart-3"></i> Sales/Purchase</a>
                 <a href="credit_page.html"><i data-lucide="credit-card"></i> Credit</a>
                 <a href="shops_page.html"><i data-lucide="store"></i> Shops</a>
+                <a href="expense_page.html"><i data-lucide="banknote"></i> Expenses</a>
                 <a href="staff_page.html"><i data-lucide="users"></i> Staff</a>
                 <a href="../index.html" class="logout"><i data-lucide="log-out"></i> Logout</a>
             </nav>
@@ -71,16 +72,16 @@ Includes styled "New Purchase" Modal.
 
             <!-- SALES STATS -->
             <div class="stats-row" id="sales-stats">
-                <div class="mini-card success"><span>Total Sales</span><h4>₹8,500</h4></div>
-                <div class="mini-card info"><span>Online</span><h4>₹3,200</h4></div>
-                <div class="mini-card warning"><span>Market Credit</span><h4>₹45,000</h4></div>
+                <div class="mini-card success"><span>Todays Total Sales</span><h4>₹8,500</h4></div>
+                <div class="mini-card info"><span>Online Payments</span><h4>₹3,200</h4></div>
+                <div class="mini-card warning"><span>Cash Payments</span><h4>₹45,000</h4></div>
                 <div class="mini-card primary"><span>Weekly Sales</span><h4>₹52,000</h4></div>
             </div>
 
             <!-- PURCHASE STATS (Hidden initially) -->
             <div class="stats-row hidden" id="purchase-stats">
                 <div class="mini-card info"><span>Stock In</span><h4>500 Units</h4></div>
-                <div class="mini-card danger"><span>Total Expense</span><h4>₹12,000</h4></div>
+                <div class="mini-card danger"><span>Todays Purchase</span><h4>₹12,000</h4></div>
                 <div class="mini-card warning"><span>Weekly Purchase</span><h4>₹85,000</h4></div>
                 <div class="mini-card success"><span>Pending Bills</span><h4>₹5,000</h4></div>
             </div>
@@ -96,6 +97,12 @@ Includes styled "New Purchase" Modal.
                     <option value="all">All Staff</option>
                     <option value="ramesh">Ramesh Kumar</option>
                     <option value="suresh">Suresh Singh</option>
+                </select>
+
+                <select class="filter-select" id="filter-payment">  
+                    <option value="all">All Payment Types</option>
+                    <option value="online">Online</option>
+                    <option value="cash">Cash</option>
                 </select>
                 
                 <input type="date" class="filter-date">
