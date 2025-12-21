@@ -37,7 +37,7 @@ loginBtn.addEventListener("click", () => {
   auth
     .signInWithEmailAndPassword(email, password)
     .then(() => {
-      window.location.href = "./managerhtml_files/dashboard_page.html";
+      window.location.href = "managerhtml_files/dashboard_page.html";
     })
     .catch((err) => {
       console.error("Login error:", err.code);

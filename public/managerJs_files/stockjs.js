@@ -9,13 +9,17 @@ const searchInput = document.getElementById("stock-search");
 // Stats Elements
 const totalDamagedEl = document.getElementById("total-damaged-count");
 const resetDamageBtn = document.getElementById("reset-damage-btn");
+// New Elements for Boy Stock Card
+const boyStockTitle = document.getElementById("boy-stock-title");
+const boyStockCount = document.getElementById("boy-stock-count");
+const boyStockFilter = document.getElementById("boy-stock-filter");
 
-// Buttons (Add Btn Removed)
+// Buttons
 const assignBtn = document.getElementById("assign-stock-btn");
 const returnBtn = document.getElementById("return-stock-btn");
 const damageBtn = document.getElementById("damage-stock-btn");
 
-// Modals (Add Modal Removed)
+// Modals
 const assignModal = document.getElementById("assign-modal");
 const returnModal = document.getElementById("return-modal");
 const damageModal = document.getElementById("damage-modal");
@@ -23,16 +27,52 @@ const damageModal = document.getElementById("damage-modal");
 // Close Buttons
 const closeButtons = document.querySelectorAll(".close-modal");
 
-// Forms (Add Form Removed)
+// Forms
 const assignForm = document.getElementById("assign-form");
 const returnForm = document.getElementById("return-form");
 const damageForm = document.getElementById("damage-form");
 
-// Input Fields
+// Input Fields for Logic
 const damageQtyInput = document.getElementById("damage-qty");
+const assignQtyInput = document.getElementById("assign-qty");
+const assignBoySelect = document.getElementById("assign-boy-select");
+const returnQtyInput = document.getElementById("return-qty");
+const returnBoySelect = document.getElementById("return-boy-select");
 
 // --- Variables ---
-let totalDamagedCount = 0; // Starts at 0
+let totalDamagedCount = 0;
+
+// Dummy Data: Har ladke ke paas abhi kitna stock hai
+let boysStockData = {
+  "Ramesh Kumar": 150,
+  "Suresh Singh": 80,
+  "Rahul Verma": 45,
+};
+
+// Function to calculate Total Stock with All Boys
+function getTotalBoysStock() {
+  let total = 0;
+  for (let boy in boysStockData) {
+    total += boysStockData[boy];
+  }
+  return total;
+}
+
+// Function to Update the Card UI based on Dropdown
+function updateBoyStockCard() {
+  const selectedBoy = boyStockFilter.value;
+
+  if (selectedBoy === "all") {
+    boyStockTitle.innerText = "Stock with All Boys";
+    boyStockCount.innerText = getTotalBoysStock() + " Items";
+  } else {
+    boyStockTitle.innerText = "Stock: " + selectedBoy.split(" ")[0]; // Show First Name
+    boyStockCount.innerText = (boysStockData[selectedBoy] || 0) + " Items";
+  }
+}
+
+// Initial Call
+updateBoyStockCard();
 
 // --- Sidebar Logic ---
 function toggleMenu() {
@@ -43,7 +83,7 @@ if (menuBtn) menuBtn.addEventListener("click", toggleMenu);
 if (closeBtn) closeBtn.addEventListener("click", toggleMenu);
 if (overlay) overlay.addEventListener("click", toggleMenu);
 
-// --- Dummy Stock Data ---
+// --- Dummy Godown Stock Data ---
 const stockData = [
   {
     name: "Kesar Pista Kulfi",
@@ -122,7 +162,7 @@ function renderTable(data) {
 }
 renderTable(stockData);
 
-// --- Search Logic ---
+// --- Filter Logic ---
 if (searchInput) {
   searchInput.addEventListener("keyup", (e) => {
     const term = e.target.value.toLowerCase();
@@ -135,6 +175,11 @@ if (searchInput) {
   });
 }
 
+// Listen for Boy Dropdown Change
+if (boyStockFilter) {
+  boyStockFilter.addEventListener("change", updateBoyStockCard);
+}
+
 // --- MODAL LOGIC ---
 function openModal(modal) {
   if (modal) modal.classList.add("active");
@@ -143,7 +188,6 @@ function closeModalFunction(modal) {
   if (modal) modal.classList.remove("active");
 }
 
-// Removed Add Stock Logic
 if (assignBtn && assignModal)
   assignBtn.addEventListener("click", () => openModal(assignModal));
 if (returnBtn && returnModal)
@@ -166,25 +210,57 @@ window.onclick = function (event) {
 };
 
 // --- FORM SUBMIT LOGIC ---
-// Add Form Logic Removed
 
+// 1. ASSIGN STOCK LOGIC
 if (assignForm) {
   assignForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    alert("Stock Assigned to Delivery Boy Successfully!");
-    closeModalFunction(assignModal);
+    const boy = assignBoySelect.value;
+    const qty = parseInt(assignQtyInput.value);
+
+    if (boy && qty > 0) {
+      // Logic: Increase boy's stock
+      if (boysStockData[boy] !== undefined) {
+        boysStockData[boy] += qty;
+      } else {
+        boysStockData[boy] = qty;
+      }
+
+      updateBoyStockCard(); // Update UI
+      alert(`Assigned ${qty} items to ${boy}.`);
+      assignForm.reset();
+      closeModalFunction(assignModal);
+    } else {
+      alert("Please select a boy and valid quantity.");
+    }
   });
 }
 
+// 2. RETURN STOCK LOGIC
 if (returnForm) {
   returnForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    alert("Stock Returned to Godown Successfully!");
-    closeModalFunction(returnModal);
+    const boy = returnBoySelect.value;
+    const qty = parseInt(returnQtyInput.value);
+
+    if (boy && qty > 0) {
+      // Logic: Decrease boy's stock
+      if (boysStockData[boy] !== undefined && boysStockData[boy] >= qty) {
+        boysStockData[boy] -= qty;
+        updateBoyStockCard(); // Update UI
+        alert(`Returned ${qty} items from ${boy}.`);
+        returnForm.reset();
+        closeModalFunction(returnModal);
+      } else {
+        alert(`Error: ${boy} only has ${boysStockData[boy]} items!`);
+      }
+    } else {
+      alert("Please select a boy and valid quantity.");
+    }
   });
 }
 
-// --- DAMAGED LOGIC (With Reset Fix) ---
+// 3. DAMAGED LOGIC
 if (resetDamageBtn) {
   resetDamageBtn.addEventListener("click", () => {
     if (confirm("Reset damaged count to 0?")) {
@@ -198,7 +274,6 @@ if (resetDamageBtn) {
 if (damageForm) {
   damageForm.addEventListener("submit", (e) => {
     e.preventDefault();
-
     const qty = parseInt(damageQtyInput.value);
 
     if (qty > 0) {
