@@ -1,529 +1,202 @@
-/* ===== Google Fonts (Premium Look) ===== */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+/* ===== Google Fonts ===== */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 :root {
+  /* ===== THEME VARIABLES ===== */
   --primary-color: #ff5722;
   --primary-gradient: linear-gradient(135deg, #ff5722, #ff9800);
-  --sidebar-bg: #1e1e2d; /* Dark Professional Blue-Black */
+  
+  --sidebar-bg: #1e1e2d;
   --card-bg: #ffffff;
   --bg-color: #f0f2f5;
   --text-dark: #333;
   --text-gray: #777;
-  --danger-color: #e74c3c; /* Red for high credit */
-  --warning-color: #f39c12; /* Orange for medium credit */
-  --success-color: #27ae60; /* Green for low credit */
-  
-  /* Icon Background Colors */
-  --icon-bg-blue: #e3f2fd;
-  --icon-color-blue: #2196f3;
+  --border-color: #eee;
+
+  /* Status Colors */
+  --success-color: #27ae60;
+  --warning-color: #f39c12;
+  --danger-color: #e74c3c;
+  --info-color: #2196f3;
+
+  /* Icons */
   --icon-bg-green: #e8f5e9;
   --icon-color-green: #4caf50;
+  --icon-bg-blue: #e3f2fd;
+  --icon-color-blue: #2196f3;
   --icon-bg-orange: #fff3e0;
   --icon-color-orange: #ff9800;
   --icon-bg-purple: #f3e5f5;
   --icon-color-purple: #9c27b0;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif; /* Smart Font */
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
 
-body {
-  background: var(--bg-color); /* Body background set kiya */
-  overflow-x: hidden; /* Horizontal scroll roka */
-}
+body { background: var(--bg-color); color: var(--text-dark); overflow-x: hidden; }
 
-/* ===== Header (Fixed Top) ===== */
+/* =========================================
+   1. HEADER / TOPBAR (FIXED)
+   ========================================= */
 .topbar {
   background: var(--primary-gradient);
   color: #fff;
-  padding: 15px 20px;
+  padding: 0 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  position: sticky; /* Header bhi chipka rahega */
-  top: 0;
-  z-index: 1000; /* Sidebar se upar */
+  position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 1000;
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
+.header-left { display: flex; align-items: center; gap: 15px; }
+.topbar h2 { font-weight: 600; letter-spacing: 1px; font-size: 1.2rem; color: #fff; }
+.menu-toggle { display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+.user-info { display: flex; align-items: center; gap: 12px; }
+.role { font-size: 11px; background: rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: 20px; color: #fff; }
 
-.topbar h2 {
-    font-weight: 600;
-    letter-spacing: 1px;
-    font-size: 1.2rem;
-}
-
-.role {
-  font-size: 12px;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-/* Menu Toggle Button */
-.menu-toggle {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  display: none;
-  padding: 0;
-}
-
-/* ===== Layout (Main Container) ===== */
-.layout {
-  display: flex;
-  /* Height hataya taaki sticky kaam kare */
-  position: relative;
-  min-height: 100vh; /* Ensure layout takes full height */
-}
-
-/* ===== Sidebar (FIXED) ===== */
+/* =========================================
+   2. SIDEBAR (FIXED & SCROLLABLE)
+   ========================================= */
 .sidebar {
-  width: 250px;
-  background: var(--sidebar-bg);
-  padding-top: 30px;
-  
-  /* Sidebar ko chipkane ka logic */
-  position: fixed; /* Sticky ki jagah Fixed */
-  top: 60px; /* Header ki height ke neeche se start hoga */
-  left: 0;
-  bottom: 0; /* Bottom tak extend karega */
-  overflow-y: auto; /* Agar sidebar ke items zyada ho toh sidebar scroll karega */
-  z-index: 900;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 30px;
-  cursor: pointer;
-  display: none;
+  width: 250px; background: var(--sidebar-bg); padding-top: 20px; 
+  position: fixed; top: 60px; left: 0; bottom: 0; overflow-y: auto; z-index: 900; 
+  transition: transform 0.3s ease;
 }
 
 .sidebar a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px 30px;
-  color: #b0b0b0;
-  text-decoration: none;
-  font-size: 15px;
-  border-left: 4px solid transparent; 
-  transition: all 0.3s ease;
+  display: flex; align-items: center; gap: 12px; padding: 15px 25px;
+  color: #b0b0b0; text-decoration: none; font-size: 14px;
+  border-left: 4px solid transparent; transition: all 0.3s ease;
 }
 
 .sidebar a:hover, .sidebar a.active {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  border-left: 4px solid var(--primary-color);
-  padding-left: 35px;
+  background: rgba(255, 255, 255, 0.05); color: #fff;
+  border-left: 4px solid var(--primary-color); padding-left: 30px;
 }
 
-.sidebar a i {
-  width: 20px;
-  height: 20px;
-}
+.sidebar a.logout { color: #ff5252; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+.sidebar a.logout:hover { background: rgba(255, 82, 82, 0.1); border-left-color: #ff5252; }
 
-/* ===== Content Area (Scrollable) ===== */
+/* =========================================
+   3. CONTENT AREA
+   ========================================= */
+.layout { display: flex; width: 100%; min-height: 100vh; }
 .content {
-  flex: 1;
-  padding: 20px;
-  background: var(--bg-color);
-  width: 100%;
-  margin-left: 250px; /* Content ko sidebar ke bagal me lana padega kyunki sidebar fixed hai */
-  /* Content scroll karega, lekin body scroll ke saath */
-  min-height: 100vh; 
+  flex: 1; padding: 20px; background: var(--bg-color);
+  margin-top: 60px; margin-left: 250px; width: 100%; transition: margin 0.3s ease;
 }
 
-.content h3 {
-  margin-bottom: 25px;
-  color: var(--text-dark);
-  font-size: 22px;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 10px;
-  display: inline-block;
-  margin-top: 10px;
-}
-
-/* ===== Cards & Lists Styles (No Change) ===== */
+/* =========================================
+   4. DASHBOARD CARDS (RESTORED EXACTLY)
+   ========================================= */
 .cards {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr); /* Original 2 Columns */
+  gap: 15px;
+  margin-bottom: 30px;
 }
-
-@media (min-width: 600px) {
-  .cards { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (min-width: 1150px) {
-  .cards { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 1024px) {
+  .cards {
+    grid-template-columns: repeat(4, 1fr); /* Original 4 Columns on Desktop */
+    gap: 20px;
+  }
 }
 
 .card {
   background: var(--card-bg);
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  
+  /* TOP BORDER STYLE */
   border-top: 4px solid var(--primary-color);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: none;
+  
+  transition: transform 0.3s ease;
   cursor: pointer;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-}
-
-.card-content {
-  display: flex;
   flex-direction: column;
+  justify-content: center;
+  position: relative;
+  min-height: 120px; /* Restored Height */
+  overflow: hidden;
 }
 
-.card h4 {
-  color: var(--text-gray);
-  margin-bottom: 5px;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+.card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
 
-.card p {
-  font-size: 24px;
-  color: var(--text-dark);
-  font-weight: 600;
-}
+/* Dynamic Borders */
+.card:has(.icon-green) { border-top-color: var(--icon-color-green); }
+.card:has(.icon-blue) { border-top-color: var(--icon-color-blue); }
+.card:has(.icon-orange) { border-top-color: var(--icon-color-orange); }
+.card:has(.icon-purple) { border-top-color: var(--icon-color-purple); }
+
+.card-content h4 { color: var(--text-gray); margin-bottom: 8px; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+.card-content p { font-size: 1.6rem; color: var(--text-dark); font-weight: 700; margin: 0; line-height: 1.2; }
 
 .icon-box {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f5f5;
+  width: 45px; height: 45px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  position: absolute; top: 15px; right: 15px; opacity: 0.9;
 }
+.icon-box i { width: 22px; height: 22px; font-size: 20px; }
 
 .icon-green { background: var(--icon-bg-green); color: var(--icon-color-green); }
 .icon-blue { background: var(--icon-bg-blue); color: var(--icon-color-blue); }
 .icon-orange { background: var(--icon-bg-orange); color: var(--icon-color-orange); }
 .icon-purple { background: var(--icon-bg-purple); color: var(--icon-color-purple); }
 
-.list-section {
-  margin-top: 10px;
-}
-
-.credit-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
-  gap: 20px;
-  background: transparent;
-  box-shadow: none;
-  border-radius: 0;
-}
+/* =========================================
+   5. PENDING CREDIT LIST
+   ========================================= */
+.list-section h3 { font-size: 1.3rem; margin-bottom: 20px; color: var(--text-dark); font-weight: 600; }
+.credit-list { display: grid; grid-template-columns: 1fr; gap: 15px; }
+@media (min-width: 600px) { .credit-list { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); } }
 
 .list-item {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: row; 
-  justify-content: space-between;
-  align-items: center;
-  border-left: 5px solid transparent; 
-  transition: transform 0.3s;
+  background: var(--card-bg); border-radius: 12px; padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center;
+  border-left: 5px solid transparent; width: 100%; transition: transform 0.2s;
 }
-
-.list-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
+.list-item:hover { transform: translateX(5px); }
 .list-item:nth-child(1) { border-left-color: var(--danger-color); }
 .list-item:nth-child(2) { border-left-color: var(--warning-color); }
 .list-item:nth-child(3) { border-left-color: var(--success-color); }
 
-.shop-info {
-  margin-bottom: 0;
-  flex: 1;
-  padding-right: 15px;
-}
-
-.shop-info h4 {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-dark);
-  margin-bottom: 4px;
-}
-
-.shop-info .address, .shop-info .mobile {
-  font-size: 12px;
-  color: var(--text-gray);
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.mini-icon {
-  width: 14px;
-  height: 14px;
-  color: var(--text-gray);
-}
-
-.shop-info .mobile {
-  font-size: 11px;
-  color: var(--text-dark);
-  font-weight: 500;
-  background: #f0f2f5;
-  padding: 3px 8px;
-  border-radius: 4px;
-  display: inline-flex;
-  align-items: center;
-}
-
-.credit-amount {
-  font-size: 20px;
-  font-weight: 700;
-  text-align: right; 
-  margin-top: 0; 
-  white-space: nowrap; 
-}
-
+.shop-info h4 { font-size: 15px; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
+.shop-info .address, .shop-info .mobile { font-size: 12px; color: var(--text-gray); display: block; }
+.credit-amount { font-size: 18px; font-weight: 700; }
 .high-risk { color: var(--danger-color); }
 .medium-risk { color: var(--warning-color); }
 .low-risk { color: var(--success-color); }
 
-.view-all-btn-container {
-    grid-column: 1 / -1;
-    text-align: center;
-    margin-top: 10px;
-    background: transparent;
-}
+.view-all-btn-container { text-align: center; margin-top: 30px; grid-column: 1 / -1; }
+.view-all-btn { background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); padding: 10px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 14px; }
+.view-all-btn:hover { background: var(--primary-color); color: white; }
 
-.view-all-btn {
-    background: white;
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
-    padding: 10px 30px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.3s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
+/* =========================================
+   6. MODAL & FORM
+   ========================================= */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
+.modal-overlay.active { display: flex; }
+.modal-content { background: white; width: 100%; max-width: 450px; border-radius: 12px; padding: 30px; transform: translateY(-20px); transition: 0.3s; }
+.modal-overlay.active .modal-content { transform: translateY(0); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+.close-modal { background: none; border: none; font-size: 28px; cursor: pointer; color: #999; }
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 13px; color: var(--text-gray); margin-bottom: 8px; }
+.form-group input { width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; outline: none; }
+.form-group input:focus { border-color: var(--primary-color); }
+.save-btn { width: 100%; padding: 14px; background: var(--primary-gradient); color: white; border: none; border-radius: 8px; margin-top: 10px; cursor: pointer; font-weight: 600; }
 
-.view-all-btn:hover {
-    background: var(--primary-color);
-    color: white;
-    box-shadow: 0 6px 12px rgba(255, 87, 34, 0.3);
-}
-
-.overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 150;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-/* ===== MODAL STYLES (Popup) ===== */
-.modal-overlay {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Dark background */
-    z-index: 2000; /* Sidebar se upar */
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.modal-overlay.active {
-    display: flex;
-    opacity: 1;
-}
-
-.modal-content {
-    background: white;
-    width: 90%;
-    max-width: 400px;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-    transform: translateY(-20px);
-    transition: transform 0.3s ease;
-}
-
-.modal-overlay.active .modal-content {
-    transform: translateY(0);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-
-.modal-header h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    color: var(--text-dark);
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #888;
-}
-
-/* Profile Picture Styling with Upload Button */
-.profile-pic-container {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.profile-pic-wrapper {
-    position: relative; /* Relative position for placing camera icon */
-    display: inline-block;
-}
-
-#modal-profile-pic {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 3px solid var(--primary-color);
-    object-fit: cover; /* Image aspect ratio maintain karega */
-}
-
-/* Upload Camera Icon */
-.upload-icon {
-    position: absolute;
-    bottom: 0;
-    right: 5px;
-    background: white;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
-    border-radius: 50%;
-    padding: 6px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: all 0.3s;
-}
-
-.upload-icon:hover {
-    background: var(--primary-color);
-    color: white;
-}
-
-.upload-icon i {
-    width: 16px;
-    height: 16px;
-    display: block;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 13px;
-    color: var(--text-gray);
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-.form-group input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-.save-btn {
-    width: 100%;
-    padding: 12px;
-    background: var(--primary-gradient);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 500;
-    margin-top: 10px;
-}
-
-.save-btn:hover {
-    box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
-}
-
-/* ===== Responsive Mobile (Overlay Sidebar) ===== */
+/* =========================================
+   7. RESPONSIVE
+   ========================================= */
 @media (max-width: 768px) {
-  .menu-toggle { display: block; }
-  
-  .sidebar {
-    /* Mobile par FIXED hi rahega (Screen ke upar) */
-    position: fixed; 
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 260px;
-    transform: translateX(-100%);
-    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
-    padding-top: 20px;
-    z-index: 1200; /* Header se upar */
-  }
-
+  .sidebar { top: 60px; transform: translateX(-100%); width: 260px; box-shadow: 5px 0 15px rgba(0,0,0,0.2); height: calc(100vh - 60px); }
   .sidebar.active { transform: translateX(0); }
-  .close-btn { display: block; }
-  .overlay.active { display: block; opacity: 1; }
-  
-  .layout { display: block; }
-  
-  .content { 
-    padding: 20px 15px; 
-    margin-left: 0; /* Mobile par margin hatana padega */
-  }
-  .credit-list { grid-template-columns: 1fr; }
+  .close-btn, .menu-toggle { display: block; }
+  .content { margin-left: 0; margin-top: 60px; padding: 15px; }
+}
+@media (max-width: 350px) {
+    .cards{ grid-template-columns: 2fr; }
 }
