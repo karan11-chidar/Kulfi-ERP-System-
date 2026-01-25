@@ -103,6 +103,7 @@ body {
   display: block;
 }
 
+
 /* =========================================
    2. SIDEBAR (FIXED & CUSTOM SCROLLBAR)
    ========================================= */
@@ -194,7 +195,6 @@ body {
 .content {
   margin-top: 60px;
   margin-left: 250px;
-  width: calc(100% - 250px); /* Exact fit */
 
   padding: 20px;
   min-height: calc(100vh - 60px);

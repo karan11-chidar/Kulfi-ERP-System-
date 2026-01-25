@@ -17,7 +17,7 @@ body {
   justify-content: center;
   padding: 20px;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Scrollbar na aaye */
 }
 
 /* --- Decorative Animated Blobs --- */
@@ -40,7 +40,7 @@ body {
 .shape-2 {
   width: 400px;
   height: 400px;
-  background: rgba(41, 121, 255, 0.15); /* Soft Blue for contrast */
+  background: rgba(41, 121, 255, 0.15); /* Soft Blue */
   bottom: -100px;
   right: -100px;
   animation-delay: 2s;
@@ -63,7 +63,6 @@ body {
   background: #ffffff;
   padding: 40px 35px;
   border-radius: 20px;
-  /* Soft but deep shadow for pop effect */
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.8);
@@ -125,8 +124,11 @@ body {
 
 .input-wrapper input {
   width: 100%;
-  padding: 14px 14px 14px 45px; /* Left padding for icon */
-  font-size: 14px;
+  padding: 14px 14px 14px 45px;
+  
+  /* 🔥 FIX 1: Font size 16px to prevent iPhone Zoom */
+  font-size: 16px; 
+  
   color: #333;
   background: #f9f9f9;
   border: 2px solid transparent;
@@ -148,6 +150,7 @@ body {
   color: #999;
   display: flex;
   transition: 0.3s;
+  font-size: 18px; /* Icon size fix */
 }
 
 .icon-right {
@@ -157,6 +160,7 @@ body {
   cursor: pointer;
   display: flex;
   transition: 0.3s;
+  font-size: 18px;
 }
 
 .icon-right:hover {
@@ -208,26 +212,64 @@ body {
   display: none !important;
 }
 
-/* Animation */
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Responsive ===== */
+/* ===== Welcome Screen CSS (Fixed) ===== */
+#welcome-screen {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    /* Theme Color Set */
+    background: linear-gradient(135deg, #ff5722, #ff9800);
+    z-index: 99999;
+    display: flex; justify-content: center; align-items: center;
+    color: white; font-family: 'Poppins', sans-serif;
+    transition: opacity 1s ease-out;
+}
+
+.welcome-content { text-align: center; padding: 20px; }
+
+/* Text Animation */
+.fade-in { animation: fadeIn 2s ease-in-out; font-size: 3rem; margin-bottom: 10px; }
+.slide-up { animation: slideUp 2s ease-in-out; font-size: 1.2rem; opacity: 0.9; }
+
+/* Loading Bar */
+.loading-bar {
+    width: 200px; height: 5px; background: rgba(255,255,255,0.3);
+    margin: 20px auto; border-radius: 10px; overflow: hidden;
+}
+.progress {
+    width: 0%; height: 100%; background: white;
+    animation: loadProgress 3s linear forwards;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes loadProgress { to { width: 100%; } }
+
+/* =========================================
+   📱 MOBILE RESPONSIVE FIXES (Critical)
+   ========================================= */
 @media (max-width: 480px) {
+  body {
+      padding: 15px; /* Thoda space kam karo */
+  }
+
   .login-box {
-    padding: 30px 20px;
+    padding: 30px 20px; /* Andar ka space adjust karo */
   }
   
   .shape-1, .shape-2 {
-    width: 200px;
-    height: 200px;
+    width: 150px; /* Shapes ko aur chota karo taaki scroll na aaye */
+    height: 150px;
+    opacity: 0.6; /* Mobile par thoda light dikhe */
+  }
+
+  /* 🔥 FIX 2: Welcome Text bohot bada tha mobile ke liye */
+  .fade-in {
+      font-size: 2rem; 
+  }
+  .slide-up {
+      font-size: 1rem;
   }
 }

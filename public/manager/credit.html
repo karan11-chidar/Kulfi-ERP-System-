@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kulfi ERP | Credit Management</title>
-    <link rel="stylesheet" href="../css/manager_credit.css">
+    <link rel="stylesheet" href="../css/manager/credit.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
+ <div id="auth-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f0f2f5; z-index: 99999; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+        <div class="spinner" style="width: 50px; height: 50px; border: 4px solid #ddd; border-top: 4px solid #ff5722; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+        <h4 style="margin-top: 15px; font-family: sans-serif; color: #555;">Loading Credit Data...</h4>
+    </div>
+    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
 
     <header class="topbar">
         <div class="header-left">
@@ -30,13 +35,13 @@
                 <h3>Menu</h3>
             </div>
             <nav class="nav-links">
-                <a href="dashboard_page.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-                <a href="stock_page.html"><i data-lucide="package"></i> Stock</a>
-                <a href="sales_page.html"><i data-lucide="bar-chart-3"></i> Sales/Purchase</a>
-                <a href="credit_page.html" class="active"><i data-lucide="credit-card"></i> Credit</a>
-                <a href="shops_page.html"><i data-lucide="store"></i> Shops</a>
-                <a href="expense_page.html"><i data-lucide="banknote"></i> Expenses</a>
-                <a href="staff_page.html"><i data-lucide="users"></i> Staff</a>
+                <a href="dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="stock.html"><i data-lucide="package"></i> Stock</a>
+                <a href="sales.html"><i data-lucide="bar-chart-3"></i> Sales/Purchase</a>
+                <a href="credit.html" class="active"><i data-lucide="credit-card"></i> Credit</a>
+                <a href="shops.html"><i data-lucide="store"></i> Shops</a>
+                <a href="expense.html"><i data-lucide="banknote"></i> Expenses</a>
+                <a href="staff.html"><i data-lucide="users"></i> Staff</a>
                 <a href="../index.html" class="logout"><i data-lucide="log-out"></i> Logout</a>
             </nav>
         </aside>
@@ -180,6 +185,15 @@
         </div>
     </div>
 
-    <script src="../managerJs_files/creditJs.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <script src="../js/firebase-config.js"></script>
+
+    <script src="../js/manager/dashboard/backend/authGuard.js"></script>
+
+    <script>"../js/manager/creditJs.js"</script>
+    <script src="../js/manager/credit/creditMain.js"></script>
 </body>
 </html>

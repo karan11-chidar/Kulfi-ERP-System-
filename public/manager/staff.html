@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kulfi ERP | Staff Management</title>
+    
+    <link rel="stylesheet" href="../css/manager/staff.css">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    </head>
+<body>
+
+    <div id="auth-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f0f2f5; z-index: 99999; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+        <div class="spinner" style="width: 50px; height: 50px; border: 4px solid #ddd; border-top: 4px solid #ff5722; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+        <h4 style="margin-top: 15px; font-family: sans-serif; color: #555;">Loading Staff Data...</h4>
+    </div>
+    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+
+    <div class="app-container"> <header class="topbar">
+            <div class="header-left">
+                <button id="menu-btn" class="menu-toggle"><i data-lucide="menu"></i></button>
+                <h2>Kulfi ERP</h2>
+            </div>
+            <div class="user-info">
+                <span class="role-badge">Manager</span>
+                <div class="profile-icon">
+                    <img src="https://ui-avatars.com/api/?name=Manager+User&background=ff5722&color=fff" alt="User">
+                </div>
+            </div>
+        </header>
+
+        <div class="layout">
+            <aside class="sidebar" id="sidebar">
+                <button id="close-sidebar" class="close-btn">&times;</button>
+                <div class="sidebar-header">
+                    <h3>Menu</h3>
+                </div>
+                <nav class="nav-links">
+                    <a href="./dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                    <a href="./stock.html"><i data-lucide="package"></i> Stock</a>
+                    <a href="./sales.html"><i data-lucide="bar-chart-3"></i> Sales/Purchase</a>
+                    <a href="./credit.html"><i data-lucide="credit-card"></i> Credit</a>
+                    <a href="./shops.html"><i data-lucide="store"></i> Shops</a>
+                    <a href="expense.html"><i data-lucide="banknote"></i> Expenses</a>
+                    <a href="staff.html" class="active"><i data-lucide="users"></i> Staff</a>
+                    <a href="#" id="logout-btn" class="logout"><i data-lucide="log-out"></i> Logout</a>
+                </nav>
+            </aside>
+
+            <div class="overlay" id="overlay"></div>
+
+            <main class="content">
+                
+                <div class="page-header">
+                    <h3>Staff Management</h3>
+                    
+                    <div class="summary-grid">
+                        <div class="summary-card total">
+                            <div class="card-info">
+                                <span>Total Staff</span>
+                                <h2 id="total-staff-count">0</h2>
+                            </div>
+                            <div class="card-icon"><i data-lucide="users"></i></div>
+                        </div>
+                        <div class="summary-card active-card">
+                            <div class="card-info">
+                                <span>Active / On Duty</span>
+                                <h2 id="active-staff-count">0</h2>
+                            </div>
+                            <div class="card-icon"><i data-lucide="user-check"></i></div>
+                        </div>
+                        <div class="summary-card leave">
+                            <div class="card-info">
+                                <span>Total Advance Given</span>
+                                <h2 id="total-advance-count">₹0</h2>
+                            </div>
+                            <div class="card-icon"><i data-lucide="wallet"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="staff-search" placeholder="Search Name, Role, Email...">
+                    </div>
+                    
+                    <select class="filter-select" id="filter-role">
+                        <option value="all">All Roles</option>
+                         <option value="delivery_boy">Delivery Boy</option>
+                                <option value="manager">Manager</option>
+                                <option value="helper">Helper</option>
+                    </select>
+
+                    <button class="btn-add" id="btn-add-staff">
+                        <i data-lucide="plus"></i> Add New Staff
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name / Email</th>
+                                <th>Role</th>
+                                <th>Mobile</th>
+                                <th>Salary</th>
+                                <th>Advance</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staff-table-body">
+                            </tbody>
+                    </table>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <div id="staff-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Add New Staff</h3>
+                <button class="close-modal" id="close-staff-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="staff-form">
+                    <input type="hidden" id="staff-id"> 
+                    
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="staff-name" placeholder="E.g. Rahul Verma" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email ID (Login)</label>
+                            <input type="email" id="staff-email" placeholder="rahul@kulfi.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="text" id="staff-password" value="123456" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Role</label>
+                            <select id="staff-role" required>
+                                <option value="delivery_boy">Delivery Boy</option>
+                                <option value="manager">Manager</option>
+                                <option value="helper">Helper</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Number</label>
+                            <input type="number" id="staff-mobile" placeholder="10-digit Mobile" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Monthly Salary (₹)</label>
+                        <input type="number" id="staff-salary" placeholder="E.g. 15000" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Joining Date</label>
+                            <input type="date" id="staff-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="staff-status">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="save-btn">Save Staff Details</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="advance-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Manage Advance</h3>
+                <button class="close-modal" id="close-advance-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="advance-form">
+                    <input type="hidden" id="advance-staff-id">
+                    
+                    <div class="form-group">
+                        <label>Staff Name</label>
+                        <input type="text" id="advance-staff-name" readonly style="background-color: #f9f9f9;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Advance Balance</label>
+                        <input type="text" id="current-advance-display" readonly style="background-color: #f9f9f9; font-weight: bold; color: #e74c3c;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Action</label>
+                        <div class="radio-group" style="display: flex; gap: 15px;">
+                            <label class="radio-label" style="flex: 1; display:flex; align-items:center;">
+                                <input type="radio" name="adv_action" value="give" checked style="margin-right: 5px;">
+                                <span style="font-size: 14px;">Give Advance (+)</span>
+                            </label>
+                            <label class="radio-label" style="flex: 1; display:flex; align-items:center;">
+                                <input type="radio" name="adv_action" value="recover" style="margin-right: 5px;">
+                                <span style="font-size: 14px;">Recover/Cut (-)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Amount (₹)</label>
+                        <input type="number" id="advance-amount" placeholder="Enter Amount" required>
+                    </div>
+
+                    <button type="submit" class="save-btn btn-info">Update Balance</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <script src="../js/firebase-config.js"></script>
+
+    <script src="../js/manager/dashboard/backend/authGuard.js"></script>
+
+    <script src="../js/manager/staff/ui/staffUI.js"></script>
+    <script src="../js/manager/staff/staffMain.js"></script>
+
+</body>
+</html>

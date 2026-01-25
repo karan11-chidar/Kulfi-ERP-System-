@@ -10,13 +10,20 @@ Pure Static Design (No Firebase, Data Hardcoded).
     <title>Kulfi ERP | Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- External CSS Link -->
-    <link rel="stylesheet" href="../css/manager_dashboard.css" />
+    <link rel="stylesheet" href="../css/manager/dashboard.css" />
     <!-- Lucide Icons Script -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Tailwind CSS for Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body>
+    <div id="auth-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 99999; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+        <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #2196f3; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <h3 style="margin-top: 20px; color: #333; font-family: sans-serif;">Verifying Manager Access...</h3>
+    </div>
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
     <!-- Header -->
     <header class="topbar">
       <!-- Menu Button Wrapper -->
@@ -54,23 +61,23 @@ Pure Static Design (No Firebase, Data Hardcoded).
       <aside class="sidebar" id="sidebar">
         <button id="close-sidebar" class="close-btn">&times;</button>
 
-        <a href="#" class="active"
+        <a href="./dashboard.html" class="active"
           ><i data-lucide="layout-dashboard"></i> Dashboard</a
         >
-        <a href="../managerhtml_files/stock_page.html"
+        <a href="./stock.html"
           ><i data-lucide="package"></i> Stock</a
         >
-        <a href="../managerhtml_files/sales_page.html"
+        <a href="./sales.html"
           ><i data-lucide="bar-chart-3"></i> Sales/Purchase</a
         >
-        <a href="../managerhtml_files/credit_page.html"
+        <a href="./credit.html"
           ><i data-lucide="credit-card"></i> Credit</a
         >
-        <a href="../managerhtml_files/shops_page.html"
+        <a href=./shops.html"
           ><i data-lucide="store"></i> Shops</a
         >
-        <a href="expense_page.html"><i data-lucide="banknote"></i> Expenses</a>
-        <a href="../managerhtml_files/staff_page.html"
+        <a href="expense.html"><i data-lucide="banknote"></i> Expenses</a>
+        <a href="./staff.html"
           ><i data-lucide="users"></i> Staff</a
         >
 
@@ -93,6 +100,7 @@ Pure Static Design (No Firebase, Data Hardcoded).
 
         <div class="cards">
           <!-- Card 1 -->
+      <a href="./stock.html">
           <div class="card">
             <div class="card-content">
               <h4>Total Stock</h4>
@@ -103,8 +111,10 @@ Pure Static Design (No Firebase, Data Hardcoded).
               <i data-lucide="package"></i>
             </div>
           </div>
-
+  
+          </a>
           <!-- Card 2 -->
+           <a href="./sales.html">
           <div class="card">
             <div class="card-content">
               <h4>Today Sales</h4>
@@ -115,8 +125,10 @@ Pure Static Design (No Firebase, Data Hardcoded).
               <i data-lucide="indian-rupee"></i>
             </div>
           </div>
-
+          </a>  
+          
           <!-- Card 3 -->
+           <a href="./credit.html">
           <div class="card">
             <div class="card-content">
               <h4>Pending Payments</h4>
@@ -127,8 +139,10 @@ Pure Static Design (No Firebase, Data Hardcoded).
               <i data-lucide="alert-circle"></i>
             </div>
           </div>
+          </a>
 
           <!-- Card 4 -->
+           <a href="./stock.html">
           <div class="card">
             <div class="card-content">
               <h4>Running Boy</h4>
@@ -140,7 +154,7 @@ Pure Static Design (No Firebase, Data Hardcoded).
             </div>
           </div>
         </div>
-
+        </a>
         <!-- NEW SECTION: Pending Credit List -->
         <div class="list-section">
           <h3>Top Pending Credits</h3>
@@ -265,6 +279,14 @@ Pure Static Design (No Firebase, Data Hardcoded).
     </div>
 
     <!-- JavaScript Logic (External File) -->
-    <script src="../managerJs_files/dashboardJs.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="../js/firebase-config.js"></script>
+
+    <script src="../js/manager/dashboard/ui/dashboardUI.js"></script>
+    <script src="../js/manager/dashboard/backend/authGuard.js"></script>
+
+    <script src="../js/manager/dashboard/dashboardMain.js"></script>
   </body>
 </html>
