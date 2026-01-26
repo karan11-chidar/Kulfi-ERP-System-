@@ -1,26 +1,49 @@
 // Path: public/js/manager/staff/staffMain.js
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("🚀 Staff Module: Engine Starting...");
+  console.log("👥 Staff Page Loaded...");
 
-  // 1. UI System Start karo
-  if (window.StaffUI) {
-    window.StaffUI.init();
-  } else {
-    console.error("❌ Error: StaffUI file loaded nahi hai!");
-  }
-
-  // 2. Security Guard ko bulao (Global AuthGuard)
+  // 1. Security Check (Guard)
   if (window.AuthGuard) {
-    console.log("👮‍♂️ AuthGuard: Verifying Manager...");
-    // AuthGuard humare 'backend/authGuard.js' se ayega
     window.AuthGuard.init();
   } else {
-    console.error("❌ Error: AuthGuard file missing hai!");
+    console.error("❌ AuthGuard missing!");
+    window.location.href = "../index.html";
   }
 
-  // 3. Backend Controller (Abhi khali hai, baad me connect karenge)
+  // 2. Engine Start (Controller)
   if (window.StaffController) {
-    // window.StaffController.init();
+    window.StaffController.init();
+  } else {
+    console.error("❌ StaffController Missing!");
+  }
+
+  // =================================================
+  // 👇 3. MOBILE SIDEBAR LOGIC (FIXED) 👇
+  // =================================================
+  const menuBtn = document.getElementById("menu-btn");
+  const sidebar = document.getElementById("sidebar");
+  const closeBtn = document.getElementById("close-sidebar");
+  const overlay = document.getElementById("overlay");
+
+  // Agar HTML me ye buttons hain, tabhi logic chalega
+  if (menuBtn && sidebar && overlay) {
+    // Open Sidebar
+    menuBtn.addEventListener("click", () => {
+      sidebar.classList.add("active");
+      overlay.classList.add("active");
+    });
+
+    // Close Function
+    const closeSidebar = () => {
+      sidebar.classList.remove("active");
+      overlay.classList.remove("active");
+    };
+
+    // Close Button par click
+    if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
+
+    // Khali jagah (Overlay) par click
+    overlay.addEventListener("click", closeSidebar);
   }
 });

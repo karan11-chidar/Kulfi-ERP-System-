@@ -53,20 +53,31 @@
                 <h3>Expense Management</h3>
                 
                 <div class="summary-grid">
+                    
                     <div class="summary-card total">
                         <div class="card-info">
-                            <span>Total Expenses (Monthly)</span>
+                            <span>Total (All Time)</span>
                             <h2 id="total-expense">₹0</h2>
                         </div>
-                        <div class="card-icon"><i data-lucide="trending-down"></i></div>
+                        <div class="card-icon"><i data-lucide="layers"></i></div>
                     </div>
-                    <div class="summary-card month">
+
+                    <div class="summary-card monthly">
                         <div class="card-info">
-                            <span>This Weekly</span>
+                            <span>This Month</span>
                             <h2 id="month-expense">₹0</h2>
                         </div>
-                        <div class="card-icon"><i data-lucide="calendar"></i></div>
+                        <div class="card-icon"><i data-lucide="calendar-days"></i></div>
                     </div>
+
+                    <div class="summary-card weekly">
+                        <div class="card-info">
+                            <span>Last 7 Days</span>
+                            <h2 id="weekly-expense">₹0</h2>
+                        </div>
+                        <div class="card-icon"><i data-lucide="calendar-clock"></i></div>
+                    </div>
+
                     <div class="summary-card today">
                         <div class="card-info">
                             <span>Today's Expense</span>
@@ -74,8 +85,9 @@
                         </div>
                         <div class="card-icon"><i data-lucide="clock"></i></div>
                     </div>
+
                 </div>
-            </div>
+                </div>
 
             <div class="filter-bar">
                 <div class="search-box">
@@ -162,15 +174,19 @@
             </div>
         </div>
     </div>
- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
     <script src="../js/firebase-config.js"></script>
-
     <script src="../js/manager/backend/authGuard.js"></script>
 
+    <script src="../js/manager/expense/ui/expenseUI.js"></script>
+    <script src="../js/manager/expense/backend/expenseService.js"></script>
+    <script src="../js/manager/expense/backend/expenseController.js"></script>
+
     <script src="../js/manager/expense/expenseMain.js"></script>
-    <script src="../js/manager/expenseJs.js"></script>
+
 </body>
 </html>
