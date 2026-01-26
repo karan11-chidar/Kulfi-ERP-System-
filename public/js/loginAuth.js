@@ -72,7 +72,7 @@ if (loginBtn) {
           // 4. Role Based Redirect (Manager vs Delivery Boy)
           if (userRole === "manager") {
             window.location.href = "./manager/dashboard.html";
-          } else if (userRole === "deliveryboy") {
+          } else if (userRole === "delivery_boy") {
             window.location.href = "./deliveryboy/dashboard.html";
           } else {
             alert("Unknown Role! Contact Admin.");

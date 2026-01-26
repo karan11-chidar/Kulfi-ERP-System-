@@ -42,8 +42,10 @@
                 <a href="shops.html" class="active"><i data-lucide="store"></i> Shops</a>
                 <a href="expense.html"><i data-lucide="banknote"></i> Expenses</a>
                 <a href="staff.html"><i data-lucide="users"></i> Staff</a>
-                <a href="../index.html" class="logout"><i data-lucide="log-out"></i> Logout</a>
-            </nav>
+                <a href="../index.html" id="logout-btn" class="logout">
+                    <i data-lucide="log-out"></i> <span>Logout</span>
+                </a>          
+              </nav>
         </aside>
 
         <div class="overlay" id="overlay"></div>
@@ -163,7 +165,7 @@
     
     <script src="../js/firebase-config.js"></script>
 
-    <script src="../js/manager/dashboard/backend/authGuard.js"></script>
+    <script src="../js/manager/backend/authGuard.js"></script>
 
     <script src="../js/manager/shops/shopsMain.js"></script>
     <script src="../js/manager/shopsJs.js"></script>

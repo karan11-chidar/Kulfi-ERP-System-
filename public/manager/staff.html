@@ -45,8 +45,10 @@
                     <a href="./shops.html"><i data-lucide="store"></i> Shops</a>
                     <a href="expense.html"><i data-lucide="banknote"></i> Expenses</a>
                     <a href="staff.html" class="active"><i data-lucide="users"></i> Staff</a>
-                    <a href="#" id="logout-btn" class="logout"><i data-lucide="log-out"></i> Logout</a>
-                </nav>
+                    <a href="../index.html" id="logout-btn" class="logout">
+                        <i data-lucide="log-out"></i> <span>Logout</span>
+                    </a>               
+                 </nav>
             </aside>
 
             <div class="overlay" id="overlay"></div>
@@ -232,15 +234,19 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
     <script src="../js/firebase-config.js"></script>
-
-    <script src="../js/manager/dashboard/backend/authGuard.js"></script>
+    <script src="../js/manager/backend/authGuard.js"></script>
 
     <script src="../js/manager/staff/ui/staffUI.js"></script>
+
+    <script src="../js/manager/staff/backend/staffService.js"></script>
+
+    <script src="../js/manager/staff/backend/staffController.js"></script>
+
     <script src="../js/manager/staff/staffMain.js"></script>
 
 </body>
