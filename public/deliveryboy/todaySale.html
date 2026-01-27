@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Today's Sale Details</title>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/deliveryboy/todaySale.css">
+</head>
+<body>
+    <div class="header">
+        <a href="dashboard.html" class="back-btn"><i data-lucide="arrow-left"></i></a>
+        <h3>Today's Sale Entries</h3>
+    </div>
+
+    <div class="container">
+        
+        <div class="filter-card">
+            <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="text" id="searchInput" placeholder="Search Shop..." onkeyup="filterSales()">
+            </div>
+
+            <div class="filter-row">
+                <select id="flavorFilter" onchange="filterSales()">
+                    <option value="All">All Flavors</option>
+                    <option value="Matka Kulfi">Matka Kulfi</option>
+                    <option value="Stick Kulfi">Stick Kulfi</option>
+                    <option value="Rabdi">Rabdi Special</option>
+                </select>
+
+                <select id="priceFilter" onchange="filterSales()">
+                    <option value="default">Sort: Price</option>
+                    <option value="high">High to Low</option>
+                    <option value="low">Low to High</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mini-summary">
+            <span>Total Items: <b id="totalQty">0</b></span>
+            <span>Total Value: <b id="totalVal">₹0</b></span>
+        </div>
+
+        <div id="salesList" class="sales-list">
+            </div>
+    </div>
+
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-card">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3>Update Sale Entry</h3>
+            
+            <form onsubmit="saveUpdate(event)">
+                <input type="hidden" id="editId">
+                
+                <label>Shop Name</label>
+                <input type="text" id="editShop" readonly class="readonly-input">
+
+                <label>Product (Flavor)</label>
+                <input type="text" id="editProduct" readonly class="readonly-input">
+
+                <div class="row-inputs">
+                    <div>
+                        <label>Quantity</label>
+                        <input type="number" id="editQty" oninput="calcTotal()">
+                    </div>
+                    <div>
+                        <label>Rate (₹)</label>
+                        <input type="number" id="editRate" oninput="calcTotal()">
+                    </div>
+                </div>
+
+                <div class="total-preview">
+                    Total: <span id="editTotal">₹0</span>
+                </div>
+
+                <button type="submit" class="save-btn">Update Entry</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/deliveryboy/todaySale.js"></script>
+</body>
+</html>

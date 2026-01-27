@@ -1,0 +1,91 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+body { background: #f4f7f6; color: #333; padding-bottom: 30px; }
+
+/* --- ORANGE HEADER --- */
+.top-area {
+    background: #ff5722; /* Orange Background */
+    padding: 20px;
+    padding-bottom: 25px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
+    position: sticky; top: 0; z-index: 100;
+}
+
+.header-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+.top-area h2 { font-size: 1.3rem; font-weight: 700; color: #fff; /* White Text */ }
+.back-btn { color: #fff; /* White Icon */ text-decoration: none; display: flex; align-items: center; }
+
+/* Search Bar Styling */
+.search-wrapper { position: relative; width: 100%; }
+.search-wrapper input {
+    width: 100%; padding: 12px 12px 12px 45px;
+    border: none; border-radius: 12px;
+    font-size: 14px; background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+    color: #fff; outline: none;
+}
+.search-wrapper input::placeholder { color: rgba(255, 255, 255, 0.8); }
+.search-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: #fff; width: 18px;
+}
+.search-wrapper input:focus { background: #fff; color: #333; }
+.search-wrapper input:focus + .search-icon { color: #333; } /* This requires icon after input in HTML or JS logic, simpler to keep icon white or static for now */
+
+.container { padding: 20px; max-width: 600px; margin: 0 auto; margin-top: -10px; }
+
+/* Grid */
+.summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+
+.stat-box {
+    background: #fff; padding: 15px; border-radius: 15px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    cursor: pointer; transition: 0.2s; border: 2px solid transparent;
+}
+.stat-box:active { transform: scale(0.95); }
+
+/* --- CLICK PE ORANGE COLOR --- */
+.stat-box.active-filter {
+    background: #ff5722 !important;
+    border-color: #ff5722;
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
+}
+/* Jab active ho to sab text White */
+.stat-box.active-filter .label { color: rgba(255,255,255,0.8); }
+.stat-box.active-filter .value { color: #fff !important; }
+.stat-box.active-filter .icon-bg { background: rgba(255,255,255,0.2); color: #fff; }
+
+
+.icon-bg { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+.label { font-size: 11px; color: #777; font-weight: 500; }
+.value { font-size: 1.1rem; font-weight: 700; margin-top: 2px; }
+
+/* Normal Colors */
+.green-bg { background: #e8f5e9; color: #4caf50; } .text-green { color: #4caf50; }
+.blue-bg { background: #e3f2fd; color: #2196f3; } .text-blue { color: #2196f3; }
+.red-bg { background: #ffebee; color: #f44336; } .text-red { color: #f44336; }
+.orange-bg { background: #fff3e0; color: #ff9800; } .text-orange { color: #ff9800; }
+
+.total-bar { background: #333; color: #fff; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; margin-bottom: 25px; }
+
+.section-title { font-size: 14px; font-weight: 600; color: #555; margin: 0; }
+
+.trans-card {
+    background: #fff; padding: 15px; border-radius: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.shop-info h4 { font-size: 14px; margin-bottom: 2px; }
+.shop-info small { font-size: 11px; color: #888; }
+.trans-amount { text-align: right; }
+.amt { font-size: 14px; font-weight: 700; display: block; }
+.badge { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+
+.badge-cash { background: #e8f5e9; color: #4caf50; }
+.badge-online { background: #e3f2fd; color: #2196f3; }
+.badge-pending { background: #ffebee; color: #f44336; }
+.badge-adv { background: #fff3e0; color: #ff9800; }

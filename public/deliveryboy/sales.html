@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Collection | Kulfi ERP</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/deliveryboy/sales.css">
+</head>
+<body>
+
+    <div class="top-area">
+        <div class="header-row">
+            <a href="./dashboard.html" class="back-btn"><i data-lucide="arrow-left"></i></a>
+            <h2>Today's Collection</h2>
+        </div>
+        
+        <div class="search-wrapper">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search Shop Name..." onkeyup="handleSearch()">
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="summary-grid">
+            <div class="stat-box" id="box-cash" onclick="filterList('Cash')">
+                <div class="icon-bg green-bg"><i data-lucide="banknote"></i></div>
+                <span class="label">Cash Rec.</span>
+                <span class="value text-green" id="total-cash">₹0</span>
+            </div>
+
+            <div class="stat-box" id="box-online" onclick="filterList('Online')">
+                <div class="icon-bg blue-bg"><i data-lucide="qr-code"></i></div>
+                <span class="label">Online Rec.</span>
+                <span class="value text-blue" id="total-online">₹0</span>
+            </div>
+
+            <div class="stat-box" id="box-pending" onclick="filterList('Pending')">
+                <div class="icon-bg red-bg"><i data-lucide="clock"></i></div>
+                <span class="label">Pending</span>
+                <span class="value text-red" id="total-pending">₹0</span>
+            </div>
+
+            <div class="stat-box" id="box-advance" onclick="filterList('Advance')">
+                <div class="icon-bg orange-bg"><i data-lucide="wallet"></i></div>
+                <span class="label">Advance</span>
+                <span class="value text-orange" id="total-advance">₹0</span>
+            </div>
+        </div>
+
+        <div class="total-bar">
+            <span>Total In Hand (Cash + Online)</span>
+            <span id="final-hand">₹0</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 class="section-title">Shop Wise Details</h3>
+            <button onclick="filterList('All')" style="border:none; background:none; color:#ff5722; font-weight:600; cursor:pointer; font-size:12px;">Reset Filters</button>
+        </div>
+
+        <div id="transaction-list">
+            </div>
+
+    </div>
+
+    <script src="../js/deliveryboy/sales.js"></script>
+</body>
+</html>

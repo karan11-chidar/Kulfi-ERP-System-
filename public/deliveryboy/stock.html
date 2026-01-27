@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Stock</title>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/deliveryboy/stock.css">
+</head>
+<body>
+    <div class="header">
+        <a href="dashboard.html" class="back-btn"><i data-lucide="arrow-left"></i></a>
+        <h3>My Van Stock</h3>
+    </div>
+
+    <div class="container">
+        <div class="summary-card">
+            <div class="sum-item">
+                <span class="sum-lbl">Total Load</span>
+                <span class="sum-val" id="g-tot">0</span>
+            </div>
+            <div class="divider"></div>
+            <div class="sum-item">
+                <span class="sum-lbl">Sold</span>
+                <span class="sum-val text-red" id="g-sold">0</span>
+            </div>
+            <div class="divider"></div>
+            <div class="sum-item">
+                <span class="sum-lbl">Balance</span>
+                <span class="sum-val text-green" id="g-bal">0</span>
+            </div>
+        </div>
+
+        <h4 class="section-title">Item List</h4>
+
+        <div id="stockList" class="stock-list">
+            </div>
+    </div>
+
+    <script src="../js/deliveryboy/stock.js"></script>
+</body>
+</html>

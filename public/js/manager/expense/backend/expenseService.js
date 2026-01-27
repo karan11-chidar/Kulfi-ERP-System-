@@ -1,17 +1,11 @@
 window.ExpenseService = {
-  subscribeToExpenses: function (onSuccess, onError) {
-    return db
-      .collection("expenses")
-      .orderBy("date", "desc")
-      .onSnapshot((snapshot) => {
-        const expenses = [];
-        snapshot.forEach((doc) => {
-          expenses.push({ id: doc.id, ...doc.data() });
-        });
-        onSuccess(expenses);
-      }, onError);
+  // 1. GET DATA (One Time Only)
+  getAllExpenses: function () {
+    // .get() = "Ek baar do aur phone kaat do"
+    return db.collection("expenses").orderBy("date", "desc").get();
   },
 
+  // 2. ADD EXPENSE
   addExpense: function (expenseData) {
     return db.collection("expenses").add({
       ...expenseData,
@@ -19,6 +13,7 @@ window.ExpenseService = {
     });
   },
 
+  // 3. DELETE EXPENSE
   deleteExpense: function (id) {
     return db.collection("expenses").doc(id).delete();
   },

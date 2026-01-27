@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Expense | Kulfi ERP</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/deliveryboy/addExpense.css">
+</head>
+<body>
+
+    <div class="top-area">
+        <div class="header-row">
+            <a href="dashboard.html" class="back-btn"><i data-lucide="arrow-left"></i></a>
+            <h2>Add Daily Expense</h2>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="form-card">
+            <form id="expenseForm">
+                
+                <div class="row-group">
+                    <div class="form-group half">
+                        <label>Name</label>
+                        <input type="text" value="Ramesh Kumar" readonly style="background:#eee; color:#777;">
+                    </div>
+                    <div class="form-group half">
+                        <label>Date & Time</label>
+                        <input type="text" id="autoDate" readonly style="background:#eee; color:#777; font-size:11px;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Expense Title (Kharcha)</label>
+                    <div class="input-icon">
+                        <i data-lucide="tag"></i>
+                        <input type="text" id="exTitle" placeholder="Ex. Petrol, Pani, Chai..." required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Amount (₹)</label>
+                    <div class="input-icon">
+                        <i data-lucide="indian-rupee"></i>
+                        <input type="number" id="exAmount" placeholder="0" required style="font-weight:700; color:#d32f2f;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Details (Kaha aur Kyu?)</label>
+                    <textarea id="exDesc" rows="2" placeholder="Ex. Dewas Naka pump se bike full karayi..."></textarea>
+                </div>
+
+                <button type="submit" class="save-btn">
+                    Save Expense <i data-lucide="plus-circle"></i>
+                </button>
+
+            </form>
+        </div>
+
+        <h3 class="section-title">Today's Expenses List</h3>
+        <div id="expenseList">
+            </div>
+
+    </div>
+
+    <script src="../js/deliveryboy/addExpense.js"></script>
+</body>
+</html>

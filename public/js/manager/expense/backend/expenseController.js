@@ -1,27 +1,42 @@
 window.ExpenseController = {
-  currentExpenses: [],
+  currentExpenses: [], // Local Data Store
 
   init: function () {
-    console.log("💰 ExpenseController: Calculating...");
-    this.setupDataStream();
+    console.log("💰 ExpenseController: Low Cost Mode...");
+    this.loadExpenses(); // Ab hum "Load" kar rahe hain, "Subscribe" nahi
     this.setupEventListeners();
-    document.getElementById("exp-date").valueAsDate = new Date();
+
+    // Date input me aaj ki date
+    if (document.getElementById("exp-date")) {
+      document.getElementById("exp-date").valueAsDate = new Date();
+    }
   },
 
-  setupDataStream: function () {
-    ExpenseService.subscribeToExpenses(
-      (data) => {
-        this.currentExpenses = data;
-        this.applyFilters();
-        if (window.ExpenseUI) window.ExpenseUI.hideLoader();
-      },
-      (error) => console.error("Error:", error),
-    );
+  // 1. Data Lana (Sirf Ek Baar)
+  loadExpenses: async function () {
+    try {
+      const snapshot = await ExpenseService.getAllExpenses();
+
+      this.currentExpenses = [];
+      snapshot.forEach((doc) => {
+        this.currentExpenses.push({ id: doc.id, ...doc.data() });
+      });
+
+      console.log(`🔥 Loaded ${this.currentExpenses.length} expenses`);
+
+      this.applyFilters();
+      if (window.ExpenseUI) window.ExpenseUI.hideLoader();
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to load expenses.");
+    }
   },
 
+  // 2. Filters (Same as before)
   applyFilters: function () {
     const searchInput = document.getElementById("expense-search");
     const categoryFilter = document.getElementById("filter-category");
+
     const query = searchInput ? searchInput.value.toLowerCase() : "";
     const selectedCat = categoryFilter ? categoryFilter.value : "all";
 
@@ -29,8 +44,10 @@ window.ExpenseController = {
       const matchesSearch =
         exp.description.toLowerCase().includes(query) ||
         exp.amount.toString().includes(query);
+
       const matchesCategory =
         selectedCat === "all" || exp.category === selectedCat;
+
       return matchesSearch && matchesCategory;
     });
 
@@ -40,6 +57,7 @@ window.ExpenseController = {
     }
   },
 
+  // 3. Listeners (Same as before)
   setupEventListeners: function () {
     document
       .getElementById("expense-search")
@@ -67,6 +85,7 @@ window.ExpenseController = {
       ?.addEventListener("submit", (e) => this.handleSave(e));
   },
 
+  // 4. Save Logic (Local Update Magic ✨)
   handleSave: async function (e) {
     e.preventDefault();
     const btn = e.target.querySelector("button[type='submit']");
@@ -83,8 +102,15 @@ window.ExpenseController = {
         addedBy: "Manager",
       };
 
-      await ExpenseService.addExpense(expenseData);
+      // Server par bhejo
+      const docRef = await ExpenseService.addExpense(expenseData);
+
+      // ⚡ LOCAL UPDATE (Array me manually add karo)
+      // 'unshift' naye item ko list me sabse upar dalega
+      this.currentExpenses.unshift({ id: docRef.id, ...expenseData });
+
       alert("✅ Expense Added!");
+      this.applyFilters(); // Table Refresh
       document.getElementById("expense-modal").classList.remove("active");
     } catch (error) {
       alert("❌ Error: " + error.message);
@@ -94,10 +120,19 @@ window.ExpenseController = {
     }
   },
 
+  // 5. Delete Logic (Local Update Magic ✨)
   deleteExpense: async function (id) {
-    if (confirm("Are you sure you want to delete this expense?")) {
+    if (confirm("Delete this expense?")) {
       try {
+        // Server se hatao
         await ExpenseService.deleteExpense(id);
+
+        // ⚡ LOCAL UPDATE (Array se filter kar do)
+        this.currentExpenses = this.currentExpenses.filter(
+          (item) => item.id !== id,
+        );
+
+        this.applyFilters(); // Table Refresh
       } catch (error) {
         alert("Error: " + error.message);
       }

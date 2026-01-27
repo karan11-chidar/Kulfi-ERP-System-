@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pending Payments</title>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/deliveryboy/pending.css">
+</head>
+<body>
+
+    <div class="header">
+        <a href="dashboard.html" class="back-btn"><i data-lucide="arrow-left"></i></a>
+        <h3>Pending Payments</h3>
+    </div>
+
+    <div class="container">
+        
+        <div class="total-card">
+            <span class="lbl">Total Outstanding Amount</span>
+            <h2 id="totalPendingAmount">₹0</h2>
+        </div>
+
+        <h4 class="section-title">Shop Wise List</h4>
+
+        <div id="pendingList" class="list-container">
+            </div>
+
+    </div>
+
+    
+
+    <script src="../js/deliveryboy/pendingPayment.js"></script>
+</body>
+</html>

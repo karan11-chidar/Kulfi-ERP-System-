@@ -1,0 +1,66 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+body { background: #f8f9fa; color: #333; padding-bottom: 80px; }
+a { text-decoration: none; color: inherit; }
+
+/* Orange Header */
+.header {
+    background: #ff5722; padding: 20px; color: white;
+    display: flex; align-items: center; gap: 15px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 10px rgba(255, 87, 34, 0.2);
+}
+.back-btn { color: white; display: flex; align-items: center; }
+
+.container { padding: 20px; max-width: 600px; margin: 0 auto; }
+
+/* Total Card */
+.total-card {
+    background: linear-gradient(135deg, #e6873a, #ef5350); /* Red Gradient for Danger/Pending */
+    padding: 20px; border-radius: 15px; color: white; text-align: center;
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3); margin-bottom: 25px;
+}
+.lbl { font-size: 12px; opacity: 0.9; }
+.total-card h2 { font-size: 2rem; font-weight: 700; margin-top: 5px; }
+
+/* List */
+.section-title { font-size: 14px; font-weight: 600; color: #555; margin-bottom: 15px; }
+.list-container { display: flex; flex-direction: column; gap: 12px; }
+
+.card {
+    background: white; padding: 15px; border-radius: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03); border-left: 5px solid #f44336;
+}
+
+.shop-info h4 { font-size: 14px; margin-bottom: 3px; color: #333; font-weight: 600; }
+.shop-info span { font-size: 11px; color: #888; display: block; }
+
+.amount-box { text-align: right; }
+.amt { font-size: 15px; font-weight: 700; color: #e6873a; display: block; margin-bottom: 2px; }
+.status-badge { 
+    font-size: 10px; padding: 2px 8px; border-radius: 4px; 
+    background: #ffebee; color: #e01515; font-weight: 600; 
+}
+
+/* Call Button inside card */
+.call-btn {
+    margin-left: 10px; width: 35px; height: 35px; border-radius: 50%;
+    background: #eee; display: flex; align-items: center; justify-content: center;
+    color: #333; cursor: pointer;
+}
+
+/* Bottom Nav */
+.bottom-nav {
+    position: fixed; bottom: 0; left: 0; width: 100%; background: white; height: 70px;
+    display: flex; justify-content: space-around; align-items: center;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 999;
+}
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #999; text-decoration: none; padding: 5px 10px; }
+.nav-item i { width: 24px; height: 24px; }
+.nav-item span { font-size: 10px; font-weight: 500; }
+.nav-fab {
+    background: #ff5722; color: white; width: 55px; height: 55px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(255, 87, 34, 0.4); border: 4px solid #f8f9fa;
+}
+.nav-fab i { width: 28px; height: 28px; }

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Shop</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/deliveryboy/addShop.css">
+</head>
+<body>
+    <div class="header">
+        <a href="dashboard.html"><i data-lucide="arrow-left"></i></a>
+        <h2>Add New Shop</h2>
+    </div>
+
+    <div class="card">
+        <div style="text-align:center; margin-bottom:20px;">
+            <div class="store-icon-wrapper"><i data-lucide="store"></i></div>
+            <h3 style="margin:10px 0;">Shop Details</h3>
+        </div>
+
+        <form id="addShopForm">
+            <div class="form-group"><label>Shop Name *</label><input type="text" required placeholder="Ex. Sharma General Store"></div>
+            <div class="form-group"><label>Owner Name</label><input type="text" placeholder="Ex. Rahul Sharma"></div>
+            <div class="form-group"><label>Mobile *</label><input type="tel" required placeholder="9876543210"></div>
+            <div class="form-group"><label>Address *</label><textarea rows="3" required placeholder="Full Address"></textarea></div>
+            <button class="submit-btn">Register Shop <i data-lucide="check-circle"></i></button>
+        </form>
+    </div>
+    <script src="../js/deliveryboy/addShop.js"></script>
+</body>
+</html>

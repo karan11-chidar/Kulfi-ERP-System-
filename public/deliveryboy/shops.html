@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Shop | Kulfi ERP</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/deliveryboy/shops.css">
+</head>
+<body>
+    <div class="top-area">
+        <div class="header">
+            <a href="dashboard.html"><i data-lucide="arrow-left"></i></a>
+            <h2>Select Shop</h2>
+        </div>
+        <div class="search-box">
+            <i data-lucide="search"></i>
+            <input type="text" id="search" placeholder="Search shop...">
+        </div>
+    </div>
+
+    <div class="shop-list" id="list">
+        </div>
+
+    <div id="modal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h3 id="m-shop">Shop Name</h3>
+                <button onclick="closeModal()" style="border:none; background:none; font-size:24px;">&times;</button>
+            </div>
+            
+            <div class="form-row">
+                <div style="flex:2"><label>Item</label>
+                <select id="item" class="input-box"><option>Matka Kulfi</option><option>Stick Kulfi</option></select></div>
+                <div style="flex:1"><label>Rate</label>
+                <input type="number" id="rate" value="20" class="input-box"></div>
+            </div>
+
+            <div class="form-row" style="background:#f0f8ff; padding:10px; border-radius:10px;">
+                <div><label>Pkts (1=50)</label><input type="number" id="pkt" class="input-box" placeholder="0"></div>
+                <div><label>Loose</label><input type="number" id="loose" class="input-box" placeholder="0"></div>
+            </div>
+
+            <div style="margin-bottom:15px;">
+                <label>Payment</label>
+                <div class="pay-opts">
+                    <div class="p-opt active" onclick="setPay(this)">Cash</div>
+                    <div class="p-opt" onclick="setPay(this)">Online</div>
+                    <div class="p-opt" onclick="setPay(this)">Credit</div>
+                </div>
+            </div>
+
+            <div class="total-box">
+                <div><span>Total Qty</span><br><b id="t-qty">0</b> pcs</div>
+                <div style="font-size:1.4rem; font-weight:700;" id="t-amt">₹0</div>
+            </div>
+
+            <button class="save-btn" onclick="save()">Confirm Sale <i data-lucide="check-circle"></i></button>
+        </div>
+    </div>
+
+    <script src="../js/deliveryboy/shops.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sales History</title>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/deliveryboy/history.css">
+</head>
+<body>
+
+    <div class="header">
+        <a href="dashboard.html" class="back-btn"><i data-lucide="arrow-left"></i></a>
+        <h3>My History</h3>
+    </div>
+
+    <div class="container">
+        <div class="filters">
+            <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="text" id="searchInp" placeholder="Search Shop Name..." onkeyup="filterData()">
+            </div>
+            
+            <div class="date-box">
+                <input type="date" id="dateInp" onchange="filterData()">
+                <button class="clear-btn" onclick="clearDate()">Clear</button>
+            </div>
+        </div>
+
+        <h4 class="section-label">Transaction List</h4>
+        
+        <div class="history-list" id="list">
+            </div>
+    </div>
+
+    <script src="../js/deliveryboy/history.js"></script>
+</body>
+</html>
