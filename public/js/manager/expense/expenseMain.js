@@ -1,49 +1,53 @@
 // Path: public/js/manager/expense/expenseMain.js
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("📦 Expense Page Loaded...");
+  console.log("🟢 1. Main File Loaded");
 
-  // 1. Security Check (Guard)
+  // Check AuthGuard
   if (window.AuthGuard) {
+    console.log("🟢 2. AuthGuard Found");
     window.AuthGuard.init();
   } else {
-    console.error("❌ AuthGuard missing!");
-    window.location.href = "../index.html";
+    console.error("🔴 AuthGuard Missing!");
   }
 
-  // 2. Engine Start (Controller)
+  // Check Controller
   if (window.ExpenseController) {
-    window.ExpenseController.init();
+    console.log("🟢 3. Controller Found, Initializing...");
+    try {
+      window.ExpenseController.init();
+    } catch (error) {
+      console.error("🔴 Controller Crash:", error);
+      // Agar crash ho, to loader hata do taaki screen dikhe
+      document.getElementById("auth-loader").style.display = "none";
+      alert("Code Crash: " + error.message);
+    }
   } else {
-    console.error("❌ ExpenseController Missing!");
+    console.error(
+      "🔴 ExpenseController NOT Found! (Check expenseController.js for syntax errors)",
+    );
+    // Loader hatao taaki user ko pata chale kuch gadbad hai
+    document.getElementById("auth-loader").style.display = "none";
   }
 
-  // =================================================
-  // 👇 3. MOBILE SIDEBAR LOGIC (NEW ADDITION) 👇
-  // =================================================
+  // Sidebar Logic
   const menuBtn = document.getElementById("menu-btn");
   const sidebar = document.getElementById("sidebar");
   const closeBtn = document.getElementById("close-sidebar");
   const overlay = document.getElementById("overlay");
 
-  // Agar saare elements page par hain, tabhi logic lagao
-  if (menuBtn && sidebar && overlay) {
-    // Open Sidebar
+  if (menuBtn) {
     menuBtn.addEventListener("click", () => {
       sidebar.classList.add("active");
-      overlay.classList.add("active"); // Peeche ka background dhundhla karo
+      overlay.classList.add("active");
     });
-
-    // Close Function (Donon jagah use hoga)
-    const closeSidebar = () => {
-      sidebar.classList.remove("active");
-      overlay.classList.remove("active");
-    };
-
-    // Close Button par click
-    if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
-
-    // Overlay (khali jagah) par click karne se bhi band ho
-    overlay.addEventListener("click", closeSidebar);
   }
+
+  const closeSidebar = () => {
+    sidebar.classList.remove("active");
+    overlay.classList.remove("active");
+  };
+
+  if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
+  if (overlay) overlay.addEventListener("click", closeSidebar);
 });

@@ -131,7 +131,7 @@
   top: 60px; /* Below Header */
   left: 0;
   bottom: 0;
-  overflow-y: auto;
+  
   z-index: 900;
   transition: transform 0.3s ease;
 }

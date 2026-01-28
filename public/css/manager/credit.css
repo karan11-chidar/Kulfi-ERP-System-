@@ -43,10 +43,11 @@ body { background: var(--bg-color); color: var(--text-dark); overflow-x: hidden;
 .topbar {
     background: var(--primary-gradient); /* Gradient Background */
     color: #fff; /* White Text */
-    padding: 10px 20px;
+    padding: 0px 20px;
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
+    height: 60px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
     position: sticky; top: 0; z-index: 1000;
 }
@@ -96,7 +97,7 @@ body { background: var(--bg-color); color: var(--text-dark); overflow-x: hidden;
     width: 250px; background: var(--sidebar-bg); padding-top: 20px; 
     position: fixed; top: 60px; /* Below Header */
     left: 0; bottom: 0; 
-    overflow-y: auto; z-index: 900; 
+    z-index: 900; 
     transition: transform 0.3s ease;
 }
 

@@ -1,83 +1,81 @@
-window.ExpenseUI = {
-  renderTable: function (expenseList) {
-    const tbody = document.getElementById("expense-table-body");
-    tbody.innerHTML = "";
+// Path: public/js/manager/expense/ui/expenseUI.js
 
-    if (expenseList.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px;">No Expenses Found</td></tr>`;
+window.ExpenseUI = {
+  tableBody: document.getElementById("expense-table-body"),
+  loadMoreContainer: document.getElementById("pagination-controls"),
+  loadMoreBtn: document.getElementById("btn-load-more"),
+  loader: document.getElementById("auth-loader"),
+
+  renderTable: function (list) {
+    this.tableBody.innerHTML = "";
+    if (!list || list.length === 0) {
+      this.tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#777;">No expenses found</td></tr>`;
       return;
     }
 
-    expenseList.forEach((expense) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-                <td>${expense.date}</td>
-                <td><span class="badge badge-${expense.category.toLowerCase().split(" ")[0]}">${expense.category}</span></td>
-                <td>${expense.description}</td>
-                <td style="font-weight: bold; color: #e74c3c;">₹${Number(expense.amount).toLocaleString()}</td>
-                <td>${expense.paymentMode}</td>
-                <td>
-                    <button class="btn-icon delete-btn" onclick="ExpenseController.deleteExpense('${expense.id}')">
-                        <i data-lucide="trash-2" style="color: red;"></i>
-                    </button>
-                </td>
-            `;
-      tbody.appendChild(row);
+    list.forEach((item) => {
+      let catColor = "#777";
+      if (item.category === "Raw Material") catColor = "#e67e22";
+      if (item.category === "Fuel") catColor = "#e74c3c";
+      if (item.category === "Salary") catColor = "#2ecc71";
+      if (item.category === "Maintenance") catColor = "#9b59b6";
+
+      const row = `
+        <tr>
+          <td>${item.date}</td>
+          <td><span style="color:${catColor}; font-weight:600;">${item.category}</span></td>
+          <td>${item.description}</td>
+          <td style="font-weight:bold;">₹${(Number(item.amount) || 0).toLocaleString()}</td>
+          <td>${item.paymentMode}</td>
+          <td>
+             <i data-lucide="trash-2" style="color:red; cursor:pointer;" 
+                onclick="window.ExpenseController.deleteExpense('${item.id}')"></i>
+          </td>
+        </tr>
+      `;
+      this.tableBody.innerHTML += row;
     });
-    lucide.createIcons();
+    if (window.lucide) window.lucide.createIcons();
   },
 
-  updateStats: function (expenseList) {
-    let total = 0;
-    let monthly = 0;
-    let weekly = 0;
-    let today = 0;
+  // 🔥 NEW: Ye Cards ko update karega (Table se koi lena dena nahi)
+  updateCards: function (total, month, week, today) {
+    const totalEl = document.getElementById("total-expense");
+    const monthEl = document.getElementById("month-expense");
+    const weeklyEl = document.getElementById("weekly-expense");
+    const todayEl = document.getElementById("today-expense");
 
-    const now = new Date();
-    const todayDateStr = now.toISOString().split("T")[0];
-    const currentMonth = (now.getMonth() + 1).toString().padStart(2, "0");
-
-    // Last 7 Days Date
-    const lastWeekDate = new Date();
-    lastWeekDate.setDate(now.getDate() - 7);
-
-    expenseList.forEach((exp) => {
-      const amount = Number(exp.amount);
-      const expDateObj = new Date(exp.date);
-
-      // 1. Total
-      total += amount;
-
-      // 2. Monthly
-      if (exp.date.split("-")[1] === currentMonth) {
-        monthly += amount;
-      }
-
-      // 3. Weekly (Logic: Date >= 7 din pehle AND Date <= Aaj)
-      if (expDateObj >= lastWeekDate && expDateObj <= now) {
-        weekly += amount;
-      }
-
-      // 4. Today
-      if (exp.date === todayDateStr) {
-        today += amount;
-      }
-    });
-
-    // UI Update
-    this.animateValue("total-expense", total);
-    this.animateValue("month-expense", monthly);
-    this.animateValue("weekly-expense", weekly);
-    this.animateValue("today-expense", today);
+    if (totalEl) totalEl.innerText = "₹" + total.toLocaleString();
+    if (monthEl) monthEl.innerText = "₹" + month.toLocaleString();
+    if (weeklyEl) weeklyEl.innerText = "₹" + week.toLocaleString();
+    if (todayEl) todayEl.innerText = "₹" + today.toLocaleString();
   },
 
-  animateValue: function (id, value) {
-    const el = document.getElementById(id);
-    if (el) el.innerText = "₹" + value.toLocaleString();
+  // Helpers
+  clearTable: function () {
+    this.tableBody.innerHTML = "";
   },
 
-  hideLoader: function () {
-    const loader = document.getElementById("auth-loader");
-    if (loader) loader.style.display = "none";
+  showLoading: function () {
+    if (this.loader) this.loader.style.display = "flex";
+  },
+  hideLoading: function () {
+    if (this.loader) this.loader.style.display = "none";
+  },
+
+  showLoadMore: function () {
+    if (this.loadMoreContainer) this.loadMoreContainer.style.display = "block";
+  },
+  hideLoadMore: function () {
+    if (this.loadMoreContainer) this.loadMoreContainer.style.display = "none";
+  },
+
+  showButtonLoading: function (isLoading) {
+    if (this.loadMoreBtn) {
+      this.loadMoreBtn.innerText = isLoading
+        ? "Loading..."
+        : "⬇️ Load More Expenses";
+      this.loadMoreBtn.disabled = isLoading;
+    }
   },
 };

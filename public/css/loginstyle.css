@@ -10,14 +10,15 @@
 
 body {
   min-height: 100vh;
-  /* Clean Professional Background */
   background: #f0f2f5;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
   position: relative;
-  overflow: hidden; /* Scrollbar na aaye */
+  overflow-x: hidden;   /* Only horizontal hide */
+  overflow-y: auto;     /* Allow vertical scroll */
+
 }
 
 /* --- Decorative Animated Blobs --- */
@@ -142,6 +143,10 @@ body {
   box-shadow: 0 0 0 4px rgba(255, 87, 34, 0.1);
   outline: none;
 }
+#welcome-screen {
+  padding: 20px;
+  text-align: center;
+}
 
 /* Icons Styling */
 .icon-left {
@@ -247,29 +252,37 @@ body {
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes loadProgress { to { width: 100%; } }
 
-/* =========================================
-   📱 MOBILE RESPONSIVE FIXES (Critical)
-   ========================================= */
 @media (max-width: 480px) {
-  body {
-      padding: 15px; /* Thoda space kam karo */
+#welcome-screen {
+  border: 2px solid black;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding: 0;
+  margin: 0 auto;
+}
+  .welcome-content {
+    border: 2px solid black;
+    
   }
 
-  .login-box {
-    padding: 30px 20px; /* Andar ka space adjust karo */
-  }
-  
-  .shape-1, .shape-2 {
-    width: 150px; /* Shapes ko aur chota karo taaki scroll na aaye */
-    height: 150px;
-    opacity: 0.6; /* Mobile par thoda light dikhe */
-  }
 
-  /* 🔥 FIX 2: Welcome Text bohot bada tha mobile ke liye */
   .fade-in {
-      font-size: 2rem; 
+    font-size: 1.5rem;
+    line-height: 1.3;
   }
+
   .slide-up {
-      font-size: 1rem;
+    font-size: 0.95rem;
+    margin-top: 8px;
+  }
+
+  .loading-bar {
+    width: 140px;
+    height: 4px;
+  }
+
+  .progress {
+    animation: loadProgress 2.5s linear forwards;
   }
 }

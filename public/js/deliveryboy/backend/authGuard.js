@@ -1,4 +1,3 @@
-
 window.AuthGuard = {
   init: function () {
     console.log("👮‍♂️ AuthGuard: Active & Watching...");
@@ -35,7 +34,7 @@ window.AuthGuard = {
           const userData = doc.data();
 
           // Case 1: Manager Verified
-          if (userData.role === "manager") {
+          if (userData.role === "delivery_boy") {
             console.log("✅ Access Granted.");
 
             // UI Updates (Universal)

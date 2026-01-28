@@ -1,12 +1,15 @@
-setTimeout(() => {
-  const screen = document.getElementById("welcome-screen");
-  if (screen) {
-    screen.style.opacity = "0"; // Dhire se gayab karo
+window.addEventListener("load", () => {
+  const welcome = document.getElementById("welcome-screen");
+
+  setTimeout(() => {
+    welcome.style.opacity = "0";
+    welcome.style.transition = "opacity 0.8s ease";
+
     setTimeout(() => {
-      screen.style.display = "none"; // Pura hata do
-    }, 1000); // 1 sec transition ke liye
-  }
-}, 3000); // Total 3 Seconds ka wait
+      welcome.style.display = "none";
+    }, 800);
+  }, 2500);
+});
 
 console.log("auth.js loaded");
 
