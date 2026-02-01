@@ -166,7 +166,7 @@
 
                     <div class="form-group">
                         <label>Monthly Salary (₹)</label>
-                        <input type="number" id="staff-salary" placeholder="E.g. 15000" required>
+                        <input type="number" id="staff-salary" min="0" placeholder="E.g. 15000" required>
                     </div>
 
                     <div class="form-row">
@@ -206,18 +206,18 @@
 
                     <div class="form-group">
                         <label>Current Advance Balance</label>
-                        <input type="text" id="current-advance-display" readonly style="background-color: #f9f9f9; font-weight: bold; color: #e74c3c;">
+                        <input type="text" id="current-advance-display" min="0" readonly style="background-color: #f9f9f9; font-weight: bold; color: #e74c3c;">
                     </div>
 
                     <div class="form-group">
                         <label>Action</label>
                         <div class="radio-group" style="display: flex; gap: 15px;">
                             <label class="radio-label" style="flex: 1; display:flex; align-items:center;">
-                                <input type="radio" name="adv_action" value="give" checked style="margin-right: 5px;">
+                                <input type="radio" name="adv_action" value="give" min="0" checked style="margin-right: 5px;">
                                 <span style="font-size: 14px;">Give Advance (+)</span>
                             </label>
                             <label class="radio-label" style="flex: 1; display:flex; align-items:center;">
-                                <input type="radio" name="adv_action" value="recover" style="margin-right: 5px;">
+                                <input type="radio" name="adv_action" value="recover" min="0" style="margin-right: 5px;">
                                 <span style="font-size: 14px;">Recover/Cut (-)</span>
                             </label>
                         </div>
@@ -225,7 +225,7 @@
 
                     <div class="form-group">
                         <label>Amount (₹)</label>
-                        <input type="number" id="advance-amount" placeholder="Enter Amount" required>
+                        <input type="number" id="advance-amount" placeholder="Enter Amount" min="0" required>
                     </div>
 
                     <button type="submit" class="save-btn btn-info">Update Balance</button>

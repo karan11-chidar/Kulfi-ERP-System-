@@ -1,10 +1,7 @@
-// Path: public/js/manager/expense/ui/expenseUI.js
-
 window.ExpenseUI = {
   tableBody: document.getElementById("expense-table-body"),
-  loadMoreContainer: document.getElementById("pagination-controls"),
-  loadMoreBtn: document.getElementById("btn-load-more"),
-  loader: document.getElementById("auth-loader"),
+  mainLoader: document.getElementById("auth-loader"),
+  scrollLoader: null,
 
   renderTable: function (list) {
     this.tableBody.innerHTML = "";
@@ -36,46 +33,52 @@ window.ExpenseUI = {
       this.tableBody.innerHTML += row;
     });
     if (window.lucide) window.lucide.createIcons();
+    this.ensureScrollLoader();
   },
 
-  // 🔥 NEW: Ye Cards ko update karega (Table se koi lena dena nahi)
-  updateCards: function (total, month, week, today) {
-    const totalEl = document.getElementById("total-expense");
-    const monthEl = document.getElementById("month-expense");
-    const weeklyEl = document.getElementById("weekly-expense");
-    const todayEl = document.getElementById("today-expense");
-
-    if (totalEl) totalEl.innerText = "₹" + total.toLocaleString();
-    if (monthEl) monthEl.innerText = "₹" + month.toLocaleString();
-    if (weeklyEl) weeklyEl.innerText = "₹" + week.toLocaleString();
-    if (todayEl) todayEl.innerText = "₹" + today.toLocaleString();
+  updateCards: function (t, m, w, td) {
+    const ids = [
+      "total-expense",
+      "month-expense",
+      "weekly-expense",
+      "today-expense",
+    ];
+    const vals = [t, m, w, td];
+    ids.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = "₹" + vals[i].toLocaleString();
+    });
   },
 
-  // Helpers
   clearTable: function () {
     this.tableBody.innerHTML = "";
   },
 
-  showLoading: function () {
-    if (this.loader) this.loader.style.display = "flex";
+  showMainLoader: function () {
+    if (this.mainLoader) this.mainLoader.style.display = "flex";
   },
-  hideLoading: function () {
-    if (this.loader) this.loader.style.display = "none";
-  },
-
-  showLoadMore: function () {
-    if (this.loadMoreContainer) this.loadMoreContainer.style.display = "block";
-  },
-  hideLoadMore: function () {
-    if (this.loadMoreContainer) this.loadMoreContainer.style.display = "none";
+  hideMainLoader: function () {
+    if (this.mainLoader) this.mainLoader.style.display = "none";
   },
 
-  showButtonLoading: function (isLoading) {
-    if (this.loadMoreBtn) {
-      this.loadMoreBtn.innerText = isLoading
-        ? "Loading..."
-        : "⬇️ Load More Expenses";
-      this.loadMoreBtn.disabled = isLoading;
+  ensureScrollLoader: function () {
+    if (!document.getElementById("scroll-loader-row")) {
+      const tr = document.createElement("tr");
+      tr.id = "scroll-loader-row";
+      tr.style.display = "none";
+      tr.innerHTML = `
+            <td colspan="6" style="text-align:center; padding:15px;">
+                <span style="display:inline-block; width:20px; height:20px; border:2px solid #ddd; border-top:2px solid #ff5722; border-radius:50%; animation:spin 1s infinite;"></span>
+                <span style="margin-left:10px; color:#666; font-size:14px;">Loading more...</span>
+            </td>
+          `;
+      this.tableBody.appendChild(tr);
+      this.scrollLoader = tr;
     }
+  },
+
+  showScrollLoader: function (show) {
+    const loader = document.getElementById("scroll-loader-row");
+    if (loader) loader.style.display = show ? "table-row" : "none";
   },
 };

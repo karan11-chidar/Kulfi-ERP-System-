@@ -1,125 +1,121 @@
-// Path: public/js/manager/expense/backend/expenseController.js
-
 window.ExpenseController = {
   currentDate: new Date().toISOString().split("T")[0],
   currentList: [],
   lastCursorTime: null,
-  PAGE_SIZE: 20,
 
-  init: function () {
-    console.log("💰 ExpenseController: Independent Stats Mode 🚀");
+  // 🔥 STATE VARIABLE (Magic Box)
+  lifeTimeTotal: 0,
 
-    // 1. Date Filter Set karo
+  PAGE_SIZE: 10,
+  isLoading: false,
+  hasMoreData: true,
+
+  init: async function () {
+    console.log("💰 ExpenseController: Optimized Mode 🚀");
+
     const dateInput = document.getElementById("exp-date-filter");
     if (dateInput) {
       dateInput.value = this.currentDate;
       dateInput.onchange = (e) => this.loadExpensesForDate(e.target.value);
     }
 
-    // 2. Table Load karo (Aaj ki date ka)
-    this.loadExpensesForDate(this.currentDate);
+    if (window.ExpenseUI) window.ExpenseUI.showMainLoader();
 
-    // 3. 🔥 Stats Load karo (Ye Table se independent hai)
-    this.loadStats();
+    // 1. Fetch Life-Time Total (SIRF EK BAAR)
+    this.lifeTimeTotal = await ExpenseService.getLifeTimeTotal();
+
+    // 2. Load Date Data
+    this.loadExpensesForDate(this.currentDate);
 
     this.setupEventListeners();
   },
 
-  // --- STATS LOGIC (Cards ke liye) ---
-  loadStats: async function () {
-    try {
-      console.log("📊 Loading Stats...");
-      // Mahine ka data lao
-      const snapshot = await ExpenseService.getMonthDataForStats();
+  loadExpensesForDate: async function (date) {
+    this.currentDate = date;
+    this.hasMoreData = true;
+    this.isLoading = false;
 
-      let monthTotal = 0;
-      let weekTotal = 0;
-      let todayTotal = 0;
-
-      const todayStr = new Date().toISOString().split("T")[0];
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      const weekStr = sevenDaysAgo.toISOString().split("T")[0];
-
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        const amount = Number(data.amount) || 0;
-        const date = data.date;
-
-        // 1. Monthly (Sab jod lo kyunki query hi monthly hai)
-        monthTotal += amount;
-
-        // 2. Today
-        if (date === todayStr) {
-          todayTotal += amount;
-        }
-
-        // 3. Weekly (Agar date pichle 7 din me hai)
-        if (date >= weekStr) {
-          weekTotal += amount;
-        }
-      });
-
-      // 4. Total All Time (Optional - Abhi Monthly + Previous rakh sakte hain)
-      // Reads bachane ke liye main Total me bhi Monthly dikha raha hu
-      // Agar tumhe Pura chahiye to bata dena, usme reads lagenge.
-      const totalAllTime = monthTotal; // Filhal same rakha hai safe side
-
-      // UI Update karo
-      if (window.ExpenseUI) {
-        window.ExpenseUI.updateCards(
-          totalAllTime,
-          monthTotal,
-          weekTotal,
-          todayTotal,
-        );
-      }
-    } catch (error) {
-      console.error("Stats Error:", error);
-    }
-  },
-
-  // --- TABLE LOGIC (List ke liye) ---
-  loadExpensesForDate: async function (date, isLoadMore = false) {
-    if (!isLoadMore) {
-      this.currentDate = date;
-      this.currentList = [];
-      this.lastCursorTime = null;
-      if (window.ExpenseUI) window.ExpenseUI.clearTable();
-      if (window.ExpenseUI) window.ExpenseUI.showLoading();
-    }
+    this.loadStats(); // Update Cards
 
     const STORAGE_KEY = `kulfi_exp_${date}`;
     const localData = localStorage.getItem(STORAGE_KEY);
 
-    if (localData && !isLoadMore) {
-      console.log(`⚡ Found Cache for ${date}`);
+    if (localData) {
       this.currentList = JSON.parse(localData);
       if (this.currentList.length > 0) {
         const lastItem = this.currentList[this.currentList.length - 1];
         this.lastCursorTime = lastItem._timestamp || null;
       }
       this.applyFilters();
+      if (window.ExpenseUI) window.ExpenseUI.hideMainLoader();
+      this.checkForNewData(date);
     } else {
-      await this.fetchFromFirebase(date, isLoadMore);
+      this.currentList = [];
+      this.lastCursorTime = null;
+      if (window.ExpenseUI) window.ExpenseUI.clearTable();
+      await this.fetchNextBatch();
     }
   },
 
-  fetchFromFirebase: async function (date, isLoadMore) {
-    if (isLoadMore && window.ExpenseUI)
-      window.ExpenseUI.showButtonLoading(true);
+  checkForNewData: async function (date) {
+    if (this.currentList.length === 0) return;
+    const latestItem = this.currentList[0];
+    let latestTime = latestItem._timestamp;
+    if (!latestTime) return;
+
+    let queryTime;
+    if (typeof latestTime.toDate === "function") queryTime = latestTime;
+    else if (latestTime.seconds)
+      queryTime = new Date(latestTime.seconds * 1000);
+    else return;
+
+    try {
+      const snapshot = await ExpenseService.getNewerExpenses(date, queryTime);
+      if (!snapshot.empty) {
+        const newItems = [];
+        let addedAmount = 0;
+
+        snapshot.forEach((doc) => {
+          if (!this.currentList.find((i) => i.id === doc.id)) {
+            const data = doc.data();
+            newItems.push({ id: doc.id, ...data, _timestamp: data.timestamp });
+            addedAmount += Number(data.amount) || 0;
+          }
+        });
+
+        if (newItems.length > 0) {
+          this.currentList = [...newItems, ...this.currentList];
+          localStorage.setItem(
+            `kulfi_exp_${date}`,
+            JSON.stringify(this.currentList),
+          );
+          this.applyFilters();
+
+          // 🔥 Local Total Update
+          this.lifeTimeTotal += addedAmount;
+          this.loadStats();
+        }
+      }
+    } catch (e) {
+      console.error("Sync failed", e);
+    }
+  },
+
+  fetchNextBatch: async function () {
+    if (this.isLoading || !this.hasMoreData) return;
+    this.isLoading = true;
+    if (window.ExpenseUI) window.ExpenseUI.showScrollLoader(true);
 
     try {
       const snapshot = await ExpenseService.getExpenses(
-        date,
+        this.currentDate,
         this.lastCursorTime,
         this.PAGE_SIZE,
       );
-
       if (snapshot.empty) {
-        if (window.ExpenseUI) window.ExpenseUI.hideLoadMore();
-        if (window.ExpenseUI) window.ExpenseUI.showButtonLoading(false);
-        if (!isLoadMore) this.applyFilters();
+        this.hasMoreData = false;
+        if (window.ExpenseUI) window.ExpenseUI.showScrollLoader(false);
+        if (this.currentList.length === 0) this.applyFilters();
         return;
       }
 
@@ -139,15 +135,18 @@ window.ExpenseController = {
 
       this.currentList = [...this.currentList, ...newItems];
       localStorage.setItem(
-        `kulfi_exp_${date}`,
+        `kulfi_exp_${this.currentDate}`,
         JSON.stringify(this.currentList),
       );
       this.applyFilters();
     } catch (error) {
       console.error(error);
-      if (window.ExpenseUI) window.ExpenseUI.hideLoading();
     } finally {
-      if (window.ExpenseUI) window.ExpenseUI.showButtonLoading(false);
+      this.isLoading = false;
+      if (window.ExpenseUI) {
+        window.ExpenseUI.hideMainLoader();
+        window.ExpenseUI.showScrollLoader(false);
+      }
     }
   },
 
@@ -165,49 +164,51 @@ window.ExpenseController = {
         selectedCategory === "all" || item.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-    this.refreshUI(filteredList);
+
+    if (window.ExpenseUI) window.ExpenseUI.renderTable(filteredList);
   },
 
-  refreshUI: function (listToRender) {
+  // 🔥 STATS UPDATE (Local Total + DB Date Stats)
+  loadStats: async function () {
+    const stats = await ExpenseService.getStats(this.currentDate);
     if (window.ExpenseUI) {
-      window.ExpenseUI.hideLoading();
-      const data = listToRender || this.currentList;
-      window.ExpenseUI.renderTable(data);
-      // NOTE: Ab hum yahan se Stats update NAHI karenge. Stats alag hain.
-
-      if (
-        this.currentList.length > 0 &&
-        this.currentList.length % this.PAGE_SIZE === 0
-      ) {
-        window.ExpenseUI.showLoadMore();
-      } else {
-        window.ExpenseUI.hideLoadMore();
-      }
+      window.ExpenseUI.updateCards(
+        this.lifeTimeTotal, // 🔥 Life-Time Total (Optimized)
+        stats.monthTotal,
+        stats.weekTotal,
+        stats.todayTotal,
+      );
     }
   },
 
   handleAddExpense: async function (e) {
     e.preventDefault();
     const btn = document.querySelector("#expense-form .save-btn");
-    btn.innerText = "Saving...";
+
+    const amount = Number(document.getElementById("exp-amount").value);
+    if (amount <= 0) {
+      alert("⚠️ Invalid Amount!");
+      return;
+    }
+
     btn.disabled = true;
+    btn.innerText = "Saving...";
 
     try {
-      const expenseData = {
+      const data = {
         category: document.getElementById("exp-category").value,
-        amount: Number(document.getElementById("exp-amount").value),
+        amount: amount,
         description: document.getElementById("exp-note").value,
         date: document.getElementById("exp-date").value,
         paymentMode: document.getElementById("exp-mode").value,
       };
 
-      const docRef = await ExpenseService.addExpense(expenseData);
+      const docRef = await ExpenseService.addExpense(data);
 
-      // List Update
-      if (expenseData.date === this.currentDate) {
+      if (data.date === this.currentDate) {
         const newItem = {
           id: docRef.id,
-          ...expenseData,
+          ...data,
           _timestamp: { seconds: Date.now() / 1000 },
         };
         this.currentList.unshift(newItem);
@@ -218,42 +219,56 @@ window.ExpenseController = {
         this.applyFilters();
       }
 
-      // 🔥 Stats Update (Reload stats to be accurate)
+      // 🔥 Local Total Update
+      this.lifeTimeTotal += amount;
       this.loadStats();
 
-      alert("✅ Added!");
       document.getElementById("expense-modal").classList.remove("active");
       document.getElementById("expense-form").reset();
       document.getElementById("exp-date").value = new Date()
         .toISOString()
         .split("T")[0];
-    } catch (error) {
-      alert("Error: " + error.message);
+      alert("✅ Saved!");
+    } catch (e) {
+      alert(e.message);
     } finally {
-      btn.innerText = "Save Expense";
       btn.disabled = false;
+      btn.innerText = "Save Expense";
     }
   },
 
   deleteExpense: async function (id) {
-    if (!confirm("Delete?")) return;
-    try {
-      await ExpenseService.deleteExpense(id);
-      this.currentList = this.currentList.filter((i) => i.id !== id);
-      localStorage.setItem(
-        `kulfi_exp_${this.currentDate}`,
-        JSON.stringify(this.currentList),
-      );
-      this.applyFilters();
+    if (!confirm("Delete this expense?")) return;
 
-      // 🔥 Stats Update
+    // Find item to subtract amount
+    const item = this.currentList.find((i) => i.id === id);
+    const amount = item ? Number(item.amount) || 0 : 0;
+
+    await ExpenseService.deleteExpense(id);
+
+    this.currentList = this.currentList.filter((i) => i.id !== id);
+    localStorage.setItem(
+      `kulfi_exp_${this.currentDate}`,
+      JSON.stringify(this.currentList),
+    );
+
+    // 🔥 Local Total Update
+    if (amount > 0) {
+      this.lifeTimeTotal -= amount;
       this.loadStats();
-    } catch (error) {
-      alert("Error: " + error.message);
     }
+
+    this.applyFilters();
   },
 
   setupEventListeners: function () {
+    window.addEventListener("scroll", () => {
+      if (
+        window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 100
+      )
+        this.fetchNextBatch();
+    });
     const form = document.getElementById("expense-form");
     if (form) form.onsubmit = (e) => this.handleAddExpense(e);
 
@@ -266,37 +281,14 @@ window.ExpenseController = {
     document.getElementById("close-expense-modal").onclick = () =>
       document.getElementById("expense-modal").classList.remove("active");
 
-    const loadMoreBtn = document.getElementById("btn-load-more");
-    if (loadMoreBtn) {
-      loadMoreBtn.onclick = () =>
-        this.fetchFromFirebase(this.currentDate, true);
-    }
+    document.getElementById("expense-search").oninput = () =>
+      this.applyFilters();
+    document.getElementById("filter-category").onchange = () =>
+      this.applyFilters();
 
-    const searchInput = document.getElementById("expense-search");
-    if (searchInput) searchInput.oninput = () => this.applyFilters();
-
-    const filterCat = document.getElementById("filter-category");
-    if (filterCat) filterCat.onchange = () => this.applyFilters();
-    // 👇 REFRESH BUTTON LOGIC
-    const refreshBtn = document.getElementById("btn-refresh-data");
-    if (refreshBtn) {
-        refreshBtn.onclick = () => {
-            // 1. Button ghumao (Visual feedback)
-            const icon = refreshBtn.querySelector("i");
-            if(icon) icon.style.animation = "spin 1s linear infinite";
-
-            // 2. Jeb (Cache) ko aag laga do 🔥 (Delete current date cache)
-            localStorage.removeItem(`kulfi_exp_${this.currentDate}`);
-
-            // 3. Wapas Load karo (Ab ye majboori mein Firebase jayega)
-            this.loadExpensesForDate(this.currentDate).then(() => {
-                if(icon) icon.style.animation = "none"; // Animation roko
-                
-                // 4. Stats bhi refresh kar lo (Safe side)
-                this.loadStats();
-                alert("✅ Data Refreshed!");
-            });
-        };
-    }
-},
+    document.getElementById("btn-refresh-data").onclick = () => {
+      localStorage.removeItem(`kulfi_exp_${this.currentDate}`);
+      this.loadExpensesForDate(this.currentDate);
+    };
+  },
 };

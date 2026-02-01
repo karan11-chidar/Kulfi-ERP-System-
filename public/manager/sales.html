@@ -78,13 +78,57 @@ Includes styled "New Purchase" Modal.
             </div>
 
             <!-- SALES STATS -->
-            <div class="stats-row" id="sales-stats">
-                <div class="mini-card success"><span>Todays Total Sales</span><h4>₹8,500</h4></div>
-                <div class="mini-card info"><span>Online Payments</span><h4>₹3,200</h4></div>
-                <div class="mini-card warning"><span>Cash Payments</span><h4>₹45,000</h4></div>
-                <div class="mini-card primary"><span>Weekly Sales</span><h4>₹52,000</h4></div>
-            </div>
+          <div class="stats-row" id="sales-stats">
+    <div class="mini-card success">
+        <span>Todays Total Sales</span>
+        <h4>₹0</h4>
+        <div class="card-icon"><i data-lucide="shopping-bag"></i></div>
+    </div>
 
+    <div class="mini-card info">
+        <span>Online Payments</span>
+        <h4>₹0</h4>
+        <div class="card-icon"><i data-lucide="smartphone"></i></div>
+    </div>
+
+    <div class="mini-card warning">
+        <span>Cash Payments</span>
+        <h4>₹0</h4>
+        <div class="card-icon"><i data-lucide="banknote"></i></div>
+    </div>
+
+    <div class="mini-card primary">
+        <span>Total Sales</span>
+        <h4>₹0</h4>
+        <div class="card-icon"><i data-lucide="calendar-check"></i></div>
+    </div>
+</div>
+
+<div class="stats-row hidden" id="purchase-stats">
+    <div class="mini-card info">
+        <span>Stock In</span>
+        <h4>0 Units</h4>
+        <div class="card-icon"><i data-lucide="package"></i></div>
+    </div>
+
+    <div class="mini-card danger">
+        <span>Todays Purchase</span>
+        <h4>₹0</h4>
+        <div class="card-icon"><i data-lucide="shopping-cart"></i></div>
+    </div>
+
+    <div class="mini-card warning">
+        <span>Weekly Purchase</span>
+        <h4>₹0</h4>
+        <div class="card-icon"><i data-lucide="history"></i></div>
+    </div>
+
+    <div class="mini-card success">
+        <span>Pending Bills</span>
+        <h4>₹0</h4>
+        <div class="card-icon"><i data-lucide="file-warning"></i></div>
+    </div>
+</div>
             <!-- PURCHASE STATS (Hidden initially) -->
             <div class="stats-row hidden" id="purchase-stats">
                 <div class="mini-card info"><span>Stock In</span><h4>500 Units</h4></div>
@@ -170,47 +214,47 @@ Includes styled "New Purchase" Modal.
                 <button class="close-modal" id="close-purchase-modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="add-purchase-form">
-                    <div class="form-group">
-                        <label>Product Name</label>
-                        <input type="text" placeholder="E.g. Kesar Pista Kulfi" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Supplier Name</label>
-                        <input type="text" placeholder="E.g. Dairy Farm Inc." required>
-                    </div>
+               <form id="add-purchase-form">
+    <div class="form-group">
+        <label>Product Name</label>
+        <input type="text" id="p-name" placeholder="E.g. Kesar Pista Kulfi" required>
+    </div>
+    
+    <div class="form-group">
+        <label>Supplier Name</label>
+        <input type="text" id="p-supplier" placeholder="E.g. Dairy Farm Inc." required>
+    </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Category</label>
-                            <select>
-                                <option>Kulfi</option>
-                                <option>Ice Cream</option>
-                                <option>Raw Material</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Cost (₹)</label>
-                            <input type="number" placeholder="0" required>
-                        </div>
-                    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Category</label>
+            <select id="p-category">
+                <option>Kulfi</option>
+                <option>Ice Cream</option>
+                <option>Raw Material</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Cost (₹)</label>
+            <input type="number" id="p-cost" placeholder="0"  min="0" required>
+        </div>
+    </div>
 
-                    <div class="form-group">
-                        <label>Quantity Received</label>
-                        <input type="number" placeholder="Qty" required>
-                    </div>
+    <div class="form-group">
+        <label>Quantity Received</label>
+        <input type="number" id="p-qty" placeholder="Qty" min="0" required>
+    </div>
 
-                    <div class="form-group">
-                        <label>Bill Status</label>
-                        <select>
-                            <option value="Paid">Paid</option>
-                            <option value="Pending">Pending</option>
-                        </select>
-                    </div>
+    <div class="form-group">
+        <label>Bill Status</label>
+        <select id="p-status">
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+        </select>
+    </div>
 
-                    <button type="submit" class="save-btn">Save Entry</button>
-                </form>
+    <button type="submit" class="save-btn">Save Entry</button>
+</form>
             </div>
         </div>
     </div>
@@ -218,12 +262,15 @@ Includes styled "New Purchase" Modal.
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
-    <script src="../js/firebase-config.js"></script>
+   <script src="../js/firebase-config.js"></script>
+<script src="../js/manager/backend/authGuard.js"></script>
 
-    <script src="../js/manager/backend/authGuard.js"></script>
-    <script src="../js/manager/sales/salesMain.js"></script>
-    <script src="../js/manager/salesJs.js"></script>
+<script src="../js/manager/stock/backend/stockService.js"></script>
 
+<script src="../js/manager/sales/backend/salesService.js"></script>
+<script src="../js/manager/sales/backend/salesController.js"></script>
+<script src="../js/manager/sales/ui/salesUI.js"></script>
+<script src="../js/manager/sales/salesMain.js"></script>
 </body>
 </html>
 

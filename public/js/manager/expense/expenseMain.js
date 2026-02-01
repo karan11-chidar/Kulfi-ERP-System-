@@ -1,33 +1,16 @@
-// Path: public/js/manager/expense/expenseMain.js
-
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("🟢 1. Main File Loaded");
+  console.log("🚀 Expense Page Initializing...");
 
-  // Check AuthGuard
   if (window.AuthGuard) {
-    console.log("🟢 2. AuthGuard Found");
     window.AuthGuard.init();
-  } else {
-    console.error("🔴 AuthGuard Missing!");
   }
 
-  // Check Controller
   if (window.ExpenseController) {
-    console.log("🟢 3. Controller Found, Initializing...");
     try {
       window.ExpenseController.init();
-    } catch (error) {
-      console.error("🔴 Controller Crash:", error);
-      // Agar crash ho, to loader hata do taaki screen dikhe
-      document.getElementById("auth-loader").style.display = "none";
-      alert("Code Crash: " + error.message);
+    } catch (e) {
+      console.error("Controller Error:", e);
     }
-  } else {
-    console.error(
-      "🔴 ExpenseController NOT Found! (Check expenseController.js for syntax errors)",
-    );
-    // Loader hatao taaki user ko pata chale kuch gadbad hai
-    document.getElementById("auth-loader").style.display = "none";
   }
 
   // Sidebar Logic

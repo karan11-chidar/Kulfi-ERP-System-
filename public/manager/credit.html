@@ -79,21 +79,30 @@
                 </div>
             </div>
 
-            <div class="filter-bar">
-                <div class="search-box">
-                    <i data-lucide="search"></i>
-                    <input type="text" id="credit-search" placeholder="Search Shop Name...">
-                </div>
-                <select class="filter-select" id="sort-credit">
-                    <option value="high">Sort by Highest Credit</option>
-                    <option value="low">Sort by Lowest Credit</option>
-                    <option value="name">Sort by Name</option>
-                </select>
-                <button class="btn btn-add" id="btn-add-shop-credit">
-                    <i data-lucide="plus"></i> Add New Credit
-                </button>
-            </div>
+         <div class="filter-bar">
+    <div class="view-toggles" style="display: flex; gap: 10px; margin-right: 15px; align-items: center;">
+        <input type="date" id="filter-date" style="padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: 600; color: #333; outline: none;">
+        
+        <button id="filter-pending" class="filter-btn" style="padding: 8px 15px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: 600;">
+            ⚠️ Pending
+        </button>
+    </div>
 
+    <div class="search-box">
+        <i data-lucide="search"></i>
+        <input type="text" id="credit-search" placeholder="Search Shop Name or Mobile...">
+    </div>
+    
+    <select class="filter-select" id="sort-credit">
+        <option value="high">Highest Credit</option>
+        <option value="low">Lowest Credit</option>
+        <option value="name">Name (A-Z)</option>
+    </select>
+
+    <button class="btn btn-add" id="btn-add-shop-credit">
+        <i data-lucide="plus"></i> Add New Shop
+    </button>
+</div>
             <div class="table-container">
                 <table>
                     <thead>
@@ -145,7 +154,7 @@
                     </div>
                     <div class="form-group">
                         <label>Amount (₹)</label>
-                        <input type="number" id="modal-amount" placeholder="Enter Amount" required>
+                        <input type="number" id="modal-amount" placeholder="Enter Amount" min="0" required>
                     </div>
                     <div class="form-group">
                         <label>Note (Optional)</label>
@@ -164,38 +173,52 @@
                 <button class="close-modal" id="close-add-shop-modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="add-shop-form">
-                    <div class="form-group">
-                        <label>Shop Name</label>
-                        <input type="text" id="new-shop-name" placeholder="Enter Shop Name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Mobile Number</label>
-                        <input type="tel" id="new-shop-mobile" placeholder="Enter Mobile Number" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Address / Area</label>
-                        <input type="text" id="new-shop-address" placeholder="Enter Location" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Initial Credit Amount (₹)</label>
-                        <input type="number" id="new-shop-credit" placeholder="Enter Opening Balance" required>
-                    </div>
-                    <button type="submit" class="save-btn" style="background: var(--success);">Add Shop</button>
-                </form>
+               <form id="add-shop-form">
+    <div class="form-group">
+        <label>Shop Name</label>
+        <input type="text" id="new-shop-name" placeholder="Enter Shop Name" required>
+    </div>
+
+    <div class="form-group">
+        <label>Owner Name</label>
+        <input type="text" id="new-shop-owner" placeholder="Enter Owner Name" required>
+    </div>
+
+    <div class="form-group">
+        <label>Mobile Number</label>
+        <input type="tel" id="new-shop-mobile" placeholder="Enter Mobile Number" required>
+    </div>
+
+    <div class="form-group">
+        <label>Address / Area</label>
+        <input type="text" id="new-shop-address" placeholder="Enter Location" required>
+    </div>
+
+    <div class="form-group">
+        <label>Initial Credit Amount (₹)</label>
+        <input type="number" id="new-shop-credit" placeholder="Enter Opening Balance"  min="0" required>
+    </div>
+
+    <button type="submit" class="save-btn" style="background: var(--success);">Add Shop</button>
+</form>
             </div>
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    
-    <script src="../js/firebase-config.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-    <script src="../js/manager/backend/authGuard.js"></script>
+<script src="../js/firebase-config.js"></script>
+<script src="../js/manager/backend/authGuard.js"></script>
 
-    <script src="../js/manager/creditJs.js"></script>
-    <script src="../js/manager/credit/creditMain.js"></script>
+<script src="../js/manager/credit/backend/creditService.js"></script>
+
+<script src="../js/manager/credit/ui/creditUI.js"></script>
+
+<script src="../js/manager/credit/backend/creditController.js"></script>
+
+<script src="../js/manager/credit/creditMain.js"></script>
+
 </body>
 </html>
