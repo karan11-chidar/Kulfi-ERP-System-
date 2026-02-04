@@ -11,6 +11,13 @@
     <link rel="stylesheet" href="../css/deliveryboy/dashboard.css">
 </head>
 <body>
+     <div id="auth-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 99999; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+        <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #2196f3; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <h3 style="margin-top: 20px; color: #333; font-family: sans-serif;">Verifying Delivery Boy Access...</h3>
+    </div>
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 
     <div class="mobile-header">
         <i data-lucide="menu" class="header-icon" onclick="toggleMenu()"></i>
@@ -120,8 +127,15 @@
     <div class="sidebar" id="sidebar">
         <h2 style="color:var(--primary); margin-bottom:30px;">Kulfi ERP</h2>
         <a href="./profile.html" class="side-link"><i data-lucide="user"></i> My Profile</a>
-        <a href="../index.html" class="side-link" style="color:red;"><i data-lucide="log-out"></i> Logout</a>
+       <a href="../index.html" id="logout-btn" class="side-link" style="color:red;"><i data-lucide="log-out"></i> Logout</a>
     </div>
+
+   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="../js/firebase-config.js"></script>
     <script src="../js/deliveryboy/dashboard.js"></script>
+        <script src="../js/deliveryboy/backend/authGuard.js"></script>
+
 </body>
 </html>

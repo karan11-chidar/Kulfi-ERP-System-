@@ -1,5 +1,5 @@
 window.SalesService = {
-  // 1. GET SALES (List) - No Change
+  // --- 1. GET SALES (Optimized: 10-10 karke layega) ---
   getSales: async function (lastDoc, limitCount = 10, filters = {}) {
     try {
       let q = db.collection("sales");
@@ -26,7 +26,7 @@ window.SalesService = {
     }
   },
 
-  // 2. GET PURCHASES - No Change
+  // --- 2. GET PURCHASES (Optimized: 10-10 karke layega) ---
   getPurchases: async function (lastDoc, limitCount = 10, filters = {}) {
     try {
       let q = db.collection("purchases");
@@ -49,7 +49,7 @@ window.SalesService = {
     }
   },
 
-  // 3. ADD PURCHASE - No Change
+  // --- 3. ADD PURCHASE ---
   addPurchase: async function (data) {
     const today = new Date().toISOString().split("T")[0];
     return db.collection("purchases").add({
@@ -61,15 +61,29 @@ window.SalesService = {
     });
   },
 
-  // 🔥 4. GET STATS (Optimized: Removed Weekly) 🔥
+  // --- 4. UPDATE PURCHASE ---
+  updatePurchase: async function (id, data) {
+    return db
+      .collection("purchases")
+      .doc(id)
+      .update({
+        ...data,
+        cost: Number(data.cost) || 0,
+        quantity: Number(data.quantity) || 0,
+      });
+  },
+
+  // --- 5. GET STATS (Sirf Aaj ka aur Last Week ka data padhega - Safe) ---
   getStats: async function (targetDate) {
     try {
       const today = targetDate || new Date().toISOString().split("T")[0];
+
+      // Calculate Date 7 days ago
       const d = new Date(today);
       d.setDate(d.getDate() - 7);
       const lastWeek = d.toISOString().split("T")[0];
 
-      // --- SALES STATS (Sirf Today) ---
+      // A. Sales Stats (Sirf Aaj ki padho)
       let salesTotal = 0,
         onlineTotal = 0,
         cashTotal = 0;
@@ -85,13 +99,13 @@ window.SalesService = {
         if (d.paymentType === "cash") cashTotal += amt;
       });
 
-      // --- PURCHASE STATS (Weekly abhi bhi rakh sakte hain ya hata sakte hain, yahan rakha hai) ---
+      // B. Purchase Stats (Sirf Aaj ki aur Pending bills)
       let purchaseTotal = 0,
         stockInCount = 0,
         weeklyPurchase = 0,
         pendingBills = 0;
 
-      // Today Purchase
+      // Today's Purchase
       const purchaseSnap = await db
         .collection("purchases")
         .where("date", "==", today)
@@ -99,10 +113,11 @@ window.SalesService = {
       purchaseSnap.forEach((doc) => {
         const d = doc.data();
         purchaseTotal += Number(d.cost) || 0;
-        stockInCount += Number(d.quantity) || 0;
+        // Total Units count karo (agar totalUnits field hai toh wo, nahi toh quantity)
+        stockInCount += Number(d.totalUnits) || Number(d.quantity) || 0;
       });
 
-      // Weekly Purchase (Purchase ke liye reads kam hote hain, isliye rakh sakte hain)
+      // Weekly Purchase (Pichle 7 din) - Ye thoda heavy ho sakta hai agar bohot kharidari ho, par zaroori hai
       const weekPurchSnap = await db
         .collection("purchases")
         .where("date", ">=", lastWeek)
@@ -144,36 +159,22 @@ window.SalesService = {
     }
   },
 
-  // 🔥 5. NEW: LIFE-TIME TOTAL SALES (One-Time Fetch) 🔥
-  getLifeTimeTotalSales: async function () {
-    try {
-      console.log("💰 Fetching Life-Time Sales Total (One Time)...");
-      // Note: High volume hone par ye thoda heavy ho sakta hai startup par
-      const snap = await db.collection("sales").get();
-      let total = 0;
-      snap.forEach((doc) => (total += Number(doc.data().amount) || 0));
-      return total;
-    } catch (e) {
-      console.error("LifeTime Sales Error:", e);
-      return 0;
-    }
-  },
+  // ❌ REMOVED: getLifeTimeTotalSales (Ye bohot reads kha raha tha)
 
-  // 6. GET STAFF
+  // --- 6. GET STAFF ---
   getDeliveryStaff: async function () {
     try {
+      // Sirf active delivery boys lao (Reads kam honge)
       const snap = await db
         .collection("users")
         .where("role", "==", "delivery_boy")
         .get();
       let staff = [];
       snap.forEach((doc) => {
-        const data = doc.data();
-        if (data.name) staff.push({ name: data.name });
+        if (doc.data().name) staff.push({ name: doc.data().name });
       });
       return staff;
     } catch (e) {
-      console.error("Staff Fetch Error:", e);
       return [];
     }
   },

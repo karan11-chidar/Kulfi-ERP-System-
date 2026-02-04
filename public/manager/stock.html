@@ -9,27 +9,21 @@
   </head>
 
   <body>
-     <div id="auth-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f0f2f5; z-index: 99999; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+    <div id="auth-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f0f2f5; z-index: 99999; display: flex; justify-content: center; align-items: center; flex-direction: column;">
         <div class="spinner" style="width: 50px; height: 50px; border: 4px solid #ddd; border-top: 4px solid #ff5722; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
         <h4 style="margin-top: 15px; font-family: sans-serif; color: #555;">Loading Stock Data...</h4>
     </div>
     <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
 
-
     <header class="topbar">
       <div class="header-left">
-        <button id="menu-btn" class="menu-toggle">
-          <i data-lucide="menu"></i>
-        </button>
+        <button id="menu-btn" class="menu-toggle"><i data-lucide="menu"></i></button>
         <h2>Kulfi ERP</h2>
       </div>
       <div class="user-info">
         <span class="role-badge">Manager</span>
         <div class="profile-icon">
-          <img
-            src="https://ui-avatars.com/api/?name=Manager+User&background=0D8ABC&color=fff"
-            alt="User"
-          />
+          <img src="https://ui-avatars.com/api/?name=Manager+User&background=0D8ABC&color=fff" alt="User" />
         </div>
       </div>
     </header>
@@ -37,20 +31,16 @@
     <div class="layout">
       <aside class="sidebar" id="sidebar">
         <button id="close-sidebar" class="close-btn">&times;</button>
-        <div class="sidebar-header">
-          <h3>Menu</h3>
-        </div>
+        <div class="sidebar-header"><h3>Menu</h3></div>
         <nav class="nav-links">
-          <a href="./dashboard.html" ><i data-lucide="layout-dashboard"></i> Dashboard</a>
+          <a href="./dashboard.html"><i data-lucide="layout-dashboard"></i> Dashboard</a>
           <a href="./stock.html" class="active"><i data-lucide="package"></i> Stock</a>
           <a href="./sales.html"><i data-lucide="bar-chart-3"></i> Sales/Purchase</a>
           <a href="./credit.html"><i data-lucide="credit-card"></i> Credit</a>
           <a href="./shops.html"><i data-lucide="store"></i> Shops</a>
           <a href="./expense.html"><i data-lucide="banknote"></i> Expenses</a>
           <a href="./staff.html"><i data-lucide="users"></i> Staff</a>
-          <a href="#" id="logout-btn" class="logout">
-              <i data-lucide="log-out"></i> <span>Logout</span>
-          </a>        
+          <a href="#" id="logout-btn" class="logout"><i data-lucide="log-out"></i> <span>Logout</span></a>        
         </nav>
       </aside>
 
@@ -60,83 +50,59 @@
         <div class="page-header">
           <h3>Stock Management</h3>
           <div class="header-actions">
-            <button class="btn btn-assign" id="assign-stock-btn">
-              <i data-lucide="arrow-right-circle"></i> Assign to Boy
-            </button>
-            <button class="btn btn-return" id="return-stock-btn">
-              <i data-lucide="arrow-left-circle"></i> Return Stock
-            </button>
-            <button class="btn btn-damage" id="damage-stock-btn">
-              <i data-lucide="alert-triangle"></i> Damaged Entry
-            </button>
+            <button class="btn btn-assign" id="assign-stock-btn"><i data-lucide="arrow-right-circle"></i> Assign to Boy</button>
+            <button class="btn btn-return" id="return-stock-btn"><i data-lucide="arrow-left-circle"></i> Return Stock</button>
+            <button class="btn btn-damage" id="damage-stock-btn"><i data-lucide="alert-triangle"></i> Damaged Entry</button>
           </div>
         </div>
 
         <div class="stats-row">
           <div class="mini-card">
-            <span>Godown Stock</span>
-            <h4>12 Items</h4>
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+              <div>
+                <span>Godown Stock</span>
+                <div id="godown-stats-display"><h4>Loading...</h4></div>
+              </div>
+              <div class="icon-box" style="background:#e3f2fd; padding:10px; border-radius:50%;"><i data-lucide="package" style="color:#0D8ABC;"></i></div>
+            </div>
           </div>
-
           <div class="mini-card info">
-            <span id="boy-stock-title">Stock with Boys</span>
-            <h4 id="boy-stock-count">0 Items</h4>
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+              <div><span id="boy-stock-title">Stock with Boys</span><h4 id="boy-stock-count">0 Items</h4></div>
+              <div class="icon-box" style="background:#e1f5fe; padding:10px; border-radius:50%;"><i data-lucide="users" style="color:#0288d1;"></i></div>
+            </div>
           </div>
-
           <div class="mini-card danger">
-            <span>Out of Stock</span>
-            <h4>1 Item</h4>
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+              <div><span>Out of Stock</span><h4>0 Items</h4></div>
+              <div class="icon-box" style="background:#fdedec; padding:10px; border-radius:50%;"><i data-lucide="alert-circle" style="color:#e74c3c;"></i></div>
+            </div>
           </div>
-
           <div class="mini-card danger" style="position: relative">
-            <span>Total Damaged</span>
-            <h4 id="total-damaged-count">0 Items</h4>
-            <button
-              id="reset-damage-btn"
-              style="
-                position: absolute;
-                top: 15px;
-                right: 15px;
-                background: none;
-                border: none;
-                cursor: pointer;
-                padding: 0;
-              "
-            >
-              <i
-                data-lucide="rotate-ccw"
-                style="width: 16px; height: 16px; color: #e74c3c; opacity: 0.7"
-              ></i>
-            </button>
+             <div style="display:flex; justify-content:space-between; align-items:start;">
+              <div><span>Total Damaged</span><h4 id="total-damaged-count">0 Items</h4></div>
+              <div class="icon-box" style="background:#fdedec; padding:10px; border-radius:50%;"><i data-lucide="archive" style="color:#c0392b;"></i></div>
+            </div>
+            <button id="reset-damage-btn" style="position: absolute; top: 5px; right: 5px; background: none; border: none; cursor: pointer; padding: 5px;"><i data-lucide="rotate-ccw" style="width: 14px; height: 14px; color: #777;"></i></button>
           </div>
         </div>
 
         <div class="filter-bar">
           <div class="search-box">
             <i data-lucide="search"></i>
-            <input
-              type="text"
-              id="stock-search"
-              placeholder="Search product name..."
-            />
+            <input type="text" id="stock-search" placeholder="Search product..." />
           </div>
-
-          <select class="filter-select">
+          <select class="filter-select" id="stock-category-filter">
             <option value="all">All Categories</option>
             <option value="kulfi">Kulfi</option>
             <option value="ice-cream">Ice Cream</option>
-            <option value="shakes">Shakes</option>
+            <option value="Candy">Candy</option>
+            <option value="Cup">Cup</option>
+            <option value="Cone">Cone</option>
+            <option value="Raw Material">Raw Material</option>
           </select>
-
-          <select
-            class="filter-select"
-            id="boy-stock-filter"
-            style="border-color: var(--info)"
-          >
+          <select class="filter-select" id="boy-stock-filter" style="border-color: var(--info);">
             <option value="all">All Boys Stock</option>
-            <option value="Ramesh Kumar">Ramesh Kumar</option>
-            <option value="Suresh Singh">Suresh Singh</option>
-            <option value="Rahul Verma">Rahul Verma</option>
           </select>
         </div>
 
@@ -145,17 +111,16 @@
             <thead>
               <tr>
                 <th>Product Name</th>
+                <th>Packets</th>
+                <th>Total Units</th>
                 <th>Category</th>
                 <th>Price (₹)</th>
-                <th>Stock Qty</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody id="stock-table-body">
-              <tr>
-                <td colspan="6" style="text-align: center">Loading...</td>
-              </tr>
+              <tr><td colspan="7" style="text-align: center">Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -164,47 +129,24 @@
 
     <div id="assign-modal" class="modal-overlay">
       <div class="modal-content">
-        <div class="modal-header">
-          <h3>Assign Stock to Delivery Boy</h3>
-          <button class="close-modal" data-target="assign-modal">
-            &times;
-          </button>
-        </div>
+        <div class="modal-header"><h3>Assign Stock</h3><button class="close-modal" data-target="assign-modal">&times;</button></div>
         <div class="modal-body">
           <form id="assign-form">
-            <div class="form-group">
-              <label>Select Delivery Boy</label>
-              <select id="assign-boy-select" required>
-                <option value="">-- Select --</option>
-                <option value="Ramesh Kumar">Ramesh Kumar</option>
-                <option value="Suresh Singh">Suresh Singh</option>
-                <option value="Rahul Verma">Rahul Verma</option>
-              </select>
+            <div class="form-group"><label>Select Delivery Boy</label><select id="assign-boy-select" required><option value="">-- Select --</option></select></div>
+            <div class="form-group"><label>Select Product</label><select id="assign-product-select" required><option value="">-- Select Product --</option></select></div>
+            
+            <div class="form-row" style="display:flex; gap:10px;">
+                <div class="form-group" style="flex:1;">
+                    <label>Packets</label>
+                    <input type="number" id="assign-packets" placeholder="Pkts">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Pieces (Loose)</label>
+                    <input type="number" id="assign-pieces" placeholder="Pcs">
+                </div>
             </div>
-            <div class="form-group">
-              <label>Select Product</label>
-              <select required>
-                <option>Kesar Pista Kulfi</option>
-                <option>Malai Kulfi</option>
-                <option>Mango Dolly</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Quantity to Assign</label>
-              <input
-                type="number"
-                id="assign-qty"
-                placeholder="Enter Qty"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              class="save-btn"
-              style="background: var(--info)"
-            >
-              Assign Stock
-            </button>
+
+            <button type="submit" class="save-btn" style="background: var(--info)">Assign Stock</button>
           </form>
         </div>
       </div>
@@ -212,49 +154,24 @@
 
     <div id="return-modal" class="modal-overlay">
       <div class="modal-content">
-        <div class="modal-header">
-          <h3>Return Stock from Delivery Boy</h3>
-          <button class="close-modal" data-target="return-modal">
-            &times;
-          </button>
-        </div>
+        <div class="modal-header"><h3>Return Stock</h3><button class="close-modal" data-target="return-modal">&times;</button></div>
         <div class="modal-body">
           <form id="return-form">
-            <div class="form-group">
-              <label>Select Delivery Boy</label>
-              <select id="return-boy-select" required>
-                <option value="">-- Select --</option>
-                <option value="Ramesh Kumar">Ramesh Kumar</option>
-                <option value="Suresh Singh">Suresh Singh</option>
-                <option value="Rahul Verma">Rahul Verma</option>
-              </select>
+            <div class="form-group"><label>Select Delivery Boy</label><select id="return-boy-select" required><option value="">-- Select --</option></select></div>
+            <div class="form-group"><label>Select Product</label><select id="return-product-select" required><option value="">-- Select Product --</option></select></div>
+            
+            <div class="form-row" style="display:flex; gap:10px;">
+                <div class="form-group" style="flex:1;">
+                    <label>Packets</label>
+                    <input type="number" id="return-packets" placeholder="Pkts">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Pieces (Loose)</label>
+                    <input type="number" id="return-pieces" placeholder="Pcs">
+                </div>
             </div>
-            <div class="form-group">
-              <label>Select Product</label>
-              <select required>
-                <option>Kesar Pista Kulfi</option>
-                <option>Malai Kulfi</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Quantity Returned</label>
-              <input
-                type="number"
-                id="return-qty"
-                placeholder="Enter Qty"
-                required
-              />
-            </div>
-            <p style="font-size: 12px; color: #e74c3c; margin-bottom: 10px">
-              * This will add stock back to Godown.
-            </p>
-            <button
-              type="submit"
-              class="save-btn"
-              style="background: var(--warning)"
-            >
-              Process Return
-            </button>
+
+            <button type="submit" class="save-btn" style="background: var(--warning)">Process Return</button>
           </form>
         </div>
       </div>
@@ -262,48 +179,43 @@
 
     <div id="damage-modal" class="modal-overlay">
       <div class="modal-content">
-        <div class="modal-header">
-          <h3>Report Damaged Stock</h3>
-          <button class="close-modal" data-target="damage-modal">
-            &times;
-          </button>
-        </div>
+        <div class="modal-header"><h3>Report Damage</h3><button class="close-modal" data-target="damage-modal">&times;</button></div>
         <div class="modal-body">
           <form id="damage-form">
-            <div class="form-group">
-              <label>Select Product</label>
-              <select required>
-                <option>Kesar Pista Kulfi</option>
-                <option>Malai Kulfi</option>
-                <option>Mango Dolly</option>
-              </select>
+            <div class="form-group"><label>Select Product</label><select id="damage-product-select" required><option value="">-- Select Product --</option></select></div>
+            
+            <div class="form-row" style="display:flex; gap:10px;">
+                <div class="form-group" style="flex:1;">
+                    <label>Packets</label>
+                    <input type="number" id="damage-packets" placeholder="Pkts">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Pieces (Loose)</label>
+                    <input type="number" id="damage-pieces" placeholder="Pcs">
+                </div>
             </div>
-            <div class="form-group">
-              <label>Quantity Damaged</label>
-              <input
-                type="number"
-                id="damage-qty"
-                placeholder="Enter Qty"
-                required
-              />
+
+            <div class="form-group"><label>Reason</label><input type="text" id="damage-reason" placeholder="Reason" /></div>
+            <button type="submit" class="save-btn" style="background: var(--danger)">Report Damage</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="edit-stock-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header"><h3>Edit Product Details</h3><button class="close-modal" data-target="edit-stock-modal">&times;</button></div>
+        <div class="modal-body">
+          <form id="edit-stock-form">
+            <input type="hidden" id="edit-id">
+            <div class="form-group"><label>Product Name</label><input type="text" id="edit-name" required placeholder="Name"></div>
+            <div class="form-group"><label>Category</label><select id="edit-category" required><option value="kulfi">Kulfi</option><option value="ice-cream">Ice Cream</option><option value="Candy">Candy</option><option value="Cup">Cup</option><option value="Cone">Cone</option><option value="Raw Material">Raw Material</option></select></div>
+            <div class="form-row" style="display:flex; gap:10px;">
+                <div class="form-group" style="flex:1;"><label>Total Units</label><input type="number" id="edit-qty" required placeholder="Qty"></div>
+                <div class="form-group" style="flex:1;"><label>Items/Pkt</label><input type="number" id="edit-packet-size" required placeholder="Size"></div>
             </div>
-            <div class="form-group">
-              <label>Reason / Note</label>
-              <input
-                type="text"
-                placeholder="E.g. Melted, Broken Stick, Expired"
-              />
-            </div>
-            <p style="font-size: 12px; color: #e74c3c; margin-bottom: 10px">
-              * This will remove stock permanently (Loss).
-            </p>
-            <button
-              type="submit"
-              class="save-btn"
-              style="background: var(--danger)"
-            >
-              Report Damage
-            </button>
+            <div class="form-group"><label>Price (₹)</label><input type="number" id="edit-price" required placeholder="Price"></div>
+            <button type="submit" class="save-btn" style="background: var(--success)">Update Product</button>
           </form>
         </div>
       </div>
@@ -312,14 +224,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    
     <script src="../js/firebase-config.js"></script>
-
     <script src="../js/manager/backend/authGuard.js"></script>
     <script src="../js/manager/stock/backend/stockService.js"></script>
     <script src="../js/manager/stock/ui/stockUI.js"></script>
     <script src="../js/manager/stock/backend/stockController.js"></script>
     <script src="../js/manager/stock/stockMain.js"></script>
-
   </body>
 </html>

@@ -59,10 +59,11 @@ window.SalesUI = {
     if (window.lucide) window.lucide.createIcons();
   },
 
+  // 🔥 UPDATED: Added Edit Button
   renderPurchaseTable: function (list) {
     this.purchaseBody.innerHTML = "";
     if (list.length === 0) {
-      this.purchaseBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#777;">No Purchase Records Found</td></tr>`;
+      this.purchaseBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#777;">No Purchase Records Found</td></tr>`;
       return;
     }
     list.forEach((item) => {
@@ -71,29 +72,46 @@ window.SalesUI = {
         item.status === "Paid"
           ? "color: var(--success);"
           : "color: var(--danger);";
+
+      // Data Extraction
+      const packets = item.quantity || 0;
+      // Agar purana data hai jisme totalUnits nahi tha, toh quantity hi use karo fallback ke liye
+      const totalUnits = item.totalUnits
+        ? item.totalUnits
+        : item.unitDetail || packets;
+
+      // Unit Type Badge (Optional styling)
+      const typeBadge = item.unitType === "packet" ? "(Pkt)" : "(Pc)";
+
       const row = `
             <tr>
                 <td><strong>${item.itemName}</strong><br><small style="color:#888">${item.category}</small></td>
                 <td>${item.supplier || "-"}</td>
-                <td>${item.quantity || 0}</td>
+                
+                <td style="font-weight:600; color:#333;">${packets} <span style="font-size:10px; color:#777;">${typeBadge}</span></td>
+                
+                <td style="font-weight:bold; color:#0D8ABC;">${totalUnits}</td>
+                
                 <td>₹${cost.toLocaleString()}</td>
                 <td>${item.date}</td>
                 <td style="${statusColor} font-weight:600;">${item.status}</td>
+                <td>
+                    <button onclick="window.SalesController.openEditPurchase('${item.id}', '${item.itemName}', '${item.supplier}', ${cost}, ${packets}, '${item.status}', '${item.category}', '${item.unitDetail}')"
+                    style="border:none; background:none; cursor:pointer;" title="Edit">
+                        <i data-lucide="edit-2" style="width:16px; color:#0D8ABC;"></i>
+                    </button>
+                </td>
             </tr>`;
       this.purchaseBody.innerHTML += row;
     });
     if (window.lucide) window.lucide.createIcons();
   },
+
   injectStockCheckbox: function () {
     const form = document.getElementById("add-purchase-form");
-    if (!form) return;
-
-    // Check karo agar pehle se checkbox hai toh dobara mat lagao
-    if (document.getElementById("chk-add-stock-wrapper")) return;
+    if (!form || document.getElementById("chk-add-stock-wrapper")) return;
 
     const btnContainer = form.querySelector(".save-btn");
-
-    // HTML Create karo
     const wrapper = document.createElement("div");
     wrapper.id = "chk-add-stock-wrapper";
     wrapper.style.marginBottom = "15px";
@@ -106,47 +124,27 @@ window.SalesUI = {
             Add this to Stock Page? 📦
         </label>
       `;
-
-    // Button se theek pehle insert karo
     form.insertBefore(wrapper, btnContainer);
   },
 
-  // 🔥 UPDATE STATS (Weekly ki jagah Total Sales dikhana)
   updateStats: function (stats) {
-    // 1. TODAY'S SALES
     document.querySelector("#sales-stats .success h4").innerText =
       "₹" + (stats.salesTotal || 0).toLocaleString();
-
-    // 2. ONLINE & CASH
     document.querySelector("#sales-stats .info h4").innerText =
       "₹" + (stats.onlineTotal || 0).toLocaleString();
     document.querySelector("#sales-stats .warning h4").innerText =
       "₹" + (stats.cashTotal || 0).toLocaleString();
+    document.querySelector("#sales-stats .primary h4").innerText =
+      "₹" + (stats.lifeTimeSales || 0).toLocaleString();
 
-    // 3. 🔥 TOTAL LIFETIME SALES (Changed from Weekly)
-    const totalSaleEl = document.querySelector("#sales-stats .primary h4");
-    if (totalSaleEl) {
-      // Hame yahan label bhi change karna chahiye agar HTML me 'Weekly' likha hai
-      // Lekin filhal hum value replace kar rahe hain
-      totalSaleEl.innerText = "₹" + (stats.lifeTimeSales || 0).toLocaleString();
-
-      // Optional: Label change karne ka code
-      const labelEl = totalSaleEl.parentElement.querySelector("p");
-      if (labelEl) labelEl.innerText = "Total Sales";
-    }
-
-    // PURCHASE CARDS
     document.querySelector("#purchase-stats .info h4").innerText =
       (stats.stockInCount || 0) + " Units";
     document.querySelector("#purchase-stats .danger h4").innerText =
       "₹" + (stats.purchaseTotal || 0).toLocaleString();
-    const weekPurchEl = document.querySelector("#purchase-stats .warning h4");
-    if (weekPurchEl)
-      weekPurchEl.innerText =
-        "₹" + (stats.weeklyPurchase || 0).toLocaleString();
-    const pendingEl = document.querySelector("#purchase-stats .success h4");
-    if (pendingEl)
-      pendingEl.innerText = "₹" + (stats.pendingBills || 0).toLocaleString();
+    document.querySelector("#purchase-stats .warning h4").innerText =
+      "₹" + (stats.weeklyPurchase || 0).toLocaleString();
+    document.querySelector("#purchase-stats .success h4").innerText =
+      "₹" + (stats.pendingBills || 0).toLocaleString();
 
     if (window.lucide) window.lucide.createIcons();
   },
@@ -156,10 +154,7 @@ window.SalesUI = {
     if (!select) return;
     select.innerHTML = '<option value="all">All Staff</option>';
     staffList.forEach((boy) => {
-      const option = document.createElement("option");
-      option.value = boy.name;
-      option.innerText = boy.name;
-      select.appendChild(option);
+      select.innerHTML += `<option value="${boy.name}">${boy.name}</option>`;
     });
   },
 

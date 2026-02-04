@@ -184,80 +184,114 @@ Includes styled "New Purchase" Modal.
             </div>
 
             <!-- PURCHASE TABLE -->
-            <div id="purchase-section" class="table-container hidden">
-                <h4 class="table-title">Purchase Records (Stock In)</h4>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Supplier</th>
-                            <th>Quantity</th>
-                            <th>Cost</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="purchase-table-body">
-                        <!-- JS renders rows here -->
-                    </tbody>
-                </table>
-            </div>
+           <div id="purchase-section" class="table-container hidden">
+    <h4 class="table-title">Purchase Records (Stock In)</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Supplier</th>
+                <th>Packets</th>
+                <th>Total Units</th>
+                <th>Cost</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="purchase-table-body">
+            </tbody>
+    </table>
+</div>
 
         </main>
     </div>
 
     <!-- NEW PURCHASE MODAL (Styled) -->
-    <div id="purchase-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>New Stock Purchase</h3>
-                <button class="close-modal" id="close-purchase-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-               <form id="add-purchase-form">
-    <div class="form-group">
-        <label>Product Name</label>
-        <input type="text" id="p-name" placeholder="E.g. Kesar Pista Kulfi" required>
+   <div id="purchase-modal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Add New Purchase</h3>
+      <button class="close-modal" id="close-purchase-modal">&times;</button>
     </div>
+    <div class="modal-body">
+  <form id="add-purchase-form">
+    <input type="hidden" id="p-id">
     
-    <div class="form-group">
-        <label>Supplier Name</label>
-        <input type="text" id="p-supplier" placeholder="E.g. Dairy Farm Inc." required>
-    </div>
+    <div class="form-row" style="display:flex; gap:10px;">
 
-    <div class="form-row">
-        <div class="form-group">
-            <label>Category</label>
-            <select id="p-category">
-                <option>Kulfi</option>
-                <option>Ice Cream</option>
-                <option>Raw Material</option>
-            </select>
+            <div class="form-group" style="flex:1;">
+              <label>Item Name</label>
+              <input type="text" id="p-name" placeholder="Item Name" required />
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label>Category</label>
+               <select id="p-category">
+               <option value="kulfi">Kulfi</option>
+               <option value="Candy">Candy</option>
+               <option value="Cup">Cup</option>
+               <option value="Cone">Cone</option>
+              </select>
+            </div>
         </div>
+
         <div class="form-group">
-            <label>Cost (₹)</label>
-            <input type="number" id="p-cost" placeholder="0"  min="0" required>
+          <label>Supplier Name</label>
+          <input type="text" id="p-supplier" placeholder="Supplier Name" />
         </div>
-    </div>
 
-    <div class="form-group">
-        <label>Quantity Received</label>
-        <input type="number" id="p-qty" placeholder="Qty" min="0" required>
-    </div>
+        <div class="form-row" style="display:flex; gap:10px; align-items:flex-end; background:#f8f9fa; padding:10px; border-radius:8px; margin-bottom:10px;">
+            
+            <div class="form-group" style="width: 30%;">
+                <label>Unit Type</label>
+                <select id="p-unit-type" style="padding:8px;" onchange="window.SalesController.togglePacketField()">
+                    <option value="piece">Pieces (Single)</option>
+                    <option value="packet">Packet / Box</option>
+                </select>
+            </div>
 
-    <div class="form-group">
-        <label>Bill Status</label>
-        <select id="p-status">
+            <div class="form-group" style="flex:1;">
+                <label>Purchase Qty</label>
+                <input type="number" id="p-qty" placeholder="e.g. 10" required oninput="window.SalesController.calculateTotals()">
+            </div>
+
+            <div class="form-group" id="packet-size-group" style="flex:1; display:none;">
+                <label>Items per Pkt</label>
+                <input type="number" id="p-packet-size" value="1" placeholder="e.g. 12" oninput="window.SalesController.calculateTotals()">
+            </div>
+
+        </div>
+        
+        <p style="font-size:12px; color:#0D8ABC; margin-top:-5px; margin-bottom:15px; text-align:right;">
+            Total Stock to Add: <strong id="p-final-stock-display">0 Units</strong>
+        </p>
+
+        <div class="form-row" style="display:flex; gap:10px;">
+            <div class="form-group" style="flex:1;">
+              <label>Price Per Unit (₹)</label>
+              <input type="number" id="p-price-unit" placeholder="Cost per piece" oninput="window.SalesController.calculateFromUnit()">
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label>Total Bill Amount (₹)</label>
+              <input type="number" id="p-cost" placeholder="Total Cost" required oninput="window.SalesController.calculateFromTotal()">
+            </div>
+        </div>
+
+        <div class="form-group">
+          <label>Payment Status</label>
+          <select id="p-status">
             <option value="Paid">Paid</option>
             <option value="Pending">Pending</option>
-        </select>
-    </div>
-
-    <button type="submit" class="save-btn">Save Entry</button>
-</form>
-            </div>
+          </select>
         </div>
+
+        <button type="submit" class="save-btn" >
+          Save Entry
+        </button>
+      </form>
     </div>
+  </div>
+</div>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>

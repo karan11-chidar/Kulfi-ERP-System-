@@ -7,8 +7,16 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/deliveryboy/addShop.css">
+    <link rel="shortcut icon" href="../fav.jpg" type="image/x-icon">
 </head>
 <body>
+     <div id="auth-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 99999; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+        <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #2196f3; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <h3 style="margin-top: 20px; color: #333; font-family: sans-serif;">Verifying Delivery Boy Access...</h3>
+    </div>
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
     <div class="header">
         <a href="dashboard.html"><i data-lucide="arrow-left"></i></a>
         <h2>Add New Shop</h2>
@@ -28,6 +36,13 @@
             <button class="submit-btn">Register Shop <i data-lucide="check-circle"></i></button>
         </form>
     </div>
-    <script src="../js/deliveryboy/addShop.js"></script>
-</body>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script src="../js/firebase-config.js"></script>
+
+<script src="../js/deliveryboy/backend/authGuard.js"></script>
+
+<script src="../js/deliveryboy/stock.js"></script></body>
 </html>

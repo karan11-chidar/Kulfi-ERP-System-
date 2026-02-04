@@ -13,33 +13,25 @@ window.SalesController = {
     boy: "all",
     payment: "all",
   },
-
-  // 🔥 Optimization State
   lifeTimeSales: 0,
-
   searchTimer: null,
 
   init: async function () {
-    console.log("📊 SalesController: Optimized Total 🚀");
+    console.log("📊 SalesController: Ready 🚀");
     if (window.SalesUI) window.SalesUI.showMainLoader();
 
     const dateInput = document.querySelector(".filter-date");
     if (dateInput) dateInput.value = this.filters.date;
 
-    // 🔥 1. Fetch Life-Time Total (SIRF EK BAAR)
-    this.lifeTimeSales = await SalesService.getLifeTimeTotalSales();
-
-    // 2. Load Normal Data
     this.loadData(true);
     this.loadStats();
     this.loadStaff();
-      this.setupEventListeners();
-      // 🔥 Ye line add karo:
-    if(window.SalesUI) window.SalesUI.injectStockCheckbox(); 
-    
+
+    if (window.SalesUI) window.SalesUI.injectStockCheckbox();
     this.setupEventListeners();
   },
 
+  // ... (SwitchTab, LoadData, ResetReload, LoadStats, LoadStaff - NO CHANGE) ...
   switchTab: function (tabName) {
     this.currentTab = tabName;
     if (window.SalesUI) window.SalesUI.toggleTab(tabName);
@@ -125,20 +117,170 @@ window.SalesController = {
     this.loadData(false);
   },
 
-  // 🔥 STATS UPDATE: Use Local Total + DB Date Stats
   loadStats: async function () {
     const stats = await SalesService.getStats(this.filters.date);
-    // Combine kar rahe hain
-    const finalStats = {
-      ...stats,
-      lifeTimeSales: this.lifeTimeSales, // Local variable
-    };
-    if (window.SalesUI) window.SalesUI.updateStats(finalStats);
+    if (window.SalesUI)
+      window.SalesUI.updateStats({
+        ...stats,
+        lifeTimeSales: this.lifeTimeSales,
+      });
   },
 
   loadStaff: async function () {
     const staffList = await SalesService.getDeliveryStaff();
     if (window.SalesUI) window.SalesUI.populateStaffFilter(staffList);
+  },
+
+  // --- Packet Logic ---
+  togglePacketField: function () {
+    const type = document.getElementById("p-unit-type").value;
+    const group = document.getElementById("packet-size-group");
+    if (type === "packet") {
+      group.style.display = "block";
+      document.getElementById("p-packet-size").value = "";
+    } else {
+      group.style.display = "none";
+      document.getElementById("p-packet-size").value = "1";
+    }
+    this.calculateTotals();
+  },
+
+  getFinalStockQty: function () {
+    const qty = Number(document.getElementById("p-qty").value) || 0;
+    const type = document.getElementById("p-unit-type").value;
+    const packetSize =
+      type === "packet"
+        ? Number(document.getElementById("p-packet-size").value) || 1
+        : 1;
+    return qty * packetSize;
+  },
+
+  calculateTotals: function () {
+    const finalQty = this.getFinalStockQty();
+    document.getElementById("p-final-stock-display").innerText =
+      finalQty + " Units";
+    this.calculateFromTotal();
+  },
+
+  calculateFromTotal: function () {
+    const total = Number(document.getElementById("p-cost").value) || 0;
+    const finalQty = this.getFinalStockQty();
+    if (finalQty > 0)
+      document.getElementById("p-price-unit").value = (
+        total / finalQty
+      ).toFixed(2);
+  },
+
+  calculateFromUnit: function () {
+    const unitPrice =
+      Number(document.getElementById("p-price-unit").value) || 0;
+    const finalQty = this.getFinalStockQty();
+    if (finalQty > 0)
+      document.getElementById("p-cost").value = (unitPrice * finalQty).toFixed(
+        0,
+      );
+  },
+
+  openEditPurchase: function (
+    id,
+    name,
+    supplier,
+    cost,
+    qty,
+    status,
+    category,
+    unitDetail,
+  ) {
+    document.getElementById("purchase-modal").classList.add("active");
+
+    document.getElementById("p-id").value = id;
+    document.getElementById("p-name").value = name;
+    document.getElementById("p-supplier").value = supplier;
+    document.getElementById("p-cost").value = cost;
+    document.getElementById("p-qty").value = qty;
+    document.getElementById("p-status").value = status;
+    document.getElementById("p-category").value = category;
+
+    document.getElementById("p-unit-type").value = "piece";
+    this.togglePacketField();
+    document.getElementById("p-final-stock-display").innerText = qty + " Units";
+  },
+
+  // 🔥 UPDATED: Saving Logic with Packet Size
+  handleSavePurchase: async function (e) {
+    e.preventDefault();
+    const btn = document.querySelector("#add-purchase-form .save-btn");
+    const id = document.getElementById("p-id").value;
+
+    const cost = Number(document.getElementById("p-cost").value);
+    const purchaseQty = Number(document.getElementById("p-qty").value);
+    const unitType = document.getElementById("p-unit-type").value;
+    const packetSize =
+      Number(document.getElementById("p-packet-size").value) || 1;
+
+    // Total Units Calculation
+    const finalStockQty = this.getFinalStockQty();
+    const unitPrice =
+      Number(document.getElementById("p-price-unit").value) || 0;
+
+    if (cost < 0 || purchaseQty <= 0) {
+      alert("⚠️ Invalid Values!");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "Saving...";
+
+    let descQty = `${purchaseQty} ${unitType === "packet" ? "Packets" : "Pieces"}`;
+    if (unitType === "packet") descQty += ` (${packetSize}/pkt)`;
+
+    const purchaseData = {
+      itemName: document.getElementById("p-name").value,
+      supplier: document.getElementById("p-supplier").value,
+      category: document.getElementById("p-category").value,
+      cost: cost,
+      quantity: purchaseQty,
+      totalUnits: finalStockQty,
+      packetSize: packetSize,
+      unitType: unitType,
+      unitDetail: descQty,
+      status: document.getElementById("p-status").value,
+    };
+
+    try {
+      if (id) {
+        // UPDATE PURCHASE
+        await SalesService.updatePurchase(id, purchaseData);
+        alert("✅ Purchase Updated!");
+      } else {
+        // ADD NEW PURCHASE
+        await SalesService.addPurchase(purchaseData);
+
+        // 🔥 SYNC STOCK (Corrected: Added packetSize)
+        const addToStock = document.getElementById("chk-add-stock")?.checked;
+        if (addToStock && window.StockService) {
+          await StockService.addOrUpdateStock({
+            name: purchaseData.itemName,
+            category: purchaseData.category,
+            qty: finalStockQty, // Total Units
+            price: unitPrice, // Per Unit Price
+            packetSize: packetSize, // 🔥 Yeh bhej diya taaki Stock Page par bhi Packet ka hisaab dikhe
+          });
+        }
+        alert("✅ Purchase Added & Stock Updated!");
+      }
+
+      document.getElementById("purchase-modal").classList.remove("active");
+      document.getElementById("add-purchase-form").reset();
+      this.currentTab = "purchase";
+      this.resetAndReload();
+      this.loadStats();
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Save Entry";
+    }
   },
 
   handleSearch: function (val) {
@@ -149,66 +291,6 @@ window.SalesController = {
     }, 600);
   },
 
- // Is function ko replace karo:
-  handleAddPurchase: async function (e) {
-    e.preventDefault();
-    const btn = document.querySelector("#add-purchase-form .save-btn");
-    
-    // 1. Data Collect karo
-    const name = document.getElementById("p-name").value;
-    const category = document.getElementById("p-category").value;
-    const cost = Number(document.getElementById("p-cost").value);
-    const qty = Number(document.getElementById("p-qty").value);
-    const status = document.getElementById("p-status").value;
-
-    // Checkbox Value (Naya Feature) 
-    const addToStock = document.getElementById("chk-add-stock")?.checked;
-
-    if (cost < 0 || qty < 0) { alert("⚠️ Negative values not allowed!"); return; }
-
-    btn.disabled = true; btn.innerText = "Saving...";
-
-    const purchaseData = {
-      itemName: name,
-      supplier: document.getElementById("p-supplier").value,
-      category: category,
-      cost: cost,
-      quantity: qty,
-      status: status,
-    };
-
-    try {
-      // Step A: Purchase Entry Add karo (Sales Module)
-      await SalesService.addPurchase(purchaseData);
-      
-      // Step B: Stock Update karo (Agar Checkbox Tick hai) 📦
-      if (addToStock) {
-          // StockService global available hona chahiye
-          if(window.StockService) {
-              await StockService.addOrUpdateStock({
-                  name: name,
-                  category: category,
-                  qty: qty,
-                  price: cost // Cost ko hi price maan rahe hain filhal
-              });
-              console.log("✅ Stock Updated Successfully!");
-          } else {
-              console.warn("StockService not found! Stock not updated.");
-          }
-      }
-
-      alert("✅ Purchase Added" + (addToStock ? " & Stock Updated!" : "!"));
-      
-      document.getElementById("purchase-modal").classList.remove("active");
-      document.getElementById("add-purchase-form").reset();
-      
-      this.currentTab = "purchase";
-      this.resetAndReload();
-      this.loadStats();
-
-    } catch (e) { alert(e.message); } 
-    finally { btn.disabled = false; btn.innerText = "Save Entry"; }
-  },
   setupEventListeners: function () {
     window.addEventListener("scroll", () => {
       if (
@@ -217,12 +299,12 @@ window.SalesController = {
       )
         this.loadData();
     });
+
     document.getElementById("btn-show-sales").onclick = () =>
       this.switchTab("sales");
     document.getElementById("btn-show-purchase").onclick = () =>
       this.switchTab("purchase");
 
-    // 🔥 Date Change: Reload List & Stats (But Total remains cached)
     document.querySelector(".filter-date").onchange = (e) => {
       this.filters.date = e.target.value;
       this.resetAndReload();
@@ -231,20 +313,17 @@ window.SalesController = {
 
     document.getElementById("sales-search").oninput = (e) =>
       this.handleSearch(e.target.value);
-    document.getElementById("filter-boy").onchange = (e) => {
-      this.filters.boy = e.target.value;
-      this.resetAndReload();
-    };
-    document.getElementById("filter-payment").onchange = (e) => {
-      this.filters.payment = e.target.value;
-      this.resetAndReload();
-    };
 
-    document.getElementById("btn-add-purchase").onclick = () =>
+    document.getElementById("btn-add-purchase").onclick = () => {
+      document.getElementById("p-id").value = "";
+      document.getElementById("add-purchase-form").reset();
       document.getElementById("purchase-modal").classList.add("active");
+      this.togglePacketField();
+    };
     document.getElementById("close-purchase-modal").onclick = () =>
       document.getElementById("purchase-modal").classList.remove("active");
+
     document.getElementById("add-purchase-form").onsubmit = (e) =>
-      this.handleAddPurchase(e);
+      this.handleSavePurchase(e);
   },
 };
