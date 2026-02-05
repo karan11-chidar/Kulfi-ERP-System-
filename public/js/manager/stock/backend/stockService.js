@@ -36,15 +36,22 @@ window.StockService = {
     }
   },
 
-  // 3. GET STATS
+  // 3. GET ALL BOYS STOCK (For Stats)
   getAllBoysStock: async function () {
     try {
       const snap = await db.collection("boy_inventory").get();
-      let total = 0;
-      snap.forEach((doc) => (total += Number(doc.data().qty) || 0));
-      return total;
+      let totalUnits = 0;
+      let totalPackets = 0;
+      snap.forEach((doc) => {
+        const d = doc.data();
+        const qty = Number(d.qty) || 0;
+        const size = Number(d.packetSize) || 1;
+        totalUnits += qty;
+        totalPackets += Math.floor(qty / size);
+      });
+      return { totalUnits, totalPackets };
     } catch (e) {
-      return 0;
+      return { totalUnits: 0, totalPackets: 0 };
     }
   },
 
@@ -64,7 +71,7 @@ window.StockService = {
     }
   },
 
-  // 4. ASSIGN (Calculated Logic)
+  // 4. ASSIGN STOCK (Calculated)
   assignStock: async function (boyName, productName, qty, packetSize) {
     const batch = db.batch();
     const prodSnap = await db
@@ -103,7 +110,7 @@ window.StockService = {
     await batch.commit();
   },
 
-  // 5. RETURN (Calculated Logic)
+  // 5. RETURN STOCK (Calculated)
   returnStock: async function (boyName, productName, qty) {
     const batch = db.batch();
     const boyInvRef = db
@@ -131,20 +138,20 @@ window.StockService = {
     await batch.commit();
   },
 
-  // 6. 🔥 REPORT DAMAGE (Manual Entry - No Auto Calc / No Deduction)
+  // 6. 🔥 REPORT DAMAGE (Manual Entry - No Stock Deduction)
   reportDamage: async function (data) {
     return db.collection("damage_logs").add({
       productName: data.productName,
       category: data.category,
-      packets: Number(data.packets) || 0, // Raw Entry
-      pieces: Number(data.pieces) || 0, // Raw Entry
+      packets: Number(data.packets) || 0,
+      pieces: Number(data.pieces) || 0,
       reason: data.reason,
       date: new Date().toISOString().split("T")[0],
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
   },
 
-  // 🔥 7. GET DAMAGE STATS (Sum of Raw Packets & Pieces)
+  // 7. GET DAMAGE STATS
   getDamageStats: async function () {
     try {
       const snap = await db.collection("damage_logs").get();
@@ -161,7 +168,6 @@ window.StockService = {
     }
   },
 
-  // 8. GET LOGS
   getDamageLogs: async function () {
     const snap = await db
       .collection("damage_logs")
@@ -170,10 +176,10 @@ window.StockService = {
     return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   },
 
-  // 9. DELETE / CLEAR LOGS
   deleteDamageLog: async function (id) {
     return db.collection("damage_logs").doc(id).delete();
   },
+
   clearDamageLogs: async function () {
     const snap = await db.collection("damage_logs").get();
     const batch = db.batch();
@@ -181,7 +187,42 @@ window.StockService = {
     await batch.commit();
   },
 
-  // 10. EDIT & DELETE STOCK (Full Control)
+  // 🔥🔥🔥 THIS IS THE FUNCTION FROM SALES PAGE (Checking if it exists) 🔥🔥🔥
+  addOrUpdateStock: async function (data) {
+    const snap = await db
+      .collection("products")
+      .where("name", "==", data.name)
+      .limit(1)
+      .get();
+    const packetSize = Number(data.packetSize) || 1;
+
+    if (!snap.empty) {
+      // Product hai -> Update Qty & Price
+      const doc = snap.docs[0];
+      const currentQty = Number(doc.data().qty) || 0;
+      await db
+        .collection("products")
+        .doc(doc.id)
+        .update({
+          qty: currentQty + (Number(data.qty) || 0),
+          price: Number(data.price) || doc.data().price,
+          packetSize: packetSize,
+        });
+    } else {
+      // Naya Product -> Create
+      await db.collection("products").add({
+        name: data.name,
+        category: data.category || "General",
+        price: Number(data.price) || 0,
+        qty: Number(data.qty) || 0,
+        packetSize: packetSize,
+        status: "in-stock",
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+  },
+
+  // 10. EDIT & DELETE STOCK (Direct)
   updateProduct: async function (id, data) {
     return db.collection("products").doc(id).update(data);
   },

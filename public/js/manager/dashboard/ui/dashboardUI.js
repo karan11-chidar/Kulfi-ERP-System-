@@ -1,27 +1,33 @@
-// public/js/manager/ui/dashboardUI.js
-
 window.DashboardUI = {
-  // Saare Elements yahan cache kar lo
   elements: {
     roleBadge: document.querySelector(".role"),
     headerImg: document.getElementById("header-profile-img"),
+
     modalName: document.getElementById("profile-name"),
     modalEmail: document.getElementById("profile-email"),
+    modalPhone: document.getElementById("profile-phone"),
+    modalProfilePic: document.getElementById("modal-profile-pic"),
 
-    // Sidebar Elements
     menuBtn: document.getElementById("menu-btn"),
     sidebar: document.getElementById("sidebar"),
     overlay: document.getElementById("overlay"),
     closeSidebar: document.getElementById("close-sidebar"),
     logoutBtn: document.getElementById("logout-btn"),
 
-    // Modal Elements
     profileModal: document.getElementById("profile-modal"),
     profileTrigger: document.getElementById("profile-trigger"),
     closeModalBtn: document.getElementById("close-modal-btn"),
     sidebarProfileLink: document.getElementById("sidebar-profile-link"),
     fileInput: document.getElementById("file-upload"),
-    modalProfilePic: document.getElementById("modal-profile-pic"),
+
+    stockCount: document.getElementById("dash-stock-count"),
+    salesCount: document.getElementById("dash-sales-count"),
+    pendingCount: document.getElementById("dash-pending-count"),
+    boyCount: document.getElementById("dash-active-boys"),
+
+    // 🔥 List Container
+    pendingList: document.getElementById("dash-pending-list"),
+    loader: document.getElementById("auth-loader"),
   },
 
   init: function () {
@@ -30,21 +36,85 @@ window.DashboardUI = {
     if (window.lucide) window.lucide.createIcons();
   },
 
-  // Backend se data aane par yahan update hoga
-  updateProfile: function (user) {
-    console.log("🎨 DashboardUI: Updating Profile for", user.name);
-    if (this.elements.roleBadge) this.elements.roleBadge.innerText = "Manager"; // Ya user.name bhi laga sakte ho
-    // Header Name agar alag se dikhana ho to yahan add kar lena
-
-    if (this.elements.modalName) this.elements.modalName.value = user.name;
-    if (this.elements.modalEmail) this.elements.modalEmail.value = user.email;
+  showLoader: function () {
+    if (this.elements.loader) this.elements.loader.style.display = "flex";
+  },
+  hideLoader: function () {
+    if (this.elements.loader) this.elements.loader.style.display = "none";
   },
 
-  // Saare Click Events
+  updateProfile: function (user) {
+    if (this.elements.roleBadge) this.elements.roleBadge.innerText = "Manager";
+    if (user.photo && this.elements.headerImg)
+      this.elements.headerImg.src = user.photo;
+    if (user.photo && this.elements.modalProfilePic)
+      this.elements.modalProfilePic.src = user.photo;
+    if (this.elements.modalName)
+      this.elements.modalName.value = user.name || "";
+    if (this.elements.modalEmail)
+      this.elements.modalEmail.value = user.email || "";
+    if (this.elements.modalPhone)
+      this.elements.modalPhone.value = user.phone || "";
+  },
+
+  updateDashboard: function (data) {
+    const formatMoney = (amt) => "₹" + (amt || 0).toLocaleString();
+
+    if (this.elements.stockCount)
+      this.elements.stockCount.innerHTML = `${data.stockPackets} Pkts <span style="font-size:0.8em; font-weight:normal; color:#555;">(${data.stockUnits} Units)</span>`;
+    if (this.elements.salesCount)
+      this.elements.salesCount.innerText = formatMoney(data.salesToday);
+    if (this.elements.pendingCount)
+      this.elements.pendingCount.innerText = formatMoney(data.totalCredit);
+    if (this.elements.boyCount)
+      this.elements.boyCount.innerHTML = `<strong>Live</strong> ${data.activeBoys}`;
+
+    // 🔥 Render List
+    this.renderPendingList(data.topPending);
+  },
+
+  renderPendingList: function (list) {
+    if (!this.elements.pendingList) return;
+    this.elements.pendingList.innerHTML = "";
+
+    if (!list || list.length === 0) {
+      this.elements.pendingList.innerHTML = `<div style="padding:20px; text-align:center; color:#777;">No Pending Dues 🎉</div>`;
+      return;
+    }
+
+    list.forEach((item) => {
+      let borderClass = "border-left: 4px solid var(--success-color);";
+      let riskClass = "color: var(--success-color);";
+
+      // Risk Colors
+      if (item.amount > 10000) {
+        borderClass = "border-left: 4px solid var(--danger-color);";
+        riskClass = "color: var(--danger-color); font-weight:bold;";
+      } else if (item.amount > 5000) {
+        borderClass = "border-left: 4px solid var(--warning-color);";
+        riskClass = "color: var(--warning-color); font-weight:bold;";
+      }
+
+      const html = `
+            <div class="list-item" style="display:flex; justify-content:space-between; align-items:center; background:white; padding:15px; border-radius:8px; margin-bottom:10px; box-shadow:0 2px 5px rgba(0,0,0,0.05); ${borderClass}">
+              <div class="shop-info">
+                <h4 style="margin:0; font-size:1rem; font-weight:600;">${item.name}</h4>
+                <div style="font-size:0.85rem; color:#666; margin-top:4px;">
+                    <i data-lucide="map-pin" style="width:12px; vertical-align:middle;"></i> ${item.address}
+                </div>
+              </div>
+              <div class="credit-amount" style="font-size:1rem; ${riskClass}">
+                ₹${item.amount.toLocaleString()}
+              </div>
+            </div>`;
+
+      this.elements.pendingList.innerHTML += html;
+    });
+    if (window.lucide) window.lucide.createIcons();
+  },
+
   setupEventListeners: function () {
     const el = this.elements;
-
-    // Sidebar Toggles
     if (el.menuBtn)
       el.menuBtn.addEventListener("click", () => this.toggleSidebar());
     if (el.closeSidebar)
@@ -52,52 +122,34 @@ window.DashboardUI = {
     if (el.overlay)
       el.overlay.addEventListener("click", () => this.toggleSidebar());
 
-    // Logout (AuthGuard ko call karega)
     if (el.logoutBtn) {
       el.logoutBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        if (confirm("Are you sure you want to logout?")) {
-          if (window.AuthGuard) {
-            window.AuthGuard.logout();
-          } else {
-            console.error("AuthGuard not found!");
-          }
-        }
+        if (confirm("Logout?"))
+          firebase
+            .auth()
+            .signOut()
+            .then(() => (window.location.href = "../index.html"));
       });
     }
 
-    // Profile Modal
     if (el.profileTrigger)
-      el.profileTrigger.addEventListener("click", () => this.openModal());
+      el.profileTrigger.addEventListener("click", () =>
+        el.profileModal.classList.add("active"),
+      );
     if (el.closeModalBtn)
-      el.closeModalBtn.addEventListener("click", () => this.closeModal());
-    if (el.sidebarProfileLink) {
-      el.sidebarProfileLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        this.openModal();
-      });
-    }
-
-    // Image Preview
-    if (el.fileInput) {
+      el.closeModalBtn.addEventListener("click", () =>
+        el.profileModal.classList.remove("active"),
+      );
+    if (el.fileInput)
       el.fileInput.addEventListener("change", (e) =>
         this.handleImagePreview(e),
       );
-    }
   },
 
-  // Helper Functions
   toggleSidebar: function () {
     this.elements.sidebar.classList.toggle("active");
     this.elements.overlay.classList.toggle("active");
-  },
-  openModal: function () {
-    if (this.elements.profileModal)
-      this.elements.profileModal.classList.add("active");
-  },
-  closeModal: function () {
-    if (this.elements.profileModal)
-      this.elements.profileModal.classList.remove("active");
   },
 
   handleImagePreview: function (event) {

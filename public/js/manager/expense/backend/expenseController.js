@@ -1,32 +1,22 @@
 window.ExpenseController = {
   currentDate: new Date().toISOString().split("T")[0],
   currentList: [],
-  lastCursorTime: null,
-
-  // 🔥 STATE VARIABLE (Magic Box)
   lifeTimeTotal: 0,
-
   PAGE_SIZE: 10,
   isLoading: false,
   hasMoreData: true,
+  lastCursorTime: null,
 
   init: async function () {
-    console.log("💰 ExpenseController: Optimized Mode 🚀");
-
+    console.log("💰 ExpenseController: Init");
     const dateInput = document.getElementById("exp-date-filter");
     if (dateInput) {
       dateInput.value = this.currentDate;
       dateInput.onchange = (e) => this.loadExpensesForDate(e.target.value);
     }
-
     if (window.ExpenseUI) window.ExpenseUI.showMainLoader();
-
-    // 1. Fetch Life-Time Total (SIRF EK BAAR)
     this.lifeTimeTotal = await ExpenseService.getLifeTimeTotal();
-
-    // 2. Load Date Data
     this.loadExpensesForDate(this.currentDate);
-
     this.setupEventListeners();
   },
 
@@ -34,12 +24,9 @@ window.ExpenseController = {
     this.currentDate = date;
     this.hasMoreData = true;
     this.isLoading = false;
-
-    this.loadStats(); // Update Cards
-
+    this.loadStats();
     const STORAGE_KEY = `kulfi_exp_${date}`;
     const localData = localStorage.getItem(STORAGE_KEY);
-
     if (localData) {
       this.currentList = JSON.parse(localData);
       if (this.currentList.length > 0) {
@@ -56,25 +43,21 @@ window.ExpenseController = {
       await this.fetchNextBatch();
     }
   },
-
   checkForNewData: async function (date) {
     if (this.currentList.length === 0) return;
     const latestItem = this.currentList[0];
     let latestTime = latestItem._timestamp;
     if (!latestTime) return;
-
     let queryTime;
     if (typeof latestTime.toDate === "function") queryTime = latestTime;
     else if (latestTime.seconds)
       queryTime = new Date(latestTime.seconds * 1000);
     else return;
-
     try {
       const snapshot = await ExpenseService.getNewerExpenses(date, queryTime);
       if (!snapshot.empty) {
         const newItems = [];
         let addedAmount = 0;
-
         snapshot.forEach((doc) => {
           if (!this.currentList.find((i) => i.id === doc.id)) {
             const data = doc.data();
@@ -82,7 +65,6 @@ window.ExpenseController = {
             addedAmount += Number(data.amount) || 0;
           }
         });
-
         if (newItems.length > 0) {
           this.currentList = [...newItems, ...this.currentList];
           localStorage.setItem(
@@ -90,8 +72,6 @@ window.ExpenseController = {
             JSON.stringify(this.currentList),
           );
           this.applyFilters();
-
-          // 🔥 Local Total Update
           this.lifeTimeTotal += addedAmount;
           this.loadStats();
         }
@@ -100,12 +80,10 @@ window.ExpenseController = {
       console.error("Sync failed", e);
     }
   },
-
   fetchNextBatch: async function () {
     if (this.isLoading || !this.hasMoreData) return;
     this.isLoading = true;
     if (window.ExpenseUI) window.ExpenseUI.showScrollLoader(true);
-
     try {
       const snapshot = await ExpenseService.getExpenses(
         this.currentDate,
@@ -118,10 +96,8 @@ window.ExpenseController = {
         if (this.currentList.length === 0) this.applyFilters();
         return;
       }
-
       const lastDoc = snapshot.docs[snapshot.docs.length - 1];
       this.lastCursorTime = lastDoc.data().timestamp;
-
       const newItems = [];
       snapshot.forEach((doc) => {
         if (!this.currentList.find((i) => i.id === doc.id)) {
@@ -132,7 +108,6 @@ window.ExpenseController = {
           });
         }
       });
-
       this.currentList = [...this.currentList, ...newItems];
       localStorage.setItem(
         `kulfi_exp_${this.currentDate}`,
@@ -149,13 +124,11 @@ window.ExpenseController = {
       }
     }
   },
-
   applyFilters: function () {
     const searchInput = document.getElementById("expense-search");
     const categorySelect = document.getElementById("filter-category");
     const query = searchInput ? searchInput.value.toLowerCase() : "";
     const selectedCategory = categorySelect ? categorySelect.value : "all";
-
     const filteredList = this.currentList.filter((item) => {
       const matchesSearch =
         item.description.toLowerCase().includes(query) ||
@@ -164,16 +137,13 @@ window.ExpenseController = {
         selectedCategory === "all" || item.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-
     if (window.ExpenseUI) window.ExpenseUI.renderTable(filteredList);
   },
-
-  // 🔥 STATS UPDATE (Local Total + DB Date Stats)
   loadStats: async function () {
     const stats = await ExpenseService.getStats(this.currentDate);
     if (window.ExpenseUI) {
       window.ExpenseUI.updateCards(
-        this.lifeTimeTotal, // 🔥 Life-Time Total (Optimized)
+        this.lifeTimeTotal,
         stats.monthTotal,
         stats.weekTotal,
         stats.todayTotal,
@@ -181,11 +151,12 @@ window.ExpenseController = {
     }
   },
 
+  // 🔥 UPDATED: Capture Name OR Email
   handleAddExpense: async function (e) {
     e.preventDefault();
     const btn = document.querySelector("#expense-form .save-btn");
-
     const amount = Number(document.getElementById("exp-amount").value);
+
     if (amount <= 0) {
       alert("⚠️ Invalid Amount!");
       return;
@@ -194,6 +165,19 @@ window.ExpenseController = {
     btn.disabled = true;
     btn.innerText = "Saving...";
 
+    // 1. Get User Info (Robust Check)
+    const user = firebase.auth().currentUser;
+    let identifier = "Manager"; // Default
+
+    if (user) {
+      // Agar Naam hai toh Naam, nahi toh Email ka pehla hissa, nahi toh 'Manager'
+      if (user.displayName) {
+        identifier = user.displayName;
+      } else if (user.email) {
+        identifier = user.email.split("@")[0]; // e.g. "karan" from "karan@gmail.com"
+      }
+    }
+
     try {
       const data = {
         category: document.getElementById("exp-category").value,
@@ -201,6 +185,10 @@ window.ExpenseController = {
         description: document.getElementById("exp-note").value,
         date: document.getElementById("exp-date").value,
         paymentMode: document.getElementById("exp-mode").value,
+
+        // 🔥 Save Precise Identity
+        addedBy: identifier,
+        role: "Manager",
       };
 
       const docRef = await ExpenseService.addExpense(data);
@@ -219,7 +207,6 @@ window.ExpenseController = {
         this.applyFilters();
       }
 
-      // 🔥 Local Total Update
       this.lifeTimeTotal += amount;
       this.loadStats();
 
@@ -239,25 +226,18 @@ window.ExpenseController = {
 
   deleteExpense: async function (id) {
     if (!confirm("Delete this expense?")) return;
-
-    // Find item to subtract amount
     const item = this.currentList.find((i) => i.id === id);
     const amount = item ? Number(item.amount) || 0 : 0;
-
     await ExpenseService.deleteExpense(id);
-
     this.currentList = this.currentList.filter((i) => i.id !== id);
     localStorage.setItem(
       `kulfi_exp_${this.currentDate}`,
       JSON.stringify(this.currentList),
     );
-
-    // 🔥 Local Total Update
     if (amount > 0) {
       this.lifeTimeTotal -= amount;
       this.loadStats();
     }
-
     this.applyFilters();
   },
 
@@ -271,7 +251,6 @@ window.ExpenseController = {
     });
     const form = document.getElementById("expense-form");
     if (form) form.onsubmit = (e) => this.handleAddExpense(e);
-
     document.getElementById("btn-add-expense").onclick = () => {
       document.getElementById("expense-modal").classList.add("active");
       document.getElementById("exp-date").value = new Date()
@@ -280,12 +259,10 @@ window.ExpenseController = {
     };
     document.getElementById("close-expense-modal").onclick = () =>
       document.getElementById("expense-modal").classList.remove("active");
-
     document.getElementById("expense-search").oninput = () =>
       this.applyFilters();
     document.getElementById("filter-category").onchange = () =>
       this.applyFilters();
-
     document.getElementById("btn-refresh-data").onclick = () => {
       localStorage.removeItem(`kulfi_exp_${this.currentDate}`);
       this.loadExpensesForDate(this.currentDate);

@@ -200,3 +200,9 @@ body { background: var(--bg-color); color: var(--text-dark); overflow-x: hidden;
 @media (max-width: 300px) {
     .cards{ grid-template-columns: 2fr; }
 }
+.content h3{
+  font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}

@@ -1,292 +1,142 @@
-<!-- 
-DESCRIPTION:
-Dashboard HTML page for the Kulfi ERP System.
-Pure Static Design (No Firebase, Data Hardcoded).
--->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Kulfi ERP | Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- External CSS Link -->
     <link rel="stylesheet" href="../css/manager/dashboard.css" />
-    <!-- Lucide Icons Script -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Tailwind CSS for Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body>
     <div id="auth-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 99999; display: flex; justify-content: center; align-items: center; flex-direction: column;">
         <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #2196f3; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-        <h3 style="margin-top: 20px; color: #333; font-family: sans-serif;">Verifying Manager Access...</h3>
+        <h3 style="margin-top: 20px; color: #333; font-family: sans-serif;">Loading Dashboard...</h3>
     </div>
-    <style>
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-    <!-- Header -->
+    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+
     <header class="topbar">
-      <!-- Menu Button Wrapper -->
       <div class="header-left">
-        <button id="menu-btn" class="menu-toggle">
-          <i data-lucide="menu"></i>
-        </button>
+        <button id="menu-btn" class="menu-toggle"><i data-lucide="menu"></i></button>
         <h2>Kulfi ERP</h2>
       </div>
-      <div
-        class="header-right"
-        style="display: flex; align-items: center; gap: 15px"
-      >
+      <div class="header-right" style="display: flex; align-items: center; gap: 15px">
         <span class="role">Manager Dashboard</span>
-        <!-- Profile Trigger (Header Image) -->
         <div id="profile-trigger" style="cursor: pointer">
-          <img
-            id="header-profile-img"
-            src="https://ui-avatars.com/api/?name=Manager+User&background=0D8ABC&color=fff"
-            alt="Profile"
-            style="
-              width: 35px;
-              height: 35px;
-              border-radius: 50%;
-              object-fit: cover;
-            "
-          />
+          <img id="header-profile-img" src="https://ui-avatars.com/api/?name=Manager+User&background=0D8ABC&color=fff" alt="Profile" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;" />
         </div>
       </div>
     </header>
 
-    <!-- Main Layout -->
     <div class="layout">
-      <!-- Sidebar -->
       <aside class="sidebar" id="sidebar">
         <button id="close-sidebar" class="close-btn">&times;</button>
-
-        <a href="./dashboard.html" class="active"
-          ><i data-lucide="layout-dashboard"></i> Dashboard</a
-        >
-        <a href="./stock.html"
-          ><i data-lucide="package"></i> Stock</a
-        >
-        <a href="./sales.html"
-          ><i data-lucide="bar-chart-3"></i> Sales/Purchase</a
-        >
-        <a href="./credit.html"
-          ><i data-lucide="credit-card"></i> Credit</a
-        >
-        <a href="./shops.html"
-          ><i data-lucide="store"></i> Shops</a
-        >
-        <a href="expense.html"><i data-lucide="banknote"></i> Expenses</a>
-        <a href="./staff.html"
-          ><i data-lucide="users"></i> Staff</a
-        >
-
-        <!-- SIDEBAR PROFILE LINK -->
-        <a href="#" id="sidebar-profile-link"
-          ><i data-lucide="user"></i> My Profile</a
-        >
-
-        <a href="../index.html" id="logout-btn" class="logout">
-          <i data-lucide="log-out"></i> <span>Logout</span>
-        </a>
+        <a href="./dashboard.html" class="active"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+        <a href="./stock.html"><i data-lucide="package"></i> Stock</a>
+        <a href="./sales.html"><i data-lucide="bar-chart-3"></i> Sales/Purchase</a>
+        <a href="./credit.html"><i data-lucide="credit-card"></i> Credit</a>
+        <a href="./shops.html"><i data-lucide="store"></i> Shops</a>
+        <a href="./expense.html"><i data-lucide="banknote"></i> Expenses</a>
+        <a href="./staff.html"><i data-lucide="users"></i> Staff</a>
+        <a href="#" id="sidebar-profile-link"><i data-lucide="user"></i> My Profile</a>
+        <a href="../index.html" id="logout-btn" class="logout"><i data-lucide="log-out"></i> <span>Logout</span></a>
       </aside>
 
-      <!-- Overlay -->
       <div class="overlay" id="overlay"></div>
 
-      <!-- Content -->
       <main class="content">
         <h3>Overview</h3>
 
         <div class="cards">
-          <!-- Card 1 -->
-      <a href="./stock.html">
-          <div class="card">
-            <div class="card-content">
-              <h4>Total Stock</h4>
-              <p>150 Packets</p>
-              <!-- Hardcoded Data -->
+          <a href="./stock.html">
+            <div class="card">
+              <div class="card-content">
+                <h4>Total Stock</h4>
+                <p id="dash-stock-count" style="font-size: 1.2rem; font-weight: bold; color: #2e7d32;">Loading...</p>
+                <small style="color: #666; font-size: 0.8rem;">Current Godown Status</small>
+              </div>
+              <div class="icon-box icon-green"><i data-lucide="package"></i></div>
             </div>
-            <div class="icon-box icon-green">
-              <i data-lucide="package"></i>
-            </div>
-          </div>
-  
           </a>
-          <!-- Card 2 -->
-           <a href="./sales.html">
-          <div class="card">
-            <div class="card-content">
-              <h4>Today Sales</h4>
-              <p>₹5,200</p>
-              <!-- Hardcoded Data -->
+  
+          <a href="./sales.html">
+            <div class="card">
+              <div class="card-content">
+                <h4>Today Sales</h4>
+                <p id="dash-sales-count" style="font-size: 1.2rem; font-weight: bold; color: #1565c0;">₹0</p>
+                <small id="dash-date-display" style="color: #666; font-size: 0.8rem;">Today</small>
+              </div>
+              <div class="icon-box icon-blue"><i data-lucide="indian-rupee"></i></div>
             </div>
-            <div class="icon-box icon-blue">
-              <i data-lucide="indian-rupee"></i>
-            </div>
-          </div>
           </a>  
           
-          <!-- Card 3 -->
-           <a href="./credit.html">
-          <div class="card">
-            <div class="card-content">
-              <h4>Pending Payments</h4>
-              <p>₹42,000</p>
-              <!-- Hardcoded Data -->
+          <a href="./credit.html">
+            <div class="card">
+              <div class="card-content">
+                <h4>Pending Payments</h4>
+                <p id="dash-pending-count" style="font-size: 1.2rem; font-weight: bold; color: #ef6c00;">₹0</p>
+                <small style="color: #666; font-size: 0.8rem;">Total Market Credit</small>
+              </div>
+              <div class="icon-box icon-orange"><i data-lucide="alert-circle"></i></div>
             </div>
-            <div class="icon-box icon-orange">
-              <i data-lucide="alert-circle"></i>
-            </div>
-          </div>
           </a>
 
-          <!-- Card 4 -->
-           <a href="./stock.html">
-          <div class="card">
-            <div class="card-content">
-              <h4>Running Boy</h4>
-              <p><strong>Live</strong> 8</p>
-              <!-- Hardcoded Data -->
+          <a href="./staff.html">
+            <div class="card">
+              <div class="card-content">
+                <h4>Running Boy</h4>
+                <p id="dash-active-boys" style="font-size: 1.2rem; font-weight: bold;">0</p>
+                <small style="color: #666; font-size: 0.8rem;">Active Delivery Staff</small>
+              </div>
+              <div class="icon-box icon-purple"><i data-lucide="motorbike"></i></div>
             </div>
-            <div class="icon-box icon-purple">
-              <i data-lucide="motorbike"></i>
-            </div>
-          </div>
+          </a>
         </div>
-        </a>
-        <!-- NEW SECTION: Pending Credit List -->
+
         <div class="list-section">
           <h3>Top Pending Credits</h3>
-
-          <div class="credit-list">
-            <!-- Shop 1 -->
-            <div
-              class="list-item"
-              style="border-left-color: var(--danger-color)"
-            >
-              <div class="shop-info">
-                <h4>Gupta Kirana Store</h4>
-                <span class="address"
-                  ><i data-lucide="map-pin" class="mini-icon"></i> 12, Main
-                  Market, Indore</span
-                >
-                <span class="mobile"
-                  ><i data-lucide="phone" class="mini-icon"></i> 98765
-                  43210</span
-                >
-              </div>
-              <div class="credit-amount high-risk">₹15,000</div>
-            </div>
-
-            <!-- Shop 2 -->
-            <div
-              class="list-item"
-              style="border-left-color: var(--warning-color)"
-            >
-              <div class="shop-info">
-                <h4>Sharma General Store</h4>
-                <span class="address"
-                  ><i data-lucide="map-pin" class="mini-icon"></i> Near Bus
-                  Stand, Dewas</span
-                >
-                <span class="mobile"
-                  ><i data-lucide="phone" class="mini-icon"></i> 91234
-                  56789</span
-                >
-              </div>
-              <div class="credit-amount medium-risk">₹8,500</div>
-            </div>
-
-            <!-- Shop 3 -->
-            <div
-              class="list-item"
-              style="border-left-color: var(--success-color)"
-            >
-              <div class="shop-info">
-                <h4>Verma Dairy</h4>
-                <span class="address"
-                  ><i data-lucide="map-pin" class="mini-icon"></i> Sector 4,
-                  Bhopal</span
-                >
-                <span class="mobile"
-                  ><i data-lucide="phone" class="mini-icon"></i> 88997
-                  76655</span
-                >
-              </div>
-              <div class="credit-amount low-risk">₹3,200</div>
-            </div>
-
-            <!-- View All Button -->
-            <div class="view-all-btn-container">
-              <button class="view-all-btn">View All Pending Shops</button>
-            </div>
+          <div class="credit-list" id="dash-pending-list">
+             <div style="padding: 20px; text-align: center; color: #888;">Loading list...</div>
+          </div>
+          <div class="view-all-btn-container">
+             <button class="view-all-btn" onclick="window.location.href='./credit.html'">View All Pending Shops</button>
           </div>
         </div>
       </main>
     </div>
 
-    <!-- PROFILE MODAL (Popup) -->
     <div id="profile-modal" class="modal-overlay">
       <div class="modal-content">
-        <div class="modal-header">
-          <h3>My Profile</h3>
-          <button id="close-modal-btn" class="close-modal">&times;</button>
-        </div>
+        <div class="modal-header"><h3>My Profile</h3><button id="close-modal-btn" class="close-modal">&times;</button></div>
         <div class="modal-body">
           <div class="profile-pic-container">
             <div class="profile-pic-wrapper">
-              <img
-                id="modal-profile-pic"
-                src="https://ui-avatars.com/api/?name=Manager+User&background=0D8ABC&color=fff"
-                alt="Profile"
-              />
-              <!-- Camera Icon Upload Trigger -->
-              <label for="file-upload" class="upload-icon">
-                <i data-lucide="camera"></i>
-              </label>
-              <input
-                type="file"
-                id="file-upload"
-                accept="image/*"
-                style="display: none"
-              />
+              <img id="modal-profile-pic" src="https://ui-avatars.com/api/?name=Manager+User&background=0D8ABC&color=fff" alt="Profile" />
+              <label for="file-upload" class="upload-icon"><i data-lucide="camera"></i></label>
+              <input type="file" id="file-upload" accept="image/*" style="display: none" />
             </div>
           </div>
           <form id="profile-form">
-            <div class="form-group">
-              <label>Name</label>
-              <input type="text" id="profile-name" value="Manager User" />
-            </div>
-            <div class="form-group">
-              <label>Email</label>
-              <input
-                type="email"
-                id="profile-email"
-                value="manager@kulfi.com"
-                readonly
-                style="background-color: #f0f0f0; cursor: not-allowed"
-              />
-            </div>
-            <div class="form-group">
-              <label>Phone</label>
-              <input type="tel" id="profile-phone" value="+91 9876543210" />
-            </div>
+            <div class="form-group"><label>Name</label><input type="text" id="profile-name" value="Manager User" /></div>
+            <div class="form-group"><label>Email</label><input type="email" id="profile-email" value="manager@kulfi.com" readonly style="background-color: #f0f0f0; cursor: not-allowed" /></div>
+            <div class="form-group"><label>Phone</label><input type="tel" id="profile-phone" value="+91 9876543210" /></div>
             <button type="submit" class="save-btn">Save Changes</button>
           </form>
         </div>
       </div>
     </div>
 
-    <!-- JavaScript Logic (External File) -->
-   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="../js/firebase-config.js"></script>
 
+    <script src="../js/manager/sales/backend/salesService.js"></script>
+    <script src="../js/manager/stock/backend/stockService.js"></script>
+    
     <script src="../js/manager/dashboard/ui/dashboardUI.js"></script>
     <script src="../js/manager/backend/authGuard.js"></script>
-
+    <script src="../js/manager/dashboard/backend/dashboardController.js"></script>
     <script src="../js/manager/dashboard/dashboardMain.js"></script>
   </body>
 </html>

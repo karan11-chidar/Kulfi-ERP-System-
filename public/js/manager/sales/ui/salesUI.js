@@ -137,8 +137,11 @@ window.SalesUI = {
     document.querySelector("#sales-stats .primary h4").innerText =
       "₹" + (stats.lifeTimeSales || 0).toLocaleString();
 
-    document.querySelector("#purchase-stats .info h4").innerText =
-      (stats.stockInCount || 0) + " Units";
+    // 👇 Naya Code (Isse Replace Karein):
+document.querySelector("#purchase-stats .info h4").innerHTML = `
+    ${stats.stockInPackets || 0} Pkts 
+    <span style="font-size:12px; color:#555;">(${stats.stockInCount || 0} Units)</span>
+`;
     document.querySelector("#purchase-stats .danger h4").innerText =
       "₹" + (stats.purchaseTotal || 0).toLocaleString();
     document.querySelector("#purchase-stats .warning h4").innerText =

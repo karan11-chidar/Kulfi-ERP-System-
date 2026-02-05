@@ -118,10 +118,41 @@ window.SalesController = {
   },
 
   loadStats: async function () {
+    // 1. Backend se Basic Stats Lao
     const stats = await SalesService.getStats(this.filters.date);
+
+    // 2. 🔥 NEW LOGIC: Calculate Stock In Packets Manually from current list
+    // (Yeh accurate tabhi hoga jab saara data load ho, lekin abhi ke liye working fix hai)
+    let stockInPackets = 0;
+    let stockInUnits = 0;
+
+    // Agar purchase list khali hai toh fetch karo (Optional safety)
+    if (this.purchaseList.length === 0) {
+      // Sirf stats calculation ke liye quick fetch (Optimized)
+      const snap = await SalesService.getPurchases(null, 50, this.filters);
+      snap.forEach((doc) => {
+        const p = doc.data();
+        const qty = Number(p.totalUnits || p.quantity) || 0;
+        const size = Number(p.packetSize) || 1;
+        stockInUnits += qty;
+        stockInPackets += Math.floor(qty / size);
+      });
+    } else {
+      // Existing list se calculate karo
+      this.purchaseList.forEach((p) => {
+        const qty = Number(p.totalUnits || p.quantity) || 0;
+        const size = Number(p.packetSize) || 1;
+        stockInUnits += qty;
+        stockInPackets += Math.floor(qty / size);
+      });
+    }
+
+    // 3. UI Update (Pass Packets)
     if (window.SalesUI)
       window.SalesUI.updateStats({
         ...stats,
+        stockInCount: stockInUnits, // Purana wala override
+        stockInPackets: stockInPackets, // 🔥 Naya Data
         lifeTimeSales: this.lifeTimeSales,
       });
   },
