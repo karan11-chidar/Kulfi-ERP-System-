@@ -59,69 +59,54 @@
         <div class="stats-row">
           <div class="mini-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-              <div>
-                <span>Godown Stock</span>
-                <div id="godown-stats-display"><h4>Loading...</h4></div>
-              </div>
+              <div><span>Godown Stock</span><div id="godown-stats-display"><h4>Loading...</h4></div></div>
               <div class="icon-box" style="background:#e3f2fd; padding:10px; border-radius:50%;"><i data-lucide="package" style="color:#0D8ABC;"></i></div>
             </div>
           </div>
+
           <div class="mini-card info">
             <div style="display:flex; justify-content:space-between; align-items:start;">
               <div><span id="boy-stock-title">Stock with Boys</span><h4 id="boy-stock-count">0 Items</h4></div>
               <div class="icon-box" style="background:#e1f5fe; padding:10px; border-radius:50%;"><i data-lucide="users" style="color:#0288d1;"></i></div>
             </div>
           </div>
+
           <div class="mini-card danger">
             <div style="display:flex; justify-content:space-between; align-items:start;">
               <div><span>Out of Stock</span><h4>0 Items</h4></div>
               <div class="icon-box" style="background:#fdedec; padding:10px; border-radius:50%;"><i data-lucide="alert-circle" style="color:#e74c3c;"></i></div>
             </div>
           </div>
-          <div class="mini-card danger" style="position: relative">
+
+          <div class="mini-card danger" id="damage-card-click" style="position: relative; cursor: pointer;">
              <div style="display:flex; justify-content:space-between; align-items:start;">
-              <div><span>Total Damaged</span><h4 id="total-damaged-count">0 Items</h4></div>
+              <div>
+                  <span>Total Damaged</span>
+                  <div id="total-damaged-display">
+                      <h4>0 Units</h4>
+                  </div>
+              </div>
               <div class="icon-box" style="background:#fdedec; padding:10px; border-radius:50%;"><i data-lucide="archive" style="color:#c0392b;"></i></div>
             </div>
-            <button id="reset-damage-btn" style="position: absolute; top: 5px; right: 5px; background: none; border: none; cursor: pointer; padding: 5px;"><i data-lucide="rotate-ccw" style="width: 14px; height: 14px; color: #777;"></i></button>
+            
+            <button id="reset-damage-btn" title="Reset Counter" style="position: absolute; top: 5px; right: 5px; background: none; border: none; cursor: pointer; padding: 5px; z-index: 10;">
+              <i data-lucide="rotate-ccw" style="width: 14px; height: 14px; color: #777;"></i>
+            </button>
           </div>
         </div>
 
         <div class="filter-bar">
-          <div class="search-box">
-            <i data-lucide="search"></i>
-            <input type="text" id="stock-search" placeholder="Search product..." />
-          </div>
+          <div class="search-box"><i data-lucide="search"></i><input type="text" id="stock-search" placeholder="Search product..." /></div>
           <select class="filter-select" id="stock-category-filter">
-            <option value="all">All Categories</option>
-            <option value="kulfi">Kulfi</option>
-            <option value="ice-cream">Ice Cream</option>
-            <option value="Candy">Candy</option>
-            <option value="Cup">Cup</option>
-            <option value="Cone">Cone</option>
-            <option value="Raw Material">Raw Material</option>
+            <option value="all">All Categories</option><option value="kulfi">Kulfi</option><option value="ice-cream">Ice Cream</option><option value="Candy">Candy</option><option value="Cup">Cup</option><option value="Cone">Cone</option><option value="Raw Material">Raw Material</option>
           </select>
-          <select class="filter-select" id="boy-stock-filter" style="border-color: var(--info);">
-            <option value="all">All Boys Stock</option>
-          </select>
+          <select class="filter-select" id="boy-stock-filter" style="border-color: var(--info);"><option value="all">All Boys Stock</option></select>
         </div>
 
         <div class="table-container">
           <table>
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>Packets</th>
-                <th>Total Units</th>
-                <th>Category</th>
-                <th>Price (₹)</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="stock-table-body">
-              <tr><td colspan="7" style="text-align: center">Loading...</td></tr>
-            </tbody>
+            <thead><tr><th>Product Name</th><th>Packets</th><th>Total Units</th><th>Category</th><th>Price (₹)</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="stock-table-body"><tr><td colspan="7" style="text-align: center">Loading...</td></tr></tbody>
           </table>
         </div>
       </main>
@@ -134,18 +119,7 @@
           <form id="assign-form">
             <div class="form-group"><label>Select Delivery Boy</label><select id="assign-boy-select" required><option value="">-- Select --</option></select></div>
             <div class="form-group"><label>Select Product</label><select id="assign-product-select" required><option value="">-- Select Product --</option></select></div>
-            
-            <div class="form-row" style="display:flex; gap:10px;">
-                <div class="form-group" style="flex:1;">
-                    <label>Packets</label>
-                    <input type="number" id="assign-packets" placeholder="Pkts">
-                </div>
-                <div class="form-group" style="flex:1;">
-                    <label>Pieces (Loose)</label>
-                    <input type="number" id="assign-pieces" placeholder="Pcs">
-                </div>
-            </div>
-
+            <div class="form-row" style="display:flex; gap:10px;"><div class="form-group" style="flex:1;"><label>Packets</label><input type="number" id="assign-packets" placeholder="Pkts"></div><div class="form-group" style="flex:1;"><label>Pieces (Loose)</label><input type="number" id="assign-pieces" placeholder="Pcs"></div></div>
             <button type="submit" class="save-btn" style="background: var(--info)">Assign Stock</button>
           </form>
         </div>
@@ -159,18 +133,7 @@
           <form id="return-form">
             <div class="form-group"><label>Select Delivery Boy</label><select id="return-boy-select" required><option value="">-- Select --</option></select></div>
             <div class="form-group"><label>Select Product</label><select id="return-product-select" required><option value="">-- Select Product --</option></select></div>
-            
-            <div class="form-row" style="display:flex; gap:10px;">
-                <div class="form-group" style="flex:1;">
-                    <label>Packets</label>
-                    <input type="number" id="return-packets" placeholder="Pkts">
-                </div>
-                <div class="form-group" style="flex:1;">
-                    <label>Pieces (Loose)</label>
-                    <input type="number" id="return-pieces" placeholder="Pcs">
-                </div>
-            </div>
-
+            <div class="form-row" style="display:flex; gap:10px;"><div class="form-group" style="flex:1;"><label>Packets</label><input type="number" id="return-packets" placeholder="Pkts"></div><div class="form-group" style="flex:1;"><label>Pieces (Loose)</label><input type="number" id="return-pieces" placeholder="Pcs"></div></div>
             <button type="submit" class="save-btn" style="background: var(--warning)">Process Return</button>
           </form>
         </div>
@@ -179,25 +142,34 @@
 
     <div id="damage-modal" class="modal-overlay">
       <div class="modal-content">
-        <div class="modal-header"><h3>Report Damage</h3><button class="close-modal" data-target="damage-modal">&times;</button></div>
+        <div class="modal-header"><h3>Report Damage (Manual)</h3><button class="close-modal" data-target="damage-modal">&times;</button></div>
         <div class="modal-body">
           <form id="damage-form">
-            <div class="form-group"><label>Select Product</label><select id="damage-product-select" required><option value="">-- Select Product --</option></select></div>
-            
-            <div class="form-row" style="display:flex; gap:10px;">
-                <div class="form-group" style="flex:1;">
-                    <label>Packets</label>
-                    <input type="number" id="damage-packets" placeholder="Pkts">
-                </div>
-                <div class="form-group" style="flex:1;">
-                    <label>Pieces (Loose)</label>
-                    <input type="number" id="damage-pieces" placeholder="Pcs">
-                </div>
-            </div>
-
+            <div class="form-group"><label>Category</label><select id="damage-category" required><option value="">-- Select Category --</option><option value="kulfi">Kulfi</option><option value="ice-cream">Ice Cream</option><option value="Candy">Candy</option><option value="Cup">Cup</option><option value="Cone">Cone</option><option value="Raw Material">Raw Material</option></select></div>
+            <div class="form-group"><label>Item Name</label><input type="text" id="damage-product-name" list="damage-name-list" placeholder="Enter Item Name" required><datalist id="damage-name-list"></datalist></div>
+            <div class="form-row" style="display:flex; gap:10px;"><div class="form-group" style="flex:1;"><label>Packets</label><input type="number" id="damage-packets" placeholder="Pkts"></div><div class="form-group" style="flex:1;"><label>Pieces (Loose)</label><input type="number" id="damage-pieces" placeholder="Pcs"></div></div>
             <div class="form-group"><label>Reason</label><input type="text" id="damage-reason" placeholder="Reason" /></div>
-            <button type="submit" class="save-btn" style="background: var(--danger)">Report Damage</button>
+            <button type="submit" class="save-btn" style="background: var(--danger)">Save Entry</button>
           </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="damage-history-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header"><h3>Damage History</h3><button class="close-modal" data-target="damage-history-modal">&times;</button></div>
+        <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+            <table style="width:100%; border-collapse: collapse; font-size: 13px;">
+                <thead style="background: #f8f9fa;">
+                    <tr>
+                        <th style="padding: 8px; text-align: left;">Item</th>
+                        <th style="padding: 8px; text-align: left;">Qty</th>
+                        <th style="padding: 8px; text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="damage-history-list">
+                    </tbody>
+            </table>
         </div>
       </div>
     </div>
@@ -210,10 +182,7 @@
             <input type="hidden" id="edit-id">
             <div class="form-group"><label>Product Name</label><input type="text" id="edit-name" required placeholder="Name"></div>
             <div class="form-group"><label>Category</label><select id="edit-category" required><option value="kulfi">Kulfi</option><option value="ice-cream">Ice Cream</option><option value="Candy">Candy</option><option value="Cup">Cup</option><option value="Cone">Cone</option><option value="Raw Material">Raw Material</option></select></div>
-            <div class="form-row" style="display:flex; gap:10px;">
-                <div class="form-group" style="flex:1;"><label>Total Units</label><input type="number" id="edit-qty" required placeholder="Qty"></div>
-                <div class="form-group" style="flex:1;"><label>Items/Pkt</label><input type="number" id="edit-packet-size" required placeholder="Size"></div>
-            </div>
+            <div class="form-row" style="display:flex; gap:10px;"><div class="form-group" style="flex:1;"><label>Total Units</label><input type="number" id="edit-qty" required placeholder="Qty"></div><div class="form-group" style="flex:1;"><label>Items/Pkt</label><input type="number" id="edit-packet-size" required placeholder="Size"></div></div>
             <div class="form-group"><label>Price (₹)</label><input type="number" id="edit-price" required placeholder="Price"></div>
             <button type="submit" class="save-btn" style="background: var(--success)">Update Product</button>
           </form>

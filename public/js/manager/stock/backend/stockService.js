@@ -7,12 +7,11 @@ window.StockService = {
       snap.forEach((doc) => products.push({ id: doc.id, ...doc.data() }));
       return products;
     } catch (e) {
-      console.error("Stock Fetch Error:", e);
       return [];
     }
   },
 
-  // 2. GET BOY STOCK (New: Specific Boy ka Stock lane ke liye)
+  // 2. GET BOY STOCK
   getBoyStock: async function (boyName) {
     try {
       const snap = await db
@@ -21,16 +20,23 @@ window.StockService = {
         .get();
       let items = [];
       snap.forEach((doc) => {
-        if (doc.data().qty > 0) items.push(doc.data());
+        if (doc.data().qty > 0)
+          items.push({
+            id: doc.id,
+            name: doc.data().productName,
+            category: "Assigned",
+            price: 0,
+            qty: doc.data().qty,
+            packetSize: doc.data().packetSize || 1,
+          });
       });
       return items;
     } catch (e) {
-      console.error(e);
       return [];
     }
   },
 
-  // 3. GET ALL STOCK WITH BOYS (Stats ke liye)
+  // 3. GET STATS
   getAllBoysStock: async function () {
     try {
       const snap = await db.collection("boy_inventory").get();
@@ -58,25 +64,24 @@ window.StockService = {
     }
   },
 
-  // 4. ASSIGN STOCK (Godown [-] , Boy [+])
+  // 4. ASSIGN (Calculated Logic)
   assignStock: async function (boyName, productName, qty, packetSize) {
     const batch = db.batch();
-
-    // A. Godown se kam karo
     const prodSnap = await db
       .collection("products")
       .where("name", "==", productName)
       .limit(1)
       .get();
-    if (prodSnap.empty) throw new Error("Product Godown me nahi mila!");
+    if (prodSnap.empty) throw new Error("Product not found!");
+
     const prodDoc = prodSnap.docs[0];
     const currentQty = Number(prodDoc.data().qty) || 0;
 
     if (currentQty < qty)
-      throw new Error(`Godown me maal kam hai! Sirf ${currentQty} bache hain.`);
+      throw new Error(`Stock kam hai! Only ${currentQty} units left.`);
+
     batch.update(prodDoc.ref, { qty: currentQty - qty });
 
-    // B. Boy Inventory me badhao
     const boyInvRef = db
       .collection("boy_inventory")
       .doc(`${boyName}_${productName}`);
@@ -85,6 +90,7 @@ window.StockService = {
     if (boySnap.exists) {
       batch.update(boyInvRef, {
         qty: firebase.firestore.FieldValue.increment(qty),
+        packetSize: Number(packetSize) || 1,
       });
     } else {
       batch.set(boyInvRef, {
@@ -94,41 +100,24 @@ window.StockService = {
         packetSize: Number(packetSize) || 1,
       });
     }
-
-    // C. Log Entry
-    const logRef = db.collection("stock_logs").doc();
-    batch.set(logRef, {
-      action: "ASSIGN",
-      boyName,
-      productName,
-      qty,
-      date: new Date().toISOString().split("T")[0],
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-
     await batch.commit();
   },
 
-  // 5. RETURN STOCK (Godown [+] , Boy [-])
+  // 5. RETURN (Calculated Logic)
   returnStock: async function (boyName, productName, qty) {
     const batch = db.batch();
-
-    // A. Boy Inventory se kam karo
     const boyInvRef = db
       .collection("boy_inventory")
       .doc(`${boyName}_${productName}`);
     const boySnap = await boyInvRef.get();
 
-    if (!boySnap.exists || boySnap.data().qty < qty) {
-      throw new Error(
-        `Ladke ke paas itna stock (${productName}) nahi hai return karne ke liye!`,
-      );
-    }
+    if (!boySnap.exists || boySnap.data().qty < qty)
+      throw new Error(`Insufficent stock!`);
+
     batch.update(boyInvRef, {
       qty: firebase.firestore.FieldValue.increment(-qty),
     });
 
-    // B. Godown me wapas jodo
     const prodSnap = await db
       .collection("products")
       .where("name", "==", productName)
@@ -139,81 +128,64 @@ window.StockService = {
         qty: firebase.firestore.FieldValue.increment(qty),
       });
     }
-
-    // C. Log
-    const logRef = db.collection("stock_logs").doc();
-    batch.set(logRef, {
-      action: "RETURN",
-      boyName,
-      productName,
-      qty,
-      date: new Date().toISOString().split("T")[0],
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-
     await batch.commit();
   },
 
-  // 6. DAMAGE / ADD / EDIT / DELETE (Same as before)
-  addOrUpdateStock: async function (data) {
-    /* ... Purana code ... */
-    // (Keep your existing logic for addOrUpdateStock here)
-    // Main concept same rahega
-    const snap = await db
-      .collection("products")
-      .where("name", "==", data.name)
-      .limit(1)
-      .get();
-    const packetSize = Number(data.packetSize) || 1;
-    if (!snap.empty) {
-      const doc = snap.docs[0];
-      const currentQty = Number(doc.data().qty) || 0;
-      await db
-        .collection("products")
-        .doc(doc.id)
-        .update({
-          qty: currentQty + (Number(data.qty) || 0),
-          price: Number(data.price) || doc.data().price,
-          packetSize: packetSize,
-        });
-    } else {
-      await db.collection("products").add({
-        name: data.name,
-        category: data.category || "General",
-        price: Number(data.price) || 0,
-        qty: Number(data.qty) || 0,
-        packetSize: packetSize,
-        status: "in-stock",
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+  // 6. 🔥 REPORT DAMAGE (Manual Entry - No Auto Calc / No Deduction)
+  reportDamage: async function (data) {
+    return db.collection("damage_logs").add({
+      productName: data.productName,
+      category: data.category,
+      packets: Number(data.packets) || 0, // Raw Entry
+      pieces: Number(data.pieces) || 0, // Raw Entry
+      reason: data.reason,
+      date: new Date().toISOString().split("T")[0],
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+  },
+
+  // 🔥 7. GET DAMAGE STATS (Sum of Raw Packets & Pieces)
+  getDamageStats: async function () {
+    try {
+      const snap = await db.collection("damage_logs").get();
+      let totalPkt = 0,
+        totalPcs = 0;
+      snap.forEach((doc) => {
+        const d = doc.data();
+        totalPkt += Number(d.packets) || 0;
+        totalPcs += Number(d.pieces) || 0;
       });
+      return { totalPkt, totalPcs };
+    } catch (e) {
+      return { totalPkt: 0, totalPcs: 0 };
     }
   },
+
+  // 8. GET LOGS
+  getDamageLogs: async function () {
+    const snap = await db
+      .collection("damage_logs")
+      .orderBy("timestamp", "desc")
+      .get();
+    return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  },
+
+  // 9. DELETE / CLEAR LOGS
+  deleteDamageLog: async function (id) {
+    return db.collection("damage_logs").doc(id).delete();
+  },
+  clearDamageLogs: async function () {
+    const snap = await db.collection("damage_logs").get();
+    const batch = db.batch();
+    snap.forEach((doc) => batch.delete(doc.ref));
+    await batch.commit();
+  },
+
+  // 10. EDIT & DELETE STOCK (Full Control)
   updateProduct: async function (id, data) {
     return db.collection("products").doc(id).update(data);
   },
   deleteProduct: async function (id) {
     return db.collection("products").doc(id).delete();
-  },
-  reportDamage: async function (productName, qty, reason) {
-    const batch = db.batch();
-    const productSnap = await db
-      .collection("products")
-      .where("name", "==", productName)
-      .limit(1)
-      .get();
-    if (productSnap.empty) throw new Error("Product not found!");
-    const prodDoc = productSnap.docs[0];
-    const currentQty = Number(prodDoc.data().qty) || 0;
-    if (currentQty < qty) throw new Error(`Stock kam hai!`);
-    batch.update(prodDoc.ref, { qty: currentQty - qty });
-    const logRef = db.collection("damage_logs").doc();
-    batch.set(logRef, {
-      productName,
-      qty,
-      reason,
-      date: new Date().toISOString().split("T")[0],
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-    await batch.commit();
   },
 };
