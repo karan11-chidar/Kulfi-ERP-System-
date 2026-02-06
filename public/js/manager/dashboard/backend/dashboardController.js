@@ -18,8 +18,12 @@ window.DashboardController = {
           // 🔥 OPTIMIZED: Sirf Udhaar wali dukaanein mangwao (Bachaat!)
           db.collection("shops").where("currentCredit", ">", 0).get(),
 
-          // Active Boys
-          db.collection("users").where("role", "==", "delivery_boy").get(),
+          // 🔥 ACTIVE Boys Query Fix: Sirf Active walo ko count karo
+          db
+            .collection("users")
+            .where("role", "==", "delivery_boy")
+            .where("status", "==", "active")
+            .get(),
         ]);
 
       // ... (Sales & Stock Calculation Logic Same rahega) ...
@@ -32,8 +36,8 @@ window.DashboardController = {
         (sum, item) => sum + (Number(item.amount) || 0),
         0,
       );
-      // ... (Expenses, Stock totals code same rahega) ...
 
+      // Stock Calculations
       let totalPackets = 0,
         totalUnits = 0;
       stockList.forEach((p) => {
@@ -47,14 +51,11 @@ window.DashboardController = {
       let totalCredit = 0;
       let pendingShops = [];
 
-      // Ab shopsSnap mein sirf udhaar wali dukaanein hi aayengi
       shopsSnap.forEach((doc) => {
         const s = doc.data();
         const pending = Number(s.currentCredit) || 0;
-        // Address logic
         const address = s.address || s.location || s.area || "No Address";
 
-        // Double check (waise query filter kar chuka hai)
         if (pending > 0) {
           totalCredit += pending;
           pendingShops.push({
@@ -68,6 +69,8 @@ window.DashboardController = {
 
       pendingShops.sort((a, b) => b.amount - a.amount);
       const topPending = pendingShops.slice(0, 5);
+
+      // 🔥 Correct Count
       const activeBoys = usersSnap.size;
 
       // Update UI

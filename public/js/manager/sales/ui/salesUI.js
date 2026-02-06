@@ -59,7 +59,6 @@ window.SalesUI = {
     if (window.lucide) window.lucide.createIcons();
   },
 
-  // 🔥 UPDATED: Added Edit Button
   renderPurchaseTable: function (list) {
     this.purchaseBody.innerHTML = "";
     if (list.length === 0) {
@@ -73,14 +72,10 @@ window.SalesUI = {
           ? "color: var(--success);"
           : "color: var(--danger);";
 
-      // Data Extraction
       const packets = item.quantity || 0;
-      // Agar purana data hai jisme totalUnits nahi tha, toh quantity hi use karo fallback ke liye
       const totalUnits = item.totalUnits
         ? item.totalUnits
         : item.unitDetail || packets;
-
-      // Unit Type Badge (Optional styling)
       const typeBadge = item.unitType === "packet" ? "(Pkt)" : "(Pc)";
 
       const row = `
@@ -134,14 +129,20 @@ window.SalesUI = {
       "₹" + (stats.onlineTotal || 0).toLocaleString();
     document.querySelector("#sales-stats .warning h4").innerText =
       "₹" + (stats.cashTotal || 0).toLocaleString();
-    document.querySelector("#sales-stats .primary h4").innerText =
-      "₹" + (stats.lifeTimeSales || 0).toLocaleString();
 
-    // 👇 Naya Code (Isse Replace Karein):
-document.querySelector("#purchase-stats .info h4").innerHTML = `
-    ${stats.stockInPackets || 0} Pkts 
-    <span style="font-size:12px; color:#555;">(${stats.stockInCount || 0} Units)</span>
-`;
+    // 🔥 CHANGE: Update Weekly Sales Value & Label
+    const weeklyCard = document.querySelector("#sales-stats .primary");
+    if (weeklyCard) {
+      weeklyCard.querySelector("h4").innerText =
+        "₹" + (stats.weeklySalesTotal || 0).toLocaleString();
+      weeklyCard.querySelector("span").innerText = "Weekly Sales"; // Label Change
+    }
+
+    // Purchase Stats
+    document.querySelector("#purchase-stats .info h4").innerHTML = `
+        ${stats.stockInPackets || 0} Pkts 
+        <span style="font-size:12px; color:#555;">(${stats.stockInCount || 0} Units)</span>
+    `;
     document.querySelector("#purchase-stats .danger h4").innerText =
       "₹" + (stats.purchaseTotal || 0).toLocaleString();
     document.querySelector("#purchase-stats .warning h4").innerText =

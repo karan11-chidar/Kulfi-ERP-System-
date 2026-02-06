@@ -1,19 +1,11 @@
-<!-- 
-DESCRIPTION:
-Sales & Purchase Management Page for Manager.
-Includes styled "New Purchase" Modal.
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kulfi ERP | Sales & Purchase</title>
-    <!-- External CSS -->
     <link rel="stylesheet" href="../css/manager/sales.css">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
@@ -23,7 +15,6 @@ Includes styled "New Purchase" Modal.
     </div>
     <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
 
-    <!-- Header -->
     <header class="topbar">
         <div class="header-left">
             <button id="menu-btn" class="menu-toggle"><i data-lucide="menu"></i></button>
@@ -38,7 +29,6 @@ Includes styled "New Purchase" Modal.
     </header>
 
     <div class="layout">
-        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <button id="close-sidebar" class="close-btn">&times;</button>
             <div class="sidebar-header"><h3>Menu</h3></div>
@@ -58,27 +48,23 @@ Includes styled "New Purchase" Modal.
 
         <div class="overlay" id="overlay"></div>
 
-        <!-- Main Content -->
         <main class="content">
             
             <div class="page-header">
                 <h3>Transactions</h3>
-                <!-- Toggle Buttons -->
                 <div class="view-switcher">
                     <button class="switch-btn active" id="btn-show-sales">Sales List</button>
                     <button class="switch-btn" id="btn-show-purchase">Purchase List</button>
                 </div>
             </div>
 
-            <!-- Action Button (Excel) -->
             <div class="header-actions" style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
                 <button class="btn btn-export" id="btn-open-sheet">
                     <i data-lucide="sheet"></i> Open Google Sheet
                 </button>
             </div>
 
-            <!-- SALES STATS -->
-          <div class="stats-row" id="sales-stats">
+            <div class="stats-row" id="sales-stats">
     <div class="mini-card success">
         <span>Todays Total Sales</span>
         <h4>₹0</h4>
@@ -129,15 +115,7 @@ Includes styled "New Purchase" Modal.
         <div class="card-icon"><i data-lucide="file-warning"></i></div>
     </div>
 </div>
-            <!-- PURCHASE STATS (Hidden initially) -->
-            <div class="stats-row hidden" id="purchase-stats">
-                <div class="mini-card info"><span>Stock In</span><h4>500 Units</h4></div>
-                <div class="mini-card danger"><span>Todays Purchase</span><h4>₹12,000</h4></div>
-                <div class="mini-card warning"><span>Weekly Purchase</span><h4>₹85,000</h4></div>
-                <div class="mini-card success"><span>Pending Bills</span><h4>₹5,000</h4></div>
-            </div>
 
-            <!-- Filter Bar & New Purchase Button -->
             <div class="filter-bar">
                 <div class="search-box">
                     <i data-lucide="search"></i>
@@ -154,17 +132,16 @@ Includes styled "New Purchase" Modal.
                     <option value="all">All Payment Types</option>
                     <option value="online">Online</option>
                     <option value="cash">Cash</option>
+                    <option value="credit">Credit (Udhaar)</option>
                 </select>
                 
-                <input type="date" class="filter-date">
+                <input type="date" class="filter-date" id="sales-date-filter">
                 
-                <!-- NEW PURCHASE BUTTON (Hidden on Sales Tab) -->
                 <button class="btn btn-add hidden" id="btn-add-purchase">
                     <i data-lucide="plus"></i> New Purchase
                 </button>
             </div>
 
-            <!-- SALES TABLE -->
             <div id="sales-section" class="table-container">
                 <h4 class="table-title">Sales Records</h4>
                 <table>
@@ -178,13 +155,11 @@ Includes styled "New Purchase" Modal.
                         </tr>
                     </thead>
                     <tbody id="sales-table-body">
-                        <!-- JS renders rows here -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
 
-            <!-- PURCHASE TABLE -->
-           <div id="purchase-section" class="table-container hidden">
+            <div id="purchase-section" class="table-container hidden">
     <h4 class="table-title">Purchase Records (Stock In)</h4>
     <table>
         <thead>
@@ -207,8 +182,7 @@ Includes styled "New Purchase" Modal.
         </main>
     </div>
 
-    <!-- NEW PURCHASE MODAL (Styled) -->
-   <div id="purchase-modal" class="modal-overlay">
+    <div id="purchase-modal" class="modal-overlay">
   <div class="modal-content">
     <div class="modal-header">
       <h3>Add New Purchase</h3>
@@ -307,4 +281,3 @@ Includes styled "New Purchase" Modal.
 <script src="../js/manager/sales/salesMain.js"></script>
 </body>
 </html>
-

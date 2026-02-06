@@ -1,10 +1,11 @@
 window.StockUI = {
-  // ... (Table Render, Dropdowns same) ...
   tableBody: document.getElementById("stock-table-body"),
   mainLoader: document.getElementById("auth-loader"),
+
   renderLoading: function () {
     this.tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px;">Loading...</td></tr>`;
   },
+
   renderTable: function (data, currentViewMode = "all") {
     this.tableBody.innerHTML = "";
     if (data.length === 0) {
@@ -15,25 +16,32 @@ window.StockUI = {
       let qty = Number(item.qty) || 0;
       let pktSize = Number(item.packetSize) || 1;
       let packets = Math.floor(qty / pktSize);
+
       let packetDisplay =
         pktSize > 1
           ? `<strong>${packets}</strong> Pkt <span style="font-size:11px; color:#777;">(${pktSize}/pkt)</span>`
           : `<span style="color:#999">-</span>`;
+
       let statusClass = qty > 10 ? "in-stock" : qty > 0 ? "low" : "out";
       let statusText =
         qty > 10 ? "In Stock" : qty > 0 ? "Low Stock" : "Out of Stock";
+
       const isGodown = currentViewMode === "all";
-      const priceDisplay = isGodown
-        ? `₹${item.price}`
-        : `<span style="color:#999">-</span>`;
+
+      // 🔥 CHANGE: Price ab hamesha dikhega (chahe godown ho ya boy)
+      const priceDisplay = `₹${item.price || 0}`;
+
+      // Actions sirf Godown me dikhenge, Boy me "Assigned" dikhega
       let actionButtons = isGodown
         ? `<div class="action-icons"><i data-lucide="edit-2" style="cursor:pointer; color:#0D8ABC; margin-right:10px;" onclick="window.StockController.openEditStock('${item.id}', '${item.name}', ${qty}, ${item.price}, '${item.category}', ${pktSize})"></i><i data-lucide="trash-2" class="delete" onclick="window.StockController.handleDelete('${item.id}')" style="cursor:pointer; color:red;"></i></div>`
         : `<span style="font-size:11px; color:#555;">Assigned</span>`;
+
       const row = `<tr><td><strong>${item.name}</strong></td><td>${packetDisplay}</td><td style="font-weight: bold; color: ${isGodown ? "#0D8ABC" : "#E67E22"};">${qty} Units</td><td>${item.category}</td><td>${priceDisplay}</td><td><span class="status ${statusClass}">${statusText}</span></td><td>${actionButtons}</td></tr>`;
       this.tableBody.innerHTML += row;
     });
     if (window.lucide) window.lucide.createIcons();
   },
+
   populateDropdowns: function (boys, products) {
     ["assign-boy-select", "return-boy-select", "boy-stock-filter"].forEach(
       (id) => {
@@ -67,6 +75,7 @@ window.StockUI = {
       });
     }
   },
+
   showMainLoader: function () {
     if (this.mainLoader) this.mainLoader.style.display = "flex";
   },
@@ -78,7 +87,6 @@ window.StockUI = {
     }
   },
 
-  // 🔥 UPDATED: Show Packets + Pieces in BOTH Godown & Boys Card
   renderStats: function (
     godownUnits,
     godownPackets,
@@ -92,7 +100,7 @@ window.StockUI = {
       godownEl.innerHTML = `<h4 style="margin:0;">${godownPackets} Pkts</h4><span style="font-size:12px; color:#555;">(${godownUnits} Pieces)</span>`;
     }
 
-    // 🔥 2. Boy Stock Card (Fixed)
+    // 2. Boy Stock Card
     const boysEl = document.getElementById("boy-stock-count");
     if (boysEl) {
       boysEl.innerHTML = `<h4 style="margin:0; font-size:1.1rem; color:#0288d1;">${boysStats.totalPackets || 0} Pkts</h4><span style="font-size:11px; color:#555;">(${boysStats.totalUnits || 0} Items)</span>`;

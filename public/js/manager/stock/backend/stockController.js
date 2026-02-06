@@ -1,7 +1,7 @@
 window.StockController = {
   products: [],
   currentViewData: [],
-  boysStockStats: { totalUnits: 0, totalPackets: 0 }, // 🔥 Store Object
+  boysStockStats: { totalUnits: 0, totalPackets: 0 },
   damageStats: { totalPkt: 0, totalPcs: 0 },
   isLoading: false,
   filter: { search: "", category: "all", boy: "all" },
@@ -11,7 +11,7 @@ window.StockController = {
     try {
       await this.loadStock();
       await this.loadDropdowns();
-      this.boysStockStats = await StockService.getAllBoysStock(); // 🔥 Get Object
+      this.boysStockStats = await StockService.getAllBoysStock();
       this.damageStats = await StockService.getDamageStats();
       this.updateStats();
     } catch (e) {
@@ -22,18 +22,36 @@ window.StockController = {
     this.setupEventListeners();
   },
 
+  // 🔥 NEW HELPER: Boy Stock me Price/Category bharna
+  enrichBoyData: function (boyItems) {
+    return boyItems.map((item) => {
+      // Main Product List se match karo
+      const mainProd = this.products.find((p) => p.name === item.name);
+      return {
+        ...item,
+        // Agar match mila toh wahi Category/Price lo, nahi toh purana rakho
+        category: mainProd ? mainProd.category : item.category,
+        price: mainProd ? mainProd.price : 0,
+      };
+    });
+  },
+
   loadStock: async function () {
     this.isLoading = true;
     if (window.StockUI) window.StockUI.renderLoading();
     try {
+      // 1. Pehle Godown ka data lao (Master Data)
       this.products = await StockService.getGodownStock();
-      this.boysStockStats = await StockService.getAllBoysStock(); // 🔥 Refresh
+      this.boysStockStats = await StockService.getAllBoysStock();
       this.damageStats = await StockService.getDamageStats();
 
+      // 2. Ab View decide karo
       if (this.filter.boy === "all") {
         this.currentViewData = this.products;
       } else {
-        this.currentViewData = await StockService.getBoyStock(this.filter.boy);
+        const rawBoyStock = await StockService.getBoyStock(this.filter.boy);
+        // 🔥 MERGE LOGIC APPLIED HERE
+        this.currentViewData = this.enrichBoyData(rawBoyStock);
       }
       this.applyFilters();
     } catch (e) {
@@ -42,6 +60,27 @@ window.StockController = {
       this.isLoading = false;
     }
   },
+
+  handleViewChange: async function (boyName) {
+    this.filter.boy = boyName;
+    if (window.StockUI) window.StockUI.renderLoading();
+
+    if (boyName === "all") {
+      this.currentViewData = this.products;
+    } else {
+      try {
+        const rawBoyStock = await StockService.getBoyStock(boyName);
+        // 🔥 MERGE LOGIC APPLIED HERE TOO
+        this.currentViewData = this.enrichBoyData(rawBoyStock);
+      } catch (e) {
+        console.error(e);
+        this.currentViewData = [];
+      }
+    }
+    this.applyFilters();
+  },
+
+  // ... (Baaki saare functions SAME rahenge - No Change needed below) ...
 
   updateStats: function (godownData = this.products) {
     let godownUnits = 0;
@@ -54,7 +93,7 @@ window.StockController = {
       godownPackets += Math.floor(qty / size);
       if (qty <= 0) outOfStock++;
     });
-    // 🔥 Pass Full Stats Objects
+
     if (window.StockUI)
       window.StockUI.renderStats(
         godownUnits,
@@ -65,7 +104,6 @@ window.StockController = {
       );
   },
 
-  // ... (Baki saare handlers same as before: handleAssign, handleDamage, ApplyFilters, etc.) ...
   applyFilters: function () {
     let filtered = this.currentViewData;
     const term = this.filter.search.toLowerCase();
@@ -77,93 +115,113 @@ window.StockController = {
     if (window.StockUI) window.StockUI.renderTable(filtered, this.filter.boy);
     this.updateStats(this.products);
   },
-  handleViewChange: async function (boyName) {
-    this.filter.boy = boyName;
-    if (window.StockUI) window.StockUI.renderLoading();
-    if (boyName === "all") {
-      this.currentViewData = this.products;
-    } else {
-      try {
-        this.currentViewData = await StockService.getBoyStock(boyName);
-      } catch (e) {
-        console.error(e);
-        this.currentViewData = [];
-      }
-    }
-    this.applyFilters();
-  },
+
   loadDropdowns: async function () {
     const boys = await StockService.getDeliveryBoys();
     if (window.StockUI) window.StockUI.populateDropdowns(boys, this.products);
   },
+
   calculateTotal: function (productName, packets, pieces) {
     const product = this.products.find((p) => p.name === productName);
     const packetSize = product ? Number(product.packetSize) || 1 : 1;
     return (Number(packets) || 0) * packetSize + (Number(pieces) || 0);
   },
+
   handleReturnBoyChange: async function () {
     const boyName = document.getElementById("return-boy-select").value;
     const productSelect = document.getElementById("return-product-select");
+    const priceInput = document.getElementById("return-price");
+
     productSelect.innerHTML = '<option value="">Loading...</option>';
+    priceInput.value = "";
+
     if (!boyName) {
       productSelect.innerHTML =
         '<option value="">-- Select Boy First --</option>';
       return;
     }
+
     const items = await StockService.getBoyStock(boyName);
+
     productSelect.innerHTML = '<option value="">-- Select Product --</option>';
-    if (items.length === 0)
+
+    if (items.length === 0) {
       productSelect.innerHTML += "<option disabled>No stock found</option>";
-    else
-      items.forEach(
-        (item) =>
-          (productSelect.innerHTML += `<option value="${item.name}">${item.name} (Has: ${item.qty})</option>`),
-      );
+    } else {
+      items.forEach((item) => {
+        let price = item.price;
+        if (!price) {
+          const mainProd = this.products.find((p) => p.name === item.name);
+          price = mainProd ? mainProd.price : 0;
+        }
+
+        productSelect.innerHTML += `<option value="${item.name}" data-price="${price}">
+            ${item.name} (Has: ${item.qty} units)
+          </option>`;
+      });
+    }
+
+    productSelect.onchange = function () {
+      const selectedOption = this.options[this.selectedIndex];
+      const price = selectedOption.getAttribute("data-price");
+      document.getElementById("return-price").value = price
+        ? "₹" + price
+        : "₹0";
+    };
   },
+
   handleAssign: async function (e) {
     e.preventDefault();
     const boy = document.getElementById("assign-boy-select").value;
     const product = document.getElementById("assign-product-select").value;
     const packets = document.getElementById("assign-packets").value;
     const pieces = document.getElementById("assign-pieces").value;
+
     const totalQty = this.calculateTotal(product, packets, pieces);
     const prodObj = this.products.find((p) => p.name === product);
     const pktSize = prodObj ? prodObj.packetSize : 1;
+
     if (!boy || !product || totalQty <= 0) {
-      alert("Check quantity");
+      alert("⚠️ Quantity sahi se bharein (Packets ya Pieces)");
       return;
     }
+
     try {
       await StockService.assignStock(boy, product, totalQty, pktSize);
-      alert(`✅ Assigned!`);
+      alert(`✅ ${totalQty} Units Assigned to ${boy}!`);
       document.getElementById("assign-modal").classList.remove("active");
       document.getElementById("assign-form").reset();
       this.loadStock();
     } catch (e) {
-      alert(e.message);
+      alert("❌ Error: " + e.message);
     }
   },
+
   handleReturn: async function (e) {
     e.preventDefault();
     const boy = document.getElementById("return-boy-select").value;
     const product = document.getElementById("return-product-select").value;
     const packets = document.getElementById("return-packets").value;
     const pieces = document.getElementById("return-pieces").value;
+
     const totalQty = this.calculateTotal(product, packets, pieces);
+
     if (!boy || !product || totalQty <= 0) {
-      alert("Check quantity");
+      alert("⚠️ Quantity sahi se bharein");
       return;
     }
+
     try {
       await StockService.returnStock(boy, product, totalQty);
-      alert(`✅ Returned!`);
+      alert(`✅ ${totalQty} Units Returned to Godown!`);
       document.getElementById("return-modal").classList.remove("active");
       document.getElementById("return-form").reset();
       this.loadStock();
     } catch (e) {
-      alert(e.message);
+      alert("❌ Error: " + e.message);
     }
   },
+
   handleDamage: async function (e) {
     e.preventDefault();
     const category = document.getElementById("damage-category").value;
@@ -173,14 +231,16 @@ window.StockController = {
     const packets = document.getElementById("damage-packets").value;
     const pieces = document.getElementById("damage-pieces").value;
     const reason = document.getElementById("damage-reason").value;
+
     if (!category || !nameInput) {
       alert("Category aur Name zaroori hai!");
       return;
     }
     if ((Number(packets) || 0) <= 0 && (Number(pieces) || 0) <= 0) {
-      alert("Qty daalein");
+      alert("⚠️ Quantity daalein");
       return;
     }
+
     try {
       await StockService.reportDamage({
         productName: nameInput,
@@ -189,7 +249,7 @@ window.StockController = {
         pieces: Number(pieces) || 0,
         reason,
       });
-      alert("✅ Entry Added!");
+      alert("✅ Damage Report Saved!");
       document.getElementById("damage-modal").classList.remove("active");
       document.getElementById("damage-form").reset();
       this.loadStock();
@@ -197,11 +257,13 @@ window.StockController = {
       alert(e.message);
     }
   },
+
   handleDelete: async function (id) {
     if (!confirm("Delete?")) return;
     await StockService.deleteProduct(id);
     this.loadStock();
   },
+
   handleEditSave: async function (e) {
     e.preventDefault();
     const id = document.getElementById("edit-id").value;
@@ -224,6 +286,7 @@ window.StockController = {
       if (window.StockUI) window.StockUI.hideMainLoader();
     }
   },
+
   openEditStock: function (id, name, qty, price, category, packetSize) {
     document.getElementById("edit-id").value = id;
     document.getElementById("edit-name").value = name;
@@ -233,6 +296,7 @@ window.StockController = {
     document.getElementById("edit-packet-size").value = packetSize || 1;
     document.getElementById("edit-stock-modal").classList.add("active");
   },
+
   handleResetDamage: async function () {
     if (!confirm("Reset Damage Counter?")) return;
     try {
@@ -245,11 +309,13 @@ window.StockController = {
       if (window.StockUI) window.StockUI.hideMainLoader();
     }
   },
+
   openDamageHistory: async function () {
     const list = await StockService.getDamageLogs();
     if (window.StockUI) window.StockUI.renderDamageList(list);
     document.getElementById("damage-history-modal").classList.add("active");
   },
+
   deleteDamageEntry: async function (id) {
     if (!confirm("Delete entry?")) return;
     await StockService.deleteDamageLog(id);
@@ -286,6 +352,15 @@ window.StockController = {
               .querySelectorAll(".modal-overlay")
               .forEach((m) => m.classList.remove("active"))),
       );
+    document.getElementById("assign-product-select").onchange = (e) => {
+      const prodName = e.target.value;
+      const product = this.products.find((p) => p.name === prodName);
+      if (product) {
+        document.getElementById("assign-price").value = "₹" + product.price;
+      } else {
+        document.getElementById("assign-price").value = "";
+      }
+    };
     document.getElementById("assign-form").onsubmit = (e) =>
       this.handleAssign(e);
     document.getElementById("return-form").onsubmit = (e) =>

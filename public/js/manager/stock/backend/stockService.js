@@ -71,27 +71,32 @@ window.StockService = {
     }
   },
 
-  // 4. ASSIGN STOCK (Calculated)
+  // 4. ASSIGN STOCK (Godown -> Boy)
   assignStock: async function (boyName, productName, qty, packetSize) {
     const batch = db.batch();
+
+    // A. Godown se Minus
     const prodSnap = await db
       .collection("products")
       .where("name", "==", productName)
       .limit(1)
       .get();
-    if (prodSnap.empty) throw new Error("Product not found!");
+
+    if (prodSnap.empty) throw new Error("Product Godown me nahi mila!");
 
     const prodDoc = prodSnap.docs[0];
     const currentQty = Number(prodDoc.data().qty) || 0;
 
     if (currentQty < qty)
-      throw new Error(`Stock kam hai! Only ${currentQty} units left.`);
+      throw new Error(`Stock kam hai! Sirf ${currentQty} units bache hain.`);
 
     batch.update(prodDoc.ref, { qty: currentQty - qty });
 
+    // B. Boy ko Add (Composite Key: Name_Product)
     const boyInvRef = db
       .collection("boy_inventory")
       .doc(`${boyName}_${productName}`);
+
     const boySnap = await boyInvRef.get();
 
     if (boySnap.exists) {
@@ -103,42 +108,64 @@ window.StockService = {
       batch.set(boyInvRef, {
         boyName,
         productName,
-        qty,
+        qty: Number(qty),
         packetSize: Number(packetSize) || 1,
       });
     }
     await batch.commit();
   },
 
-  // 5. RETURN STOCK (Calculated)
+  // 5. RETURN STOCK (Boy -> Godown)
   returnStock: async function (boyName, productName, qty) {
     const batch = db.batch();
+    qty = Number(qty);
+
+    // A. Boy Stock Check
     const boyInvRef = db
       .collection("boy_inventory")
       .doc(`${boyName}_${productName}`);
+
     const boySnap = await boyInvRef.get();
 
-    if (!boySnap.exists || boySnap.data().qty < qty)
-      throw new Error(`Insufficent stock!`);
+    if (!boySnap.exists) throw new Error("Boy ke paas ye product nahi mila!");
 
-    batch.update(boyInvRef, {
-      qty: firebase.firestore.FieldValue.increment(-qty),
-    });
+    const currentBoyQty = Number(boySnap.data().qty) || 0;
 
+    if (currentBoyQty < qty)
+      throw new Error(
+        `Return quantity (${qty}) boy ke stock (${currentBoyQty}) se zyada hai!`,
+      );
+
+    // B. Boy se Minus (Delete if 0)
+    const newBoyQty = currentBoyQty - qty;
+
+    if (newBoyQty <= 0) {
+      batch.delete(boyInvRef); // Clean Database
+    } else {
+      batch.update(boyInvRef, { qty: newBoyQty });
+    }
+
+    // C. Godown me Wapas Add
     const prodSnap = await db
       .collection("products")
       .where("name", "==", productName)
       .limit(1)
       .get();
+
     if (!prodSnap.empty) {
-      batch.update(prodSnap.docs[0].ref, {
-        qty: firebase.firestore.FieldValue.increment(qty),
+      const prodDoc = prodSnap.docs[0];
+      const currentGodownQty = Number(prodDoc.data().qty) || 0;
+      batch.update(prodDoc.ref, {
+        qty: currentGodownQty + qty,
       });
+    } else {
+      throw new Error("Main Godown me ye product register nahi hai!");
     }
+
     await batch.commit();
   },
 
-  // 6. 🔥 REPORT DAMAGE (Manual Entry - No Stock Deduction)
+  // 6. REPORT DAMAGE
   reportDamage: async function (data) {
     return db.collection("damage_logs").add({
       productName: data.productName,
@@ -151,7 +178,7 @@ window.StockService = {
     });
   },
 
-  // 7. GET DAMAGE STATS
+  // 7. DAMAGE STATS
   getDamageStats: async function () {
     try {
       const snap = await db.collection("damage_logs").get();
@@ -187,7 +214,7 @@ window.StockService = {
     await batch.commit();
   },
 
-  // 🔥🔥🔥 THIS IS THE FUNCTION FROM SALES PAGE (Checking if it exists) 🔥🔥🔥
+  // ADD/UPDATE STOCK (From Purchase Page)
   addOrUpdateStock: async function (data) {
     const snap = await db
       .collection("products")
@@ -197,7 +224,6 @@ window.StockService = {
     const packetSize = Number(data.packetSize) || 1;
 
     if (!snap.empty) {
-      // Product hai -> Update Qty & Price
       const doc = snap.docs[0];
       const currentQty = Number(doc.data().qty) || 0;
       await db
@@ -209,7 +235,6 @@ window.StockService = {
           packetSize: packetSize,
         });
     } else {
-      // Naya Product -> Create
       await db.collection("products").add({
         name: data.name,
         category: data.category || "General",
@@ -222,7 +247,7 @@ window.StockService = {
     }
   },
 
-  // 10. EDIT & DELETE STOCK (Direct)
+  // 10. EDIT & DELETE STOCK
   updateProduct: async function (id, data) {
     return db.collection("products").doc(id).update(data);
   },

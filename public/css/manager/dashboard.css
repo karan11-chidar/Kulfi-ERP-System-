@@ -118,7 +118,7 @@ body { background: var(--bg-color); color: var(--text-dark); overflow-x: hidden;
   flex-direction: column;
   justify-content: center;
   position: relative;
-  min-height: 120px; /* Restored Height */
+ height: 120px; /* Restored Height */
   overflow: hidden;
 }
 
@@ -144,6 +144,7 @@ body { background: var(--bg-color); color: var(--text-dark); overflow-x: hidden;
 .icon-blue { background: var(--icon-bg-blue); color: var(--icon-color-blue); }
 .icon-orange { background: var(--icon-bg-orange); color: var(--icon-color-orange); }
 .icon-purple { background: var(--icon-bg-purple); color: var(--icon-color-purple); }
+
 
 /* =========================================
    5. PENDING CREDIT LIST
@@ -196,6 +197,11 @@ body { background: var(--bg-color); color: var(--text-dark); overflow-x: hidden;
   .sidebar.active { transform: translateX(0); }
   .close-btn, .menu-toggle { display: block; }
   .content { margin-left: 0; margin-top: 60px; padding: 15px; }
+   .icon-box{
+      top: 3;
+      height: 30px;
+      width: 20px;
+    }
 }
 @media (max-width: 300px) {
     .cards{ grid-template-columns: 2fr; }

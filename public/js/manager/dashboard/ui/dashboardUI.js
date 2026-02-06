@@ -25,13 +25,13 @@ window.DashboardUI = {
     pendingCount: document.getElementById("dash-pending-count"),
     boyCount: document.getElementById("dash-active-boys"),
 
-    // 🔥 List Container
+    // List Container
     pendingList: document.getElementById("dash-pending-list"),
     loader: document.getElementById("auth-loader"),
   },
 
   init: function () {
-    console.log("🎨 DashboardUI: Initialized");
+    console.log("📊 DashboardUI: Initialized");
     this.setupEventListeners();
     if (window.lucide) window.lucide.createIcons();
   },
@@ -69,16 +69,17 @@ window.DashboardUI = {
     if (this.elements.boyCount)
       this.elements.boyCount.innerHTML = `<strong>Live</strong> ${data.activeBoys}`;
 
-    // 🔥 Render List
+    // Render List
     this.renderPendingList(data.topPending);
   },
 
+  // 🔥 UPDATED: Clickable Address & Phone Number
   renderPendingList: function (list) {
     if (!this.elements.pendingList) return;
     this.elements.pendingList.innerHTML = "";
 
     if (!list || list.length === 0) {
-      this.elements.pendingList.innerHTML = `<div style="padding:20px; text-align:center; color:#777;">No Pending Dues 🎉</div>`;
+      this.elements.pendingList.innerHTML = `<div style="padding:20px; text-align:center; color:#777;">No Pending Dues ✅</div>`;
       return;
     }
 
@@ -95,14 +96,31 @@ window.DashboardUI = {
         riskClass = "color: var(--warning-color); font-weight:bold;";
       }
 
+      // 🔗 Clickable Logic
+      const mapLink = item.address
+        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address)}`
+        : "#";
+      const phoneLink = item.mobile ? `tel:${item.mobile}` : "#";
+      const phoneDisplay = item.mobile || "No Number";
+
       const html = `
             <div class="list-item" style="display:flex; justify-content:space-between; align-items:center; background:white; padding:15px; border-radius:8px; margin-bottom:10px; box-shadow:0 2px 5px rgba(0,0,0,0.05); ${borderClass}">
               <div class="shop-info">
                 <h4 style="margin:0; font-size:1rem; font-weight:600;">${item.name}</h4>
-                <div style="font-size:0.85rem; color:#666; margin-top:4px;">
-                    <i data-lucide="map-pin" style="width:12px; vertical-align:middle;"></i> ${item.address}
+                
+                <div style="margin-top:4px;">
+                    <a href="${mapLink}" target="_blank" style="font-size:0.85rem; color:#666; text-decoration:none; display:flex; align-items:center; gap:5px;">
+                        <i data-lucide="map-pin" style="width:14px; color:#0D8ABC;"></i> ${item.address}
+                    </a>
+                </div>
+
+                <div style="margin-top:4px;">
+                    <a href="${phoneLink}" style="font-size:0.85rem; color:#666; text-decoration:none; display:flex; align-items:center; gap:5px;">
+                        <i data-lucide="phone" style="width:14px; color:#28a745;"></i> ${phoneDisplay}
+                    </a>
                 </div>
               </div>
+              
               <div class="credit-amount" style="font-size:1rem; ${riskClass}">
                 ₹${item.amount.toLocaleString()}
               </div>
